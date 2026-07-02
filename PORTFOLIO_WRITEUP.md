@@ -14,6 +14,8 @@ I then ran a clean post-correction check on SCIN-only grouped splits. The fixed 
 
 I also added a skin-tone subgroup audit using SCIN Fitzpatrick and Monk metadata. The audit did not show an obvious aggregate drop across Fitzpatrick buckets in the small SCIN-only sample, but the darkest Monk bucket was too small to interpret. I treat that as a process win rather than a fairness claim: the project now has the machinery to report subgroup performance and the discipline to say when the subgroup data is underpowered.
 
+Finally, I ran one modeling improvement under the corrected protocol: a decoupled cRT-style head. I froze the deployed ONNX image model, used its logits as a compact representation, and retrained only a class-balanced logistic head on each grouped split. This produced a real macro-recall lift: **63.1% to 73.1% macro recall** across five grouped split seeds. The trade-off was lower accuracy, **86.2% to 75.1%**, so I frame it as a tail-sensitive operating point rather than a replacement for the default app model.
+
 That decision is central to the project: the limiting factor is no longer model architecture. It is data quality, label ambiguity, and the lack of enough face-specific examples for overlapping inflammatory skin presentations.
 
 This is not a medical device and does not provide diagnosis.
@@ -46,8 +48,11 @@ The first deployable model was a MobileNetV3-Small classifier exported to ONNX. 
 | Raw MobileNetV3 ONNX | 68.3% | 44.4% |
 | Conservative prior-calibrated MobileNetV3 ONNX | 69.4% | 48.4% |
 | Conservative MobileNetV3 ONNX on grouped SCIN-only splits, 5 split seeds | 86.2% +/- 1.2 | 63.1% +/- 10.1 |
+| Decoupled balanced logit head on grouped SCIN-only splits, 5 split seeds | 75.1% +/- 2.0 | 73.1% +/- 10.1 |
 
 The grouped SCIN-only result is the cleanest deployed-model check because it avoids case leakage. It is not directly comparable to the earlier merged benchmark because it uses a smaller SCIN-only dataset, but it answers the key validity question: the deployed model still clears 80% accuracy under grouped evaluation. Macro recall remains the more honest limitation.
+
+The decoupled head moves that limitation in the right direction. Compared with the deployed grouped baseline, it improves folliculitis recall from 44.4% to 70.1%, clinician-review from 45.0% to 68.0%, hyperpigmentation from 40.0% to 73.3%, and rosacea from 68.6% to 77.1%. It gives up majority-class dermatitis recall, which explains the accuracy drop.
 
 ### 2. Frozen Foundation-Style Embeddings
 
@@ -164,6 +169,7 @@ This project demonstrates the full applied ML loop:
 - calibration, holdout confirmation, and rejection of an overfit result
 - discovery and correction of case-level split leakage risk
 - subgroup evaluation by available skin-tone metadata
+- a decoupled balanced-head experiment that improves tail macro recall on the grouped split
 - error analysis that turns model failure into a concrete data acquisition plan
 
 The most important outcome is not just a score. It is a defensible conclusion: for this task, the next real improvement requires higher-quality face-specific labeled data, not another small architecture tweak.

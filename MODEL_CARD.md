@@ -55,6 +55,12 @@ The subgroup audit does not show an obvious aggregate drop for darker Fitzpatric
 
 Artifact: `models/grouped_scin_subgroup_metrics.json`.
 
+### Tail-Sensitive Head
+
+I tested a decoupled balanced head under the same grouped SCIN protocol. The deployed ONNX image model was frozen, and only a class-balanced logistic head over the frozen logits was retrained. This improved macro recall from 63.1% +/- 10.1 to 73.1% +/- 10.1 across five grouped split seeds, mainly by lifting clinician-review, folliculitis, hyperpigmentation, and rosacea recall. Accuracy dropped from 86.2% +/- 1.2 to 75.1% +/- 2.0, so this is documented as a tail-sensitive operating point rather than the default app model.
+
+Artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`.
+
 ## Known Limitations
 
 - Broad labels overlap visually, especially acne, folliculitis, and dermatitis-like irritation.

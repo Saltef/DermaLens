@@ -65,6 +65,36 @@ The audit is useful because it makes subgroup reporting executable. It does not 
 
 Artifact: `models/grouped_scin_subgroup_metrics.json`.
 
+### Decoupled Balanced-Head Result
+
+I then tested one modeling improvement under the same grouped protocol. This was a cRT-style decoupled experiment:
+
+1. Freeze the deployed ONNX image model.
+2. Use its six output logits as a compact representation.
+3. Train only a class-balanced multinomial logistic head on each grouped training split.
+4. Select the best `C` value by validation macro recall within each split.
+5. Compare against the fixed deployed conservative-prior operating point.
+
+| Model | Accuracy | Macro Recall |
+| --- | ---: | ---: |
+| Deployed conservative-prior ONNX baseline | 86.2% +/- 1.2 | 63.1% +/- 10.1 |
+| Decoupled balanced logit head | 75.1% +/- 2.0 | 73.1% +/- 10.1 |
+
+Per-class recall moved as follows:
+
+| Class | Deployed Baseline | Decoupled Head | Change |
+| --- | ---: | ---: | ---: |
+| acne_like_texture | 84.5% | 73.0% | -11.5 |
+| clinician_review | 45.0% | 68.0% | +23.0 |
+| dermatitis_like_irritation | 96.4% | 76.7% | -19.7 |
+| folliculitis_like_bumps | 44.4% | 70.1% | +25.7 |
+| hyperpigmentation_like_uneven_tone | 40.0% | 73.3% | +33.3 |
+| rosacea_like_redness | 68.6% | 77.1% | +8.6 |
+
+Decision: this is a real tail-recall modeling win, not the new default app model. It demonstrates that a class-balanced decoupled head can move the metric the project cares about, while making the accuracy/macro-recall trade-off explicit.
+
+Artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`.
+
 ## Baseline To Beat
 
 Current portfolio default:
