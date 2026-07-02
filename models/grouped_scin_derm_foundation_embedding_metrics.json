@@ -2,7 +2,7 @@
   "status": "blocked",
   "protocol": "Derm Foundation embedding experiment under grouped SCIN protocol.",
   "foundation_model": "google/derm-foundation",
-  "reason": "Local SCIN manifest/images are not present in this checkout. A direct access attempt to google/derm-foundation also returned a gated-repo 401 without authenticated terms acceptance.",
-  "next_step": "Restore data/raw/scin locally, accept the google/derm-foundation terms on Hugging Face, run `huggingface-cli login`, then rerun this script.",
+  "reason": "GatedRepoError: 401 Client Error. (Request ID: Root=1-6a46c61f-705734aa50ac07b025b3b517;72b983b8-84dc-425a-839d-5fd21df90701)\n\nCannot access gated repo for url https://huggingface.co/google/derm-foundation/resolve/a16a6ab4f87888948fe248136e697ed28146a1c6/.gitattributes.\nAccess to model google/derm-foundation is restricted. You must have access to it and be authenticated to access it. Please log in.",
+  "next_step": "Accept the google/derm-foundation terms on Hugging Face, run `huggingface-cli login`, then rerun this script.",
   "source": "https://huggingface.co/google/derm-foundation"
 }
