@@ -8,6 +8,8 @@ The final application is a Dockerized local web app. A user uploads a facial ima
 
 The strongest untuned experimental model reached **79.2% accuracy and 71.0% macro recall** on the original face-focused validation split. A validation-tuned calibration pass reached **81.4% accuracy**, but fresh holdout testing did not reproduce that result. I therefore rejected the 81.4% number as an overfit diagnostic result rather than presenting it as the project outcome.
 
+After a later technical review, I also found a more fundamental validity risk: the original dataset preparation could split multiple photos from the same SCIN case across train and validation. I fixed this by making `case_id` grouped splitting the default protocol and by writing an auditable `split_audit.json` for every prepared ImageFolder dataset. The numbers below are therefore presented as the experiment history that led to the current conclusion; the next headline model claim should be rerun under the grouped protocol.
+
 That decision is central to the project: the limiting factor is no longer model architecture. It is data quality, label ambiguity, and the lack of enough face-specific examples for overlapping inflammatory skin presentations.
 
 This is not a medical device and does not provide diagnosis.
@@ -19,6 +21,7 @@ This is not a medical device and does not provide diagnosis.
 - A deployable compact ONNX baseline using MobileNetV3-Small.
 - A research pipeline for comparing frozen vision embeddings, neural classifier heads, supervised contrastive learning, targeted augmentation, prior calibration, and ensemble methods.
 - A validation and error-audit workflow that surfaces where the model fails and what data would be needed next.
+- A corrected data-splitting protocol that prevents case-level leakage and records split metadata for review.
 
 ## Why This Problem Is Hard
 
@@ -141,6 +144,8 @@ This is where additional data is needed. Specifically, the project needs:
 
 The current model is not mainly limited by whether the classifier head is linear, neural, contrastive, or ensembled. It is limited by the ambiguity and sparsity of the supervised signal.
 
+An important methodological limitation was also discovered after the first round of experiments: SCIN can include several images per case, and the initial fallback split operated at the image level. That can inflate validation scores in medical imaging because same-case photos may be visually near-duplicate. I corrected the preparation code to split by case/group ID, added an overlap assertion, and added split audit metadata. This strengthens the project story because the process now rejects not only overfit calibration, but also leakage-prone evaluation.
+
 ## What This Project Demonstrates
 
 This project demonstrates the full applied ML loop:
@@ -152,6 +157,7 @@ This project demonstrates the full applied ML loop:
 - model comparison across compact CNNs, pretrained embedding backbones, transformer-style backbones, neural heads, and ensemble methods
 - literature-informed experiments such as long-tail supervised contrastive learning and frozen foundation-style representations
 - calibration, holdout confirmation, and rejection of an overfit result
+- discovery and correction of case-level split leakage risk
 - error analysis that turns model failure into a concrete data acquisition plan
 
 The most important outcome is not just a score. It is a defensible conclusion: for this task, the next real improvement requires higher-quality face-specific labeled data, not another small architecture tweak.

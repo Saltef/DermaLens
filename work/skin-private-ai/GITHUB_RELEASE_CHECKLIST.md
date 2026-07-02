@@ -76,5 +76,5 @@ diagnoses skin disease
 Preferred portfolio framing:
 
 ```text
-An applied ML case study showing local inference, privacy-first image handling, model comparison, calibration, holdout validation, and data-quality limitation analysis.
+An applied ML case study showing local inference, privacy-first image handling, model comparison, calibration, holdout validation, leakage-aware data splitting, and data-quality limitation analysis.
 ```

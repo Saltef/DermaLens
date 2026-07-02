@@ -14,6 +14,19 @@ The experimental arc is intentionally critical:
 
 The strongest untuned model reached `79.2%` accuracy and `71.0%` macro recall on the original validation split. A validation-tuned variant reached `81.4%`, but fresh holdout confirmation did not reproduce it. The final conclusion is that the system is now data-limited: more face-specific, consistently labeled data is needed for acne/folliculitis/dermatitis separation.
 
+## How To Read These Numbers
+
+The metrics below are retained as an experiment log, not as clinical validation. A later methodological review identified a leakage risk in the original preparation path: SCIN cases can contain multiple images, while the older fallback split operated at the image-row level. That means near-duplicate photos from the same case could land in both train and validation.
+
+I implemented the corrected protocol in `scripts/prepare_imagefolder.py`:
+
+- split by `case_id` / group ID, not image row
+- assert that no group appears in both train and validation
+- write `split_audit.json` with image counts, group counts, and split settings
+- skip exact duplicate file digests while writing ImageFolder outputs
+
+Future headline metrics should be produced only after rerunning the baseline and best experimental models under this grouped split. The earlier numbers are still useful for comparing modeling ideas, but they should be framed as pre-correction validation results.
+
 ## Baseline To Beat
 
 Current portfolio default:
@@ -21,6 +34,7 @@ Current portfolio default:
 - Model: fine-tuned MobileNetV3-Small ONNX
 - Dataset: `scin_headneck_plus_fitzpatrick_v1`
 - Inference: conservative prior calibration
+- Split caveat: original image-level validation protocol; rerun with grouped `case_id` split before treating as final.
 - Accuracy: `69.4%`
 - Macro recall: `48.4%`
 

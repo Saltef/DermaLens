@@ -12,7 +12,7 @@ This is not a diagnostic medical device. Outputs are screening-style observation
 - **Research models:** ConvNeXt frozen embeddings, neural classifier heads, long-tail supervised contrastive tests, targeted augmentation, probability ensembles, and calibration sweeps.
 - **Best deployable ONNX result:** 69.4% accuracy and 48.4% macro recall after conservative calibration.
 - **Best untuned experimental validation result:** 79.2% accuracy and 71.0% macro recall with a mixed ConvNeXt ensemble.
-- **Critical limitation:** fresh holdout testing did not confirm the validation-tuned 81.4% result; the project is currently data-limited, especially around acne/folliculitis/dermatitis overlap.
+- **Critical limitation:** fresh holdout testing did not confirm the validation-tuned 81.4% result. A later review also identified image-level split leakage risk in multi-photo cases, so future headline metrics should use the grouped split protocol now built into `scripts/prepare_imagefolder.py`.
 - **Write-up:** See [PORTFOLIO_WRITEUP.md](PORTFOLIO_WRITEUP.md).
 
 ## What The App Does
@@ -149,6 +149,28 @@ For single-class softmax outputs, set:
 ## Dataset Prep
 
 We do not have a dataset checked into this project. See [DATASETS.md](DATASETS.md) for the recommended dataset plan and the local folder layout.
+
+The preparation script now defaults to patient/case-aware splitting when the manifest has a `case_id` column:
+
+```powershell
+python scripts/prepare_imagefolder.py `
+  --manifest data/raw/scin/face_skin_manifest.csv `
+  --image-root data/raw/scin `
+  --output data/processed/scin_grouped_v1
+```
+
+Each run writes `split_audit.json` with image counts, group counts, and a leakage check. For medical image datasets, avoid `--allow-image-level-split` unless there is truly no case or patient identifier.
+
+For stricter SCIN labels, rebuild the manifest with:
+
+```powershell
+python scripts/scin_build_manifest.py `
+  --min-label-confidence 0.45 `
+  --exclude-mixed-labels `
+  --mixed-label-margin 0.15
+```
+
+The mapping rationale is versioned in `models/label_mapping_rules_v2.json`.
 
 ## GPU Training
 

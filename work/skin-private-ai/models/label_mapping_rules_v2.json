@@ -1,0 +1,40 @@
+{
+  "version": "scin_face_skin_mapping_v2",
+  "purpose": "Document the heuristic conversion from SCIN condition metadata into DermaLens Local portfolio target labels.",
+  "default_behavior": {
+    "min_label_confidence": 0.0,
+    "exclude_mixed_labels": false,
+    "note": "Defaults preserve the original broad manifest behavior. Stricter experiments should set --min-label-confidence and --exclude-mixed-labels."
+  },
+  "target_labels": {
+    "acne_like_texture": {
+      "signals": ["related_category == ACNE", "weighted label contains acne"],
+      "known_noise": "Mixed acne/dermatitis/folliculitis presentations are common and should be audited."
+    },
+    "rosacea_like_redness": {
+      "signals": ["weighted label contains rosacea"],
+      "known_noise": "Redness can be confounded with dermatitis, lighting, flushing, and skin-tone representation."
+    },
+    "dermatitis_like_irritation": {
+      "signals": ["weighted label contains eczema", "weighted label contains dermatitis", "weighted label contains rash", "weighted label contains psoriasis"],
+      "known_noise": "Psoriasis is visually heterogeneous; keep this broad label only for exploratory screening experiments."
+    },
+    "hyperpigmentation_like_uneven_tone": {
+      "signals": ["related_category == PIGMENTARY_PROBLEM", "weighted label contains hyperpigmentation, melasma, pigment, or vitiligo"],
+      "known_noise": "Lighting and camera processing can mimic uneven tone."
+    },
+    "folliculitis_like_bumps": {
+      "signals": ["weighted label contains folliculitis"],
+      "known_noise": "Often overlaps visually with acne-like inflammatory bumps."
+    },
+    "clinician_review": {
+      "signals": ["related_category == GROWTH_OR_MOLE", "weighted label contains melanoma, carcinoma, or nevus"],
+      "known_noise": "This is an abstention/review bucket, not a lesion classifier."
+    }
+  },
+  "recommended_strict_manifest_flags": [
+    "--min-label-confidence 0.45",
+    "--exclude-mixed-labels",
+    "--mixed-label-margin 0.15"
+  ]
+}

@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import random
 from pathlib import Path
 
+import numpy as np
 import torch
 from torch import nn
 from torch.utils.data import DataLoader, WeightedRandomSampler
@@ -26,6 +28,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--label-smoothing", type=float, default=0.0)
     parser.add_argument("--random-erasing", type=float, default=0.0)
     parser.add_argument("--select-metric", choices=["val_accuracy", "macro_recall"], default="val_accuracy")
+    parser.add_argument("--seed", type=int, default=42)
     return parser.parse_args()
 
 
@@ -34,6 +37,7 @@ def main() -> None:
     data_dir = Path(args.data_dir)
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    _set_seed(args.seed)
 
     train_steps = [
             transforms.Resize((256, 256)),
@@ -48,7 +52,7 @@ def main() -> None:
     transform_train = transforms.Compose(train_steps)
     transform_val = transforms.Compose(
         [
-            transforms.Resize((224, 224)),
+            transforms.Resize((224, 224), interpolation=transforms.InterpolationMode.BICUBIC),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]
@@ -123,6 +127,8 @@ def main() -> None:
                 "label_smoothing": args.label_smoothing,
                 "random_erasing": args.random_erasing,
                 "select_metric": args.select_metric,
+                "seed": args.seed,
+                "validation_preprocessing": "Resize((224, 224), bicubic) + ImageNet normalization, matching api.model_adapter._preprocess_for_classifier.",
                 "epochs": args.epochs,
                 "classes": train_ds.classes,
                 "history": history,
@@ -153,6 +159,16 @@ def build_model(name: str, num_classes: int, *, pretrained: bool, freeze_backbon
             param.requires_grad = False
     model.classifier[-1] = nn.Linear(model.classifier[-1].in_features, num_classes)
     return model
+
+
+def _set_seed(seed: int) -> None:
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
 
 
 @torch.no_grad()

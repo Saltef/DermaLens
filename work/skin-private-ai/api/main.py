@@ -5,6 +5,7 @@ from typing import Annotated
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.concurrency import run_in_threadpool
 import uvicorn
 
 from api.pipeline import analyze_upload
@@ -13,6 +14,7 @@ from api.pipeline import analyze_upload
 APP_ROOT = Path(__file__).resolve().parent.parent
 FRONTEND_ROOT = APP_ROOT / "frontend"
 PRIVATE_DATA_ROOT = APP_ROOT / "private-data"
+MAX_UPLOAD_BYTES = 12 * 1024 * 1024
 
 app = FastAPI(
     title="DermaLens Local",
@@ -41,15 +43,16 @@ def health() -> dict:
 
 @app.post("/api/analyze")
 async def analyze(file: Annotated[UploadFile, File(...)]) -> dict:
-    if not file.content_type or not file.content_type.startswith("image/"):
+    if file.content_type and not file.content_type.startswith("image/") and file.content_type != "application/octet-stream":
         raise HTTPException(status_code=415, detail="Upload must be an image.")
 
-    raw = await file.read()
-    if len(raw) > 12 * 1024 * 1024:
+    raw = await file.read(MAX_UPLOAD_BYTES + 1)
+    if len(raw) > MAX_UPLOAD_BYTES:
         raise HTTPException(status_code=413, detail="Image is too large. Use a photo under 12 MB.")
 
     try:
-        return analyze_upload(
+        return await run_in_threadpool(
+            analyze_upload,
             raw,
             original_filename=file.filename or "upload",
             save_uploads=os.getenv("SAVE_UPLOADS", "false").lower() == "true",

@@ -7,10 +7,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from PIL import Image, ImageOps
+from PIL.Image import DecompressionBombError
 
 from api.preprocessing import clean_image, prepare_regions
 from api.privacy import safe_storage_name
 from api.classifier import classify_regions
+
+
+Image.MAX_IMAGE_PIXELS = 24_000_000
 
 
 def analyze_upload(
@@ -76,6 +80,8 @@ def _load_image(raw: bytes) -> Image.Image:
         image = Image.open(io.BytesIO(raw))
         image = ImageOps.exif_transpose(image)
         return image.convert("RGB")
+    except DecompressionBombError as exc:
+        raise ValueError("Image dimensions are too large. Use a normal phone photo under 24 megapixels.") from exc
     except Exception as exc:
         raise ValueError("Could not decode image. Try a JPEG or PNG photo.") from exc
 

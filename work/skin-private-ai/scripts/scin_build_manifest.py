@@ -29,6 +29,23 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--download-metadata", action="store_true")
     parser.add_argument("--download-images", action="store_true")
     parser.add_argument("--max-per-label", type=int, default=0, help="0 means unlimited.")
+    parser.add_argument(
+        "--min-label-confidence",
+        type=float,
+        default=0.0,
+        help="Drop cases whose best weighted SCIN condition label is below this confidence.",
+    )
+    parser.add_argument(
+        "--exclude-mixed-labels",
+        action="store_true",
+        help="Drop cases whose top two weighted labels are too close to call.",
+    )
+    parser.add_argument(
+        "--mixed-label-margin",
+        type=float,
+        default=0.15,
+        help="Minimum top-label margin required when --exclude-mixed-labels is enabled.",
+    )
     parser.add_argument("--seed", type=int, default=42)
     return parser.parse_args()
 
@@ -52,7 +69,14 @@ def main() -> None:
 
     cases = _read_by_case_id(cases_path)
     labels = _read_by_case_id(labels_path)
-    rows = _build_rows(cases, labels, head_neck_only=args.head_neck_only)
+    rows = _build_rows(
+        cases,
+        labels,
+        head_neck_only=args.head_neck_only,
+        min_label_confidence=args.min_label_confidence,
+        exclude_mixed_labels=args.exclude_mixed_labels,
+        mixed_label_margin=args.mixed_label_margin,
+    )
     rows = _cap_per_label(rows, args.max_per_label, args.seed)
 
     output = Path(args.output)
@@ -78,11 +102,27 @@ def _read_by_case_id(path: Path) -> dict[str, dict]:
         return {row["case_id"]: row for row in reader}
 
 
-def _build_rows(cases: dict[str, dict], labels: dict[str, dict], *, head_neck_only: bool) -> list[dict]:
+def _build_rows(
+    cases: dict[str, dict],
+    labels: dict[str, dict],
+    *,
+    head_neck_only: bool,
+    min_label_confidence: float,
+    exclude_mixed_labels: bool,
+    mixed_label_margin: float,
+) -> list[dict]:
     rows = []
     for case_id, case in cases.items():
         label_row = labels.get(case_id, {})
-        target_label = _map_case_to_target(case, label_row)
+        weighted = _weighted_label_dict(label_row.get("weighted_skin_condition_label", ""))
+        if not _passes_label_confidence(
+            weighted,
+            min_label_confidence=min_label_confidence,
+            exclude_mixed_labels=exclude_mixed_labels,
+            mixed_label_margin=mixed_label_margin,
+        ):
+            continue
+        target_label = _map_case_to_target(case, label_row, weighted=weighted)
         if not target_label:
             continue
         if head_neck_only and _truthy(case.get("body_parts_head_or_neck")) is False:
@@ -100,14 +140,15 @@ def _build_rows(cases: dict[str, dict], labels: dict[str, dict], *, head_neck_on
                     "fitzpatrick_skin_type": case.get("fitzpatrick_skin_type", ""),
                     "monk_skin_tone_us": label_row.get("monk_skin_tone_label_us", ""),
                     "monk_skin_tone_india": label_row.get("monk_skin_tone_label_india", ""),
+                    "top_condition_confidence": _top_condition_confidence(weighted),
                 }
             )
     return rows
 
 
-def _map_case_to_target(case: dict, labels: dict) -> str | None:
+def _map_case_to_target(case: dict, labels: dict, *, weighted: dict | None = None) -> str | None:
     related = case.get("related_category", "").upper()
-    weighted = _weighted_label_dict(labels.get("weighted_skin_condition_label", ""))
+    weighted = weighted if weighted is not None else _weighted_label_dict(labels.get("weighted_skin_condition_label", ""))
     label_text = " ".join(weighted.keys()).lower()
 
     if related == "ACNE" or "acne" in label_text:
@@ -139,6 +180,37 @@ def _weighted_label_dict(value: str) -> dict:
     return parsed
 
 
+def _passes_label_confidence(
+    weighted: dict,
+    *,
+    min_label_confidence: float,
+    exclude_mixed_labels: bool,
+    mixed_label_margin: float,
+) -> bool:
+    scores = sorted((_coerce_float(value) for value in weighted.values()), reverse=True)
+    scores = [score for score in scores if score is not None]
+    if min_label_confidence > 0 and (not scores or scores[0] < min_label_confidence):
+        return False
+    if exclude_mixed_labels and len(scores) > 1 and scores[0] - scores[1] < mixed_label_margin:
+        return False
+    return True
+
+
+def _top_condition_confidence(weighted: dict) -> str:
+    scores = [_coerce_float(value) for value in weighted.values()]
+    scores = [score for score in scores if score is not None]
+    if not scores:
+        return ""
+    return f"{max(scores):.4f}"
+
+
+def _coerce_float(value: object) -> float | None:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
 def _cap_per_label(rows: list[dict], max_per_label: int, seed: int) -> list[dict]:
     if max_per_label <= 0:
         return rows
@@ -163,6 +235,7 @@ def _write_manifest(rows: list[dict], output: Path) -> None:
         "fitzpatrick_skin_type",
         "monk_skin_tone_us",
         "monk_skin_tone_india",
+        "top_condition_confidence",
     ]
     with output.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
