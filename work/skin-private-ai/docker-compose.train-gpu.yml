@@ -1,0 +1,22 @@
+services:
+  trainer-gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.train.cuda
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+      - torch-cache:/root/.cache/torch
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: ["gpu"]
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+
+volumes:
+  torch-cache:

@@ -1,0 +1,35 @@
+{
+  "problem_type": "multilabel",
+  "labels": [
+    {
+      "code": "acne_like_texture",
+      "label": "Acne-like texture or inflammatory spots",
+      "rationale": "The trained classifier found visual patterns associated with inflammatory facial spots."
+    },
+    {
+      "code": "rosacea_like_redness",
+      "label": "Rosacea-like facial redness",
+      "rationale": "The trained classifier found central facial redness patterns."
+    },
+    {
+      "code": "dermatitis_like_irritation",
+      "label": "Dermatitis-like irritation",
+      "rationale": "The trained classifier found redness, irritation, or patchy texture patterns."
+    },
+    {
+      "code": "hyperpigmentation_like_uneven_tone",
+      "label": "Uneven tone / hyperpigmentation-like pattern",
+      "rationale": "The trained classifier found uneven tone or pigmentation-like patterns."
+    },
+    {
+      "code": "folliculitis_like_bumps",
+      "label": "Folliculitis-like bumps",
+      "rationale": "The trained classifier found bump-like patterns around follicles."
+    },
+    {
+      "code": "clinician_review",
+      "label": "Clinician review suggested",
+      "rationale": "The trained classifier found uncertain or higher-risk visual patterns."
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "problem_type": "multiclass",
+  "labels": [
+    {
+      "code": "acne_like_texture",
+      "label": "Acne Like Texture",
+      "rationale": "The trained classifier found visual patterns associated with this class."
+    },
+    {
+      "code": "clinician_review",
+      "label": "Clinician Review",
+      "rationale": "The trained classifier found visual patterns associated with this class."
+    },
+    {
+      "code": "dermatitis_like_irritation",
+      "label": "Dermatitis Like Irritation",
+      "rationale": "The trained classifier found visual patterns associated with this class."
+    },
+    {
+      "code": "folliculitis_like_bumps",
+      "label": "Folliculitis Like Bumps",
+      "rationale": "The trained classifier found visual patterns associated with this class."
+    },
+    {
+      "code": "hyperpigmentation_like_uneven_tone",
+      "label": "Hyperpigmentation Like Uneven Tone",
+      "rationale": "The trained classifier found visual patterns associated with this class."
+    },
+    {
+      "code": "rosacea_like_redness",
+      "label": "Rosacea Like Redness",
+      "rationale": "The trained classifier found visual patterns associated with this class."
+    }
+  ]
+}

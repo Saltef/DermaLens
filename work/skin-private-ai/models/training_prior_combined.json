@@ -1,0 +1,8 @@
+{
+  "acne_like_texture": 0.1796,
+  "clinician_review": 0.0735,
+  "dermatitis_like_irritation": 0.5524,
+  "folliculitis_like_bumps": 0.1170,
+  "hyperpigmentation_like_uneven_tone": 0.0313,
+  "rosacea_like_redness": 0.0463
+}

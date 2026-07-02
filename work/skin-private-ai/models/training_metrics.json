@@ -1,0 +1,228 @@
+{
+  "model": "mobilenet_v3_small",
+  "pretrained": true,
+  "freeze_backbone": false,
+  "class_weights": "none",
+  "balanced_sampler": false,
+  "epochs": 15,
+  "classes": [
+    "acne_like_texture",
+    "clinician_review",
+    "dermatitis_like_irritation",
+    "folliculitis_like_bumps",
+    "hyperpigmentation_like_uneven_tone",
+    "rosacea_like_redness"
+  ],
+  "history": [
+    {
+      "val_accuracy": 0.5573770491803278,
+      "macro_recall": 0.17785319255907492,
+      "per_class_recall": {
+        "acne_like_texture": 0.0,
+        "clinician_review": 0.07692307692307693,
+        "dermatitis_like_irritation": 0.9901960784313726,
+        "folliculitis_like_bumps": 0.0,
+        "hyperpigmentation_like_uneven_tone": 0.0,
+        "rosacea_like_redness": 0.0
+      },
+      "epoch": 1,
+      "train_loss": 1.4169805312643247
+    },
+    {
+      "val_accuracy": 0.6174863387978142,
+      "macro_recall": 0.2754533048650696,
+      "per_class_recall": {
+        "acne_like_texture": 0.06060606060606061,
+        "clinician_review": 0.23076923076923078,
+        "dermatitis_like_irritation": 0.9803921568627451,
+        "folliculitis_like_bumps": 0.38095238095238093,
+        "hyperpigmentation_like_uneven_tone": 0.0,
+        "rosacea_like_redness": 0.0
+      },
+      "epoch": 2,
+      "train_loss": 1.121005721481479
+    },
+    {
+      "val_accuracy": 0.644808743169399,
+      "macro_recall": 0.35004823607764785,
+      "per_class_recall": {
+        "acne_like_texture": 0.18181818181818182,
+        "clinician_review": 0.46153846153846156,
+        "dermatitis_like_irritation": 0.9509803921568627,
+        "folliculitis_like_bumps": 0.38095238095238093,
+        "hyperpigmentation_like_uneven_tone": 0.0,
+        "rosacea_like_redness": 0.125
+      },
+      "epoch": 3,
+      "train_loss": 1.0022404240102185
+    },
+    {
+      "val_accuracy": 0.6612021857923497,
+      "macro_recall": 0.3617832331067625,
+      "per_class_recall": {
+        "acne_like_texture": 0.24242424242424243,
+        "clinician_review": 0.46153846153846156,
+        "dermatitis_like_irritation": 0.9607843137254902,
+        "folliculitis_like_bumps": 0.38095238095238093,
+        "hyperpigmentation_like_uneven_tone": 0.0,
+        "rosacea_like_redness": 0.125
+      },
+      "epoch": 4,
+      "train_loss": 0.9133607816939451
+    },
+    {
+      "val_accuracy": 0.6557377049180327,
+      "macro_recall": 0.3635657643010584,
+      "per_class_recall": {
+        "acne_like_texture": 0.2727272727272727,
+        "clinician_review": 0.46153846153846156,
+        "dermatitis_like_irritation": 0.9411764705882353,
+        "folliculitis_like_bumps": 0.38095238095238093,
+        "hyperpigmentation_like_uneven_tone": 0.0,
+        "rosacea_like_redness": 0.125
+      },
+      "epoch": 5,
+      "train_loss": 0.8436629468080948
+    },
+    {
+      "val_accuracy": 0.6775956284153005,
+      "macro_recall": 0.4299364850835439,
+      "per_class_recall": {
+        "acne_like_texture": 0.36363636363636365,
+        "clinician_review": 0.5384615384615384,
+        "dermatitis_like_irritation": 0.9215686274509803,
+        "folliculitis_like_bumps": 0.38095238095238093,
+        "hyperpigmentation_like_uneven_tone": 0.0,
+        "rosacea_like_redness": 0.375
+      },
+      "epoch": 6,
+      "train_loss": 0.761270682179198
+    },
+    {
+      "val_accuracy": 0.6885245901639344,
+      "macro_recall": 0.4366209770621536,
+      "per_class_recall": {
+        "acne_like_texture": 0.3939393939393939,
+        "clinician_review": 0.5384615384615384,
+        "dermatitis_like_irritation": 0.9313725490196079,
+        "folliculitis_like_bumps": 0.38095238095238093,
+        "hyperpigmentation_like_uneven_tone": 0.0,
+        "rosacea_like_redness": 0.375
+      },
+      "epoch": 7,
+      "train_loss": 0.6914228312823237
+    },
+    {
+      "val_accuracy": 0.6939890710382514,
+      "macro_recall": 0.44797400312106195,
+      "per_class_recall": {
+        "acne_like_texture": 0.42424242424242425,
+        "clinician_review": 0.5384615384615384,
+        "dermatitis_like_irritation": 0.9215686274509803,
+        "folliculitis_like_bumps": 0.42857142857142855,
+        "hyperpigmentation_like_uneven_tone": 0.0,
+        "rosacea_like_redness": 0.375
+      },
+      "epoch": 8,
+      "train_loss": 0.6449830892134686
+    },
+    {
+      "val_accuracy": 0.6830601092896175,
+      "macro_recall": 0.4447060292648528,
+      "per_class_recall": {
+        "acne_like_texture": 0.42424242424242425,
+        "clinician_review": 0.5384615384615384,
+        "dermatitis_like_irritation": 0.9019607843137255,
+        "folliculitis_like_bumps": 0.42857142857142855,
+        "hyperpigmentation_like_uneven_tone": 0.0,
+        "rosacea_like_redness": 0.375
+      },
+      "epoch": 9,
+      "train_loss": 0.6322551819742942
+    },
+    {
+      "val_accuracy": 0.6885245901639344,
+      "macro_recall": 0.44975653431535784,
+      "per_class_recall": {
+        "acne_like_texture": 0.45454545454545453,
+        "clinician_review": 0.5384615384615384,
+        "dermatitis_like_irritation": 0.9019607843137255,
+        "folliculitis_like_bumps": 0.42857142857142855,
+        "hyperpigmentation_like_uneven_tone": 0.0,
+        "rosacea_like_redness": 0.375
+      },
+      "epoch": 10,
+      "train_loss": 0.5658175930684927
+    },
+    {
+      "val_accuracy": 0.6830601092896175,
+      "macro_recall": 0.4515390655096538,
+      "per_class_recall": {
+        "acne_like_texture": 0.48484848484848486,
+        "clinician_review": 0.5384615384615384,
+        "dermatitis_like_irritation": 0.8823529411764706,
+        "folliculitis_like_bumps": 0.42857142857142855,
+        "hyperpigmentation_like_uneven_tone": 0.0,
+        "rosacea_like_redness": 0.375
+      },
+      "epoch": 11,
+      "train_loss": 0.5517246277964845
+    },
+    {
+      "val_accuracy": 0.6830601092896175,
+      "macro_recall": 0.44812254738725327,
+      "per_class_recall": {
+        "acne_like_texture": 0.45454545454545453,
+        "clinician_review": 0.5384615384615384,
+        "dermatitis_like_irritation": 0.8921568627450981,
+        "folliculitis_like_bumps": 0.42857142857142855,
+        "hyperpigmentation_like_uneven_tone": 0.0,
+        "rosacea_like_redness": 0.375
+      },
+      "epoch": 12,
+      "train_loss": 0.5220165021565496
+    },
+    {
+      "val_accuracy": 0.6885245901639344,
+      "macro_recall": 0.45317305243775835,
+      "per_class_recall": {
+        "acne_like_texture": 0.48484848484848486,
+        "clinician_review": 0.5384615384615384,
+        "dermatitis_like_irritation": 0.8921568627450981,
+        "folliculitis_like_bumps": 0.42857142857142855,
+        "hyperpigmentation_like_uneven_tone": 0.0,
+        "rosacea_like_redness": 0.375
+      },
+      "epoch": 13,
+      "train_loss": 0.5280148970837496
+    },
+    {
+      "val_accuracy": 0.6830601092896175,
+      "macro_recall": 0.4515390655096538,
+      "per_class_recall": {
+        "acne_like_texture": 0.48484848484848486,
+        "clinician_review": 0.5384615384615384,
+        "dermatitis_like_irritation": 0.8823529411764706,
+        "folliculitis_like_bumps": 0.42857142857142855,
+        "hyperpigmentation_like_uneven_tone": 0.0,
+        "rosacea_like_redness": 0.375
+      },
+      "epoch": 14,
+      "train_loss": 0.5264463062189063
+    },
+    {
+      "val_accuracy": 0.6939890710382514,
+      "macro_recall": 0.4582235574882634,
+      "per_class_recall": {
+        "acne_like_texture": 0.5151515151515151,
+        "clinician_review": 0.5384615384615384,
+        "dermatitis_like_irritation": 0.8921568627450981,
+        "folliculitis_like_bumps": 0.42857142857142855,
+        "hyperpigmentation_like_uneven_tone": 0.0,
+        "rosacea_like_redness": 0.375
+      },
+      "epoch": 15,
+      "train_loss": 0.5001270308786508
+    }
+  ]
+}

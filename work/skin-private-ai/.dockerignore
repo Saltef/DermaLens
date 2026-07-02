@@ -1,0 +1,10 @@
+private-data
+outputs
+data/raw
+data/processed
+models/experiments
+__pycache__
+*.pyc
+.pytest_cache
+.venv
+.git

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DermaLens Local</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace" aria-label="Skin analysis workspace">
+        <aside class="panel">
+          <div class="brand">
+            <span class="mark"></span>
+            <div>
+              <h1>DermaLens Local</h1>
+              <p>Private facial skin screening on local hardware</p>
+            </div>
+          </div>
+
+          <label class="drop-zone" for="photo-input">
+            <input id="photo-input" type="file" accept="image/png,image/jpeg,image/webp" />
+            <span class="upload-icon">+</span>
+            <strong>Select photo</strong>
+            <small>JPEG, PNG, or WebP under 12 MB</small>
+          </label>
+
+          <div class="run-card">
+            <div class="metric-row">
+              <span>Mode</span>
+              <strong id="model-mode">Local ONNX</strong>
+            </div>
+            <div class="metric-row">
+              <span>Retention</span>
+              <strong>Off</strong>
+            </div>
+            <div class="metric-row">
+              <span>Calibration</span>
+              <strong id="calibration-state">Pending</strong>
+            </div>
+          </div>
+
+          <div class="privacy-strip">
+            <div class="privacy-title">
+              <span class="status-dot"></span>
+              <strong>Local run</strong>
+            </div>
+            <p>Images are re-encoded before inference. Saving remains disabled unless configured in Docker.</p>
+          </div>
+
+          <button id="analyze-button" type="button" disabled>Analyze</button>
+        </aside>
+
+        <section class="stage">
+          <div class="preview-wrap">
+            <img id="preview" alt="Selected preview" hidden />
+            <div id="empty-state" class="empty-state">
+              <h2>Upload a clear, front-facing photo</h2>
+              <p>Use diffuse light, no beauty filter, and keep the face centered.</p>
+            </div>
+          </div>
+        </section>
+
+        <aside class="results">
+          <div class="results-header">
+            <div>
+              <h2>Findings</h2>
+              <p id="summary-line">Awaiting image</p>
+            </div>
+            <span id="run-state">Idle</span>
+          </div>
+          <div id="top-card" class="top-card" hidden></div>
+          <div id="findings-list" class="findings-list"></div>
+          <div id="quality-panel" class="quality-panel"></div>
+          <div id="privacy-panel" class="quality-panel"></div>
+          <div id="limitations-panel" class="quality-panel"></div>
+        </aside>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+FROM pytorch/pytorch:1.13.1-cuda11.6-cudnn8-runtime
+
+WORKDIR /workspace
+
+RUN python -m pip install --no-cache-dir onnx==1.13.1 onnxruntime==1.14.1
+
+CMD ["python", "-c", "import torch; print(torch.__version__, torch.cuda.is_available())"]
+

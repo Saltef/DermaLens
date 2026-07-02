@@ -1,0 +1,25 @@
+services:
+  dermalens-local:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:8765:8080"
+    environment:
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8080
+      - SAVE_UPLOADS=false
+      - HF_HUB_OFFLINE=1
+      - TRANSFORMERS_OFFLINE=1
+      - HF_DATASETS_OFFLINE=1
+      - HF_HUB_DISABLE_TELEMETRY=1
+      - WANDB_DISABLED=true
+      - DO_NOT_TRACK=1
+      - PRIOR_PROFILE=conservative_population_like
+      - PRIOR_ALPHA=0.4
+      - PRIOR_PROFILE_PATH=/app/models/prior_profiles.json
+      - TRAINING_PRIOR_PATH=/app/models/training_prior_combined.json
+    volumes:
+      - ./models:/app/models:ro
+      - ./private-data:/app/private-data
+    restart: unless-stopped

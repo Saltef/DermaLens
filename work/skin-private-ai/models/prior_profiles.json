@@ -1,0 +1,26 @@
+{
+  "portfolio_upload": {
+    "acne_like_texture": 0.2,
+    "clinician_review": 0.12,
+    "dermatitis_like_irritation": 0.38,
+    "folliculitis_like_bumps": 0.1,
+    "hyperpigmentation_like_uneven_tone": 0.08,
+    "rosacea_like_redness": 0.12
+  },
+  "conservative_population_like": {
+    "acne_like_texture": 0.24,
+    "clinician_review": 0.08,
+    "dermatitis_like_irritation": 0.46,
+    "folliculitis_like_bumps": 0.07,
+    "hyperpigmentation_like_uneven_tone": 0.08,
+    "rosacea_like_redness": 0.07
+  },
+  "minority_sensitive_upload": {
+    "acne_like_texture": 0.18,
+    "clinician_review": 0.16,
+    "dermatitis_like_irritation": 0.3,
+    "folliculitis_like_bumps": 0.12,
+    "hyperpigmentation_like_uneven_tone": 0.1,
+    "rosacea_like_redness": 0.14
+  }
+}
