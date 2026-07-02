@@ -24,6 +24,7 @@ For a more explicit walkthrough, see [GUIDE.md](GUIDE.md).
 - **Research models:** ConvNeXt frozen embeddings, neural classifier heads, long-tail supervised contrastive tests, targeted augmentation, probability ensembles, and calibration sweeps.
 - **Best deployable ONNX result:** 69.4% accuracy and 48.4% macro recall after conservative calibration.
 - **Clean grouped SCIN check:** fixed deployed ONNX model with conservative prior calibration reached 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall across 5 grouped case-level split seeds. See `models/grouped_scin_clean_split_metrics.json`.
+- **Subgroup audit:** Fitzpatrick/Monk subgroup metrics are now reported in `models/grouped_scin_subgroup_metrics.json`; darker Monk buckets are too small for fairness claims.
 - **Best untuned experimental validation result:** 79.2% accuracy and 71.0% macro recall with a mixed ConvNeXt ensemble.
 - **Critical limitation:** fresh holdout testing did not confirm the validation-tuned 81.4% result. The grouped SCIN check gives a clean post-correction baseline, but tail-class estimates remain fragile because some validation classes have only 2-7 images per split.
 - **Write-up:** See [PORTFOLIO_WRITEUP.md](PORTFOLIO_WRITEUP.md).
@@ -133,6 +134,8 @@ macro recall: 63.1% +/- 10.1
 ```
 
 This is the cleanest post-correction deployed-model result in the repo. It is not a final clinical claim: the SCIN-only split is smaller than the earlier merged benchmark, and rare labels such as hyperpigmentation and clinician-review have very small validation counts. The result is useful because it converts the old "TBD on clean split" caveat into a measured baseline.
+
+The subgroup audit now reports Fitzpatrick and Monk tone buckets across the same five grouped split seeds. It is useful as a fairness workflow demonstration, but it is not strong enough for a fairness claim because some darker-tone buckets have only a handful of validation images.
 
 Target labels for the current prototype:
 

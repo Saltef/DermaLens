@@ -40,6 +40,31 @@ For seed `42`, the bootstrap 95% CI was `80.0%` to `91.3%` for accuracy and `41.
 
 Artifact: `models/grouped_scin_clean_split_metrics.json`.
 
+### Skin-Tone Subgroup Audit
+
+Using the same fixed deployed model and grouped SCIN split seeds, I evaluated available Fitzpatrick and Monk tone metadata. This is an audit workflow, not a fairness claim, because several subgroup counts are small.
+
+Fitzpatrick bucket summary:
+
+| Bucket | Mean Val Images | Accuracy | Macro Recall |
+| --- | ---: | ---: | ---: |
+| FST1-2 | 38.6 | 87.3% +/- 5.9 | 77.7% +/- 11.7 |
+| FST3-4 | 43.6 | 88.9% +/- 5.7 | 78.6% +/- 15.4 |
+| FST5-6 | 14.8 | 89.0% +/- 14.0 | 83.8% +/- 20.7 |
+| Unknown | 58.6 | 83.9% +/- 5.9 | 57.5% +/- 11.9 |
+
+Monk US bucket summary:
+
+| Bucket | Mean Val Images | Accuracy | Macro Recall |
+| --- | ---: | ---: | ---: |
+| MST1-3 | 102.4 | 87.9% +/- 2.7 | 63.3% +/- 9.6 |
+| MST4-6 | 49.4 | 83.6% +/- 5.5 | 70.2% +/- 7.6 |
+| MST7-10 | 4.8 | 75.0% +/- 50.0 | 75.0% +/- 50.0 |
+
+The audit is useful because it makes subgroup reporting executable. It does not validate fairness: the darkest Monk bucket is especially underpowered, and skin-tone metadata itself is imperfect. Future evaluation should intentionally stratify by skin tone rather than relying on incidental subgroup counts.
+
+Artifact: `models/grouped_scin_subgroup_metrics.json`.
+
 ## Baseline To Beat
 
 Current portfolio default:

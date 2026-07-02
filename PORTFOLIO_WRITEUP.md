@@ -12,6 +12,8 @@ After a later technical review, I also found a more fundamental validity risk: t
 
 I then ran a clean post-correction check on SCIN-only grouped splits. The fixed deployed ONNX model, using the same conservative prior calibration as the Docker app, reached **86.2% +/- 1.2 accuracy** and **63.1% +/- 10.1 macro recall** across five grouped split seeds. That gives the project a real clean-split baseline, while still showing the limitation: tail-class recall remains unstable because rare labels have very small validation counts.
 
+I also added a skin-tone subgroup audit using SCIN Fitzpatrick and Monk metadata. The audit did not show an obvious aggregate drop across Fitzpatrick buckets in the small SCIN-only sample, but the darkest Monk bucket was too small to interpret. I treat that as a process win rather than a fairness claim: the project now has the machinery to report subgroup performance and the discipline to say when the subgroup data is underpowered.
+
 That decision is central to the project: the limiting factor is no longer model architecture. It is data quality, label ambiguity, and the lack of enough face-specific examples for overlapping inflammatory skin presentations.
 
 This is not a medical device and does not provide diagnosis.
@@ -161,6 +163,7 @@ This project demonstrates the full applied ML loop:
 - literature-informed experiments such as long-tail supervised contrastive learning and frozen foundation-style representations
 - calibration, holdout confirmation, and rejection of an overfit result
 - discovery and correction of case-level split leakage risk
+- subgroup evaluation by available skin-tone metadata
 - error analysis that turns model failure into a concrete data acquisition plan
 
 The most important outcome is not just a score. It is a defensible conclusion: for this task, the next real improvement requires higher-quality face-specific labeled data, not another small architecture tweak.

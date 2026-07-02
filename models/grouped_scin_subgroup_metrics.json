@@ -1,0 +1,786 @@
+{
+  "protocol": "SCIN-only grouped case-level subgroup evaluation using fixed deployed ONNX model and deployed conservative prior correction.",
+  "model": "models/skin_classifier.onnx",
+  "manifest": "data/raw/scin/face_skin_manifest.csv",
+  "group_key": "case_id",
+  "profile": "conservative_population_like",
+  "alpha": 0.4,
+  "seeds": [
+    42,
+    7,
+    13,
+    21,
+    84
+  ],
+  "overall_summary": {
+    "accuracy": {
+      "mean": 0.8616437898006353,
+      "std": 0.012112975122697394,
+      "values": [
+        0.86,
+        0.8470588235294118,
+        0.8535031847133758,
+        0.8758620689655172,
+        0.8717948717948718
+      ]
+    },
+    "macro_recall": {
+      "mean": 0.6314479201917427,
+      "std": 0.10079673733729334,
+      "values": [
+        0.5245290423861853,
+        0.665895716084599,
+        0.5233520703566786,
+        0.7175654056088838,
+        0.7258973665223665
+      ]
+    },
+    "val_images": {
+      "mean": 155.6,
+      "std": 9.396807968666806,
+      "values": [
+        150,
+        170,
+        157,
+        145,
+        156
+      ]
+    }
+  },
+  "subgroup_summary": {
+    "fitzpatrick_bucket": {
+      "FST1-2": {
+        "count": {
+          "mean": 38.6,
+          "std": 4.722287581247038,
+          "values": [
+            42,
+            38,
+            43,
+            39,
+            31
+          ]
+        },
+        "accuracy": {
+          "mean": 0.8731186266780692,
+          "std": 0.05863730603012909,
+          "values": [
+            0.9285714285714286,
+            0.8157894736842105,
+            0.813953488372093,
+            0.8717948717948718,
+            0.9354838709677419
+          ]
+        },
+        "macro_recall": {
+          "mean": 0.7765039682539683,
+          "std": 0.11655493549733582,
+          "values": [
+            0.78125,
+            0.7638888888888888,
+            0.625,
+            0.76,
+            0.9523809523809524
+          ]
+        }
+      },
+      "FST3-4": {
+        "count": {
+          "mean": 43.6,
+          "std": 7.569676347110225,
+          "values": [
+            45,
+            55,
+            42,
+            34,
+            42
+          ]
+        },
+        "accuracy": {
+          "mean": 0.8885001273236567,
+          "std": 0.05679751945904888,
+          "values": [
+            0.8666666666666667,
+            0.8545454545454545,
+            0.9761904761904762,
+            0.9117647058823529,
+            0.8333333333333334
+          ]
+        },
+        "macro_recall": {
+          "mean": 0.7856174254601179,
+          "std": 0.15427723347364639,
+          "values": [
+            0.7642633228840126,
+            0.762768817204301,
+            0.9852941176470589,
+            0.8532608695652174,
+            0.5625
+          ]
+        }
+      },
+      "FST5-6": {
+        "count": {
+          "mean": 14.8,
+          "std": 8.318653737234168,
+          "values": [
+            4,
+            18,
+            16,
+            10,
+            26
+          ]
+        },
+        "accuracy": {
+          "mean": 0.8900641025641025,
+          "std": 0.13987180956074097,
+          "values": [
+            1.0,
+            0.6666666666666666,
+            0.9375,
+            1.0,
+            0.8461538461538461
+          ]
+        },
+        "macro_recall": {
+          "mean": 0.8377777777777777,
+          "std": 0.206618871414717,
+          "values": [
+            1.0,
+            0.5,
+            0.8888888888888888,
+            1.0,
+            0.8
+          ]
+        }
+      },
+      "unknown": {
+        "count": {
+          "mean": 58.6,
+          "std": 2.3021728866442674,
+          "values": [
+            59,
+            59,
+            56,
+            62,
+            57
+          ]
+        },
+        "accuracy": {
+          "mean": 0.8391248419024598,
+          "std": 0.0594382512065553,
+          "values": [
+            0.7966101694915254,
+            0.9152542372881356,
+            0.7678571428571429,
+            0.8387096774193549,
+            0.8771929824561403
+          ]
+        },
+        "macro_recall": {
+          "mean": 0.5747525374481897,
+          "std": 0.11885150159250751,
+          "values": [
+            0.4558129558129558,
+            0.6086956521739131,
+            0.44515151515151513,
+            0.6557692307692308,
+            0.7083333333333334
+          ]
+        }
+      }
+    },
+    "monk_us_bucket": {
+      "MST1-3": {
+        "count": {
+          "mean": 102.4,
+          "std": 13.903237033151669,
+          "values": [
+            101,
+            108,
+            123,
+            92,
+            88
+          ]
+        },
+        "accuracy": {
+          "mean": 0.8787869490377811,
+          "std": 0.027026873619471297,
+          "values": [
+            0.900990099009901,
+            0.8796296296296297,
+            0.8455284552845529,
+            0.8586956521739131,
+            0.9090909090909091
+          ]
+        },
+        "macro_recall": {
+          "mean": 0.6328809474095167,
+          "std": 0.09617577237281434,
+          "values": [
+            0.688901098901099,
+            0.6922748046587055,
+            0.4631981187536743,
+            0.6658640480674379,
+            0.6541666666666667
+          ]
+        }
+      },
+      "MST4-6": {
+        "count": {
+          "mean": 49.4,
+          "std": 10.014988766843425,
+          "values": [
+            46,
+            59,
+            34,
+            51,
+            57
+          ]
+        },
+        "accuracy": {
+          "mean": 0.8359070766343228,
+          "std": 0.054626972624288596,
+          "values": [
+            0.8260869565217391,
+            0.7796610169491526,
+            0.8823529411764706,
+            0.9019607843137255,
+            0.7894736842105263
+          ]
+        },
+        "macro_recall": {
+          "mean": 0.7018833064468738,
+          "std": 0.07578654913956806,
+          "values": [
+            0.6445054945054945,
+            0.6598039215686274,
+            0.7272727272727273,
+            0.8241341991341992,
+            0.6537001897533207
+          ]
+        }
+      },
+      "MST7-10": {
+        "count": {
+          "mean": 4.75,
+          "std": 4.193248541803041,
+          "values": [
+            3,
+            3,
+            2,
+            11
+          ]
+        },
+        "accuracy": {
+          "mean": 0.75,
+          "std": 0.5,
+          "values": [
+            0.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "macro_recall": {
+          "mean": 0.75,
+          "std": 0.5,
+          "values": [
+            0.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      }
+    }
+  },
+  "split_results": [
+    {
+      "seed": 42,
+      "train_images": 628,
+      "val_images": 150,
+      "overall": {
+        "count": 150,
+        "accuracy": 0.86,
+        "macro_recall": 0.5245290423861853,
+        "per_class_recall": {
+          "acne_like_texture": 0.8461538461538461,
+          "clinician_review": 0.25,
+          "dermatitis_like_irritation": 0.9795918367346939,
+          "folliculitis_like_bumps": 0.5,
+          "hyperpigmentation_like_uneven_tone": 0.0,
+          "rosacea_like_redness": 0.5714285714285714
+        }
+      },
+      "subgroups": {
+        "fitzpatrick_bucket": {
+          "FST1-2": {
+            "count": 42,
+            "accuracy": 0.9285714285714286,
+            "macro_recall": 0.78125,
+            "per_class_recall": {
+              "acne_like_texture": 0.875,
+              "clinician_review": 0.5,
+              "dermatitis_like_irritation": 1.0,
+              "rosacea_like_redness": 0.75
+            }
+          },
+          "FST3-4": {
+            "count": 45,
+            "accuracy": 0.8666666666666667,
+            "macro_recall": 0.7642633228840126,
+            "per_class_recall": {
+              "acne_like_texture": 0.7272727272727273,
+              "dermatitis_like_irritation": 0.9655172413793104,
+              "folliculitis_like_bumps": 0.6
+            }
+          },
+          "FST5-6": {
+            "count": 4,
+            "accuracy": 1.0,
+            "macro_recall": 1.0,
+            "per_class_recall": {
+              "dermatitis_like_irritation": 1.0
+            }
+          },
+          "unknown": {
+            "count": 59,
+            "accuracy": 0.7966101694915254,
+            "macro_recall": 0.4558129558129558,
+            "per_class_recall": {
+              "acne_like_texture": 1.0,
+              "clinician_review": 0.0,
+              "dermatitis_like_irritation": 0.972972972972973,
+              "folliculitis_like_bumps": 0.42857142857142855,
+              "hyperpigmentation_like_uneven_tone": 0.0,
+              "rosacea_like_redness": 0.3333333333333333
+            }
+          }
+        },
+        "monk_us_bucket": {
+          "MST1-3": {
+            "count": 101,
+            "accuracy": 0.900990099009901,
+            "macro_recall": 0.688901098901099,
+            "per_class_recall": {
+              "acne_like_texture": 0.9230769230769231,
+              "clinician_review": 0.25,
+              "dermatitis_like_irritation": 0.9857142857142858,
+              "folliculitis_like_bumps": 0.7142857142857143,
+              "rosacea_like_redness": 0.5714285714285714
+            }
+          },
+          "MST4-6": {
+            "count": 46,
+            "accuracy": 0.8260869565217391,
+            "macro_recall": 0.6445054945054945,
+            "per_class_recall": {
+              "acne_like_texture": 0.7692307692307693,
+              "dermatitis_like_irritation": 0.9642857142857143,
+              "folliculitis_like_bumps": 0.2
+            }
+          },
+          "MST7-10": {
+            "count": 3,
+            "accuracy": 0.0,
+            "macro_recall": 0.0,
+            "per_class_recall": {
+              "hyperpigmentation_like_uneven_tone": 0.0
+            }
+          }
+        }
+      }
+    },
+    {
+      "seed": 7,
+      "train_images": 608,
+      "val_images": 170,
+      "overall": {
+        "count": 170,
+        "accuracy": 0.8470588235294118,
+        "macro_recall": 0.665895716084599,
+        "per_class_recall": {
+          "acne_like_texture": 0.7647058823529411,
+          "clinician_review": 0.5,
+          "dermatitis_like_irritation": 0.944954128440367,
+          "folliculitis_like_bumps": 0.42857142857142855,
+          "hyperpigmentation_like_uneven_tone": 0.5,
+          "rosacea_like_redness": 0.8571428571428571
+        }
+      },
+      "subgroups": {
+        "fitzpatrick_bucket": {
+          "FST1-2": {
+            "count": 38,
+            "accuracy": 0.8157894736842105,
+            "macro_recall": 0.7638888888888888,
+            "per_class_recall": {
+              "acne_like_texture": 0.5555555555555556,
+              "dermatitis_like_irritation": 1.0,
+              "folliculitis_like_bumps": 0.5,
+              "rosacea_like_redness": 1.0
+            }
+          },
+          "FST3-4": {
+            "count": 55,
+            "accuracy": 0.8545454545454545,
+            "macro_recall": 0.762768817204301,
+            "per_class_recall": {
+              "acne_like_texture": 0.7333333333333333,
+              "dermatitis_like_irritation": 0.967741935483871,
+              "folliculitis_like_bumps": 0.6,
+              "rosacea_like_redness": 0.75
+            }
+          },
+          "FST5-6": {
+            "count": 18,
+            "accuracy": 0.6666666666666666,
+            "macro_recall": 0.5,
+            "per_class_recall": {
+              "clinician_review": 0.6666666666666666,
+              "dermatitis_like_irritation": 0.8333333333333334,
+              "folliculitis_like_bumps": 0.0
+            }
+          },
+          "unknown": {
+            "count": 59,
+            "accuracy": 0.9152542372881356,
+            "macro_recall": 0.6086956521739131,
+            "per_class_recall": {
+              "acne_like_texture": 1.0,
+              "clinician_review": 0.0,
+              "dermatitis_like_irritation": 0.9347826086956522,
+              "hyperpigmentation_like_uneven_tone": 0.5
+            }
+          }
+        },
+        "monk_us_bucket": {
+          "MST1-3": {
+            "count": 108,
+            "accuracy": 0.8796296296296297,
+            "macro_recall": 0.6922748046587055,
+            "per_class_recall": {
+              "acne_like_texture": 0.8235294117647058,
+              "dermatitis_like_irritation": 0.9473684210526315,
+              "folliculitis_like_bumps": 0.3333333333333333,
+              "hyperpigmentation_like_uneven_tone": 0.5,
+              "rosacea_like_redness": 0.8571428571428571
+            }
+          },
+          "MST4-6": {
+            "count": 59,
+            "accuracy": 0.7796610169491526,
+            "macro_recall": 0.6598039215686274,
+            "per_class_recall": {
+              "acne_like_texture": 0.7058823529411765,
+              "clinician_review": 0.5,
+              "dermatitis_like_irritation": 0.9333333333333333,
+              "folliculitis_like_bumps": 0.5
+            }
+          },
+          "MST7-10": {
+            "count": 3,
+            "accuracy": 1.0,
+            "macro_recall": 1.0,
+            "per_class_recall": {
+              "dermatitis_like_irritation": 1.0
+            }
+          }
+        }
+      }
+    },
+    {
+      "seed": 13,
+      "train_images": 621,
+      "val_images": 157,
+      "overall": {
+        "count": 157,
+        "accuracy": 0.8535031847133758,
+        "macro_recall": 0.5233520703566786,
+        "per_class_recall": {
+          "acne_like_texture": 0.967741935483871,
+          "clinician_review": 0.4,
+          "dermatitis_like_irritation": 0.9591836734693877,
+          "folliculitis_like_bumps": 0.38461538461538464,
+          "hyperpigmentation_like_uneven_tone": 0.0,
+          "rosacea_like_redness": 0.42857142857142855
+        }
+      },
+      "subgroups": {
+        "fitzpatrick_bucket": {
+          "FST1-2": {
+            "count": 43,
+            "accuracy": 0.813953488372093,
+            "macro_recall": 0.625,
+            "per_class_recall": {
+              "acne_like_texture": 1.0,
+              "clinician_review": 0.0,
+              "dermatitis_like_irritation": 1.0,
+              "folliculitis_like_bumps": 0.375,
+              "rosacea_like_redness": 0.75
+            }
+          },
+          "FST3-4": {
+            "count": 42,
+            "accuracy": 0.9761904761904762,
+            "macro_recall": 0.9852941176470589,
+            "per_class_recall": {
+              "acne_like_texture": 1.0,
+              "dermatitis_like_irritation": 0.9705882352941176
+            }
+          },
+          "FST5-6": {
+            "count": 16,
+            "accuracy": 0.9375,
+            "macro_recall": 0.8888888888888888,
+            "per_class_recall": {
+              "acne_like_texture": 1.0,
+              "clinician_review": 0.6666666666666666,
+              "dermatitis_like_irritation": 1.0
+            }
+          },
+          "unknown": {
+            "count": 56,
+            "accuracy": 0.7678571428571429,
+            "macro_recall": 0.44515151515151513,
+            "per_class_recall": {
+              "acne_like_texture": 0.9166666666666666,
+              "dermatitis_like_irritation": 0.9090909090909091,
+              "folliculitis_like_bumps": 0.4,
+              "hyperpigmentation_like_uneven_tone": 0.0,
+              "rosacea_like_redness": 0.0
+            }
+          }
+        },
+        "monk_us_bucket": {
+          "MST1-3": {
+            "count": 123,
+            "accuracy": 0.8455284552845529,
+            "macro_recall": 0.4631981187536743,
+            "per_class_recall": {
+              "acne_like_texture": 1.0,
+              "clinician_review": 0.0,
+              "dermatitis_like_irritation": 0.9506172839506173,
+              "folliculitis_like_bumps": 0.4,
+              "hyperpigmentation_like_uneven_tone": 0.0,
+              "rosacea_like_redness": 0.42857142857142855
+            }
+          },
+          "MST4-6": {
+            "count": 34,
+            "accuracy": 0.8823529411764706,
+            "macro_recall": 0.7272727272727273,
+            "per_class_recall": {
+              "acne_like_texture": 0.9090909090909091,
+              "clinician_review": 0.6666666666666666,
+              "dermatitis_like_irritation": 1.0,
+              "folliculitis_like_bumps": 0.3333333333333333
+            }
+          }
+        }
+      }
+    },
+    {
+      "seed": 21,
+      "train_images": 633,
+      "val_images": 145,
+      "overall": {
+        "count": 145,
+        "accuracy": 0.8758620689655172,
+        "macro_recall": 0.7175654056088838,
+        "per_class_recall": {
+          "acne_like_texture": 0.8571428571428571,
+          "clinician_review": 0.6,
+          "dermatitis_like_irritation": 0.9456521739130435,
+          "folliculitis_like_bumps": 0.5454545454545454,
+          "hyperpigmentation_like_uneven_tone": 0.5,
+          "rosacea_like_redness": 0.8571428571428571
+        }
+      },
+      "subgroups": {
+        "fitzpatrick_bucket": {
+          "FST1-2": {
+            "count": 39,
+            "accuracy": 0.8717948717948718,
+            "macro_recall": 0.76,
+            "per_class_recall": {
+              "acne_like_texture": 0.6666666666666666,
+              "clinician_review": 0.3333333333333333,
+              "dermatitis_like_irritation": 1.0,
+              "folliculitis_like_bumps": 1.0,
+              "rosacea_like_redness": 0.8
+            }
+          },
+          "FST3-4": {
+            "count": 34,
+            "accuracy": 0.9117647058823529,
+            "macro_recall": 0.8532608695652174,
+            "per_class_recall": {
+              "acne_like_texture": 1.0,
+              "clinician_review": 1.0,
+              "dermatitis_like_irritation": 0.9130434782608695,
+              "folliculitis_like_bumps": 0.5
+            }
+          },
+          "FST5-6": {
+            "count": 10,
+            "accuracy": 1.0,
+            "macro_recall": 1.0,
+            "per_class_recall": {
+              "dermatitis_like_irritation": 1.0,
+              "folliculitis_like_bumps": 1.0,
+              "rosacea_like_redness": 1.0
+            }
+          },
+          "unknown": {
+            "count": 62,
+            "accuracy": 0.8387096774193549,
+            "macro_recall": 0.6557692307692308,
+            "per_class_recall": {
+              "acne_like_texture": 0.8666666666666667,
+              "dermatitis_like_irritation": 0.9230769230769231,
+              "folliculitis_like_bumps": 0.3333333333333333,
+              "hyperpigmentation_like_uneven_tone": 0.5
+            }
+          }
+        },
+        "monk_us_bucket": {
+          "MST1-3": {
+            "count": 92,
+            "accuracy": 0.8586956521739131,
+            "macro_recall": 0.6658640480674379,
+            "per_class_recall": {
+              "acne_like_texture": 0.8571428571428571,
+              "clinician_review": 0.3333333333333333,
+              "dermatitis_like_irritation": 0.9491525423728814,
+              "folliculitis_like_bumps": 0.5555555555555556,
+              "hyperpigmentation_like_uneven_tone": 0.5,
+              "rosacea_like_redness": 0.8
+            }
+          },
+          "MST4-6": {
+            "count": 51,
+            "accuracy": 0.9019607843137255,
+            "macro_recall": 0.8241341991341992,
+            "per_class_recall": {
+              "acne_like_texture": 0.8571428571428571,
+              "clinician_review": 1.0,
+              "dermatitis_like_irritation": 0.9393939393939394,
+              "folliculitis_like_bumps": 0.5
+            }
+          },
+          "MST7-10": {
+            "count": 2,
+            "accuracy": 1.0,
+            "macro_recall": 1.0,
+            "per_class_recall": {
+              "rosacea_like_redness": 1.0
+            }
+          }
+        }
+      }
+    },
+    {
+      "seed": 84,
+      "train_images": 622,
+      "val_images": 156,
+      "overall": {
+        "count": 156,
+        "accuracy": 0.8717948717948718,
+        "macro_recall": 0.7258973665223665,
+        "per_class_recall": {
+          "acne_like_texture": 0.7878787878787878,
+          "clinician_review": 0.5,
+          "dermatitis_like_irritation": 0.9895833333333334,
+          "folliculitis_like_bumps": 0.36363636363636365,
+          "hyperpigmentation_like_uneven_tone": 1.0,
+          "rosacea_like_redness": 0.7142857142857143
+        }
+      },
+      "subgroups": {
+        "fitzpatrick_bucket": {
+          "FST1-2": {
+            "count": 31,
+            "accuracy": 0.9354838709677419,
+            "macro_recall": 0.9523809523809524,
+            "per_class_recall": {
+              "acne_like_texture": 0.8571428571428571,
+              "dermatitis_like_irritation": 1.0,
+              "rosacea_like_redness": 1.0
+            }
+          },
+          "FST3-4": {
+            "count": 42,
+            "accuracy": 0.8333333333333334,
+            "macro_recall": 0.5625,
+            "per_class_recall": {
+              "acne_like_texture": 0.25,
+              "clinician_review": 0.3333333333333333,
+              "dermatitis_like_irritation": 1.0,
+              "folliculitis_like_bumps": 0.6666666666666666
+            }
+          },
+          "FST5-6": {
+            "count": 26,
+            "accuracy": 0.8461538461538461,
+            "macro_recall": 0.8,
+            "per_class_recall": {
+              "acne_like_texture": 1.0,
+              "clinician_review": 0.6666666666666666,
+              "dermatitis_like_irritation": 0.9333333333333333,
+              "rosacea_like_redness": 0.6
+            }
+          },
+          "unknown": {
+            "count": 57,
+            "accuracy": 0.8771929824561403,
+            "macro_recall": 0.7083333333333334,
+            "per_class_recall": {
+              "acne_like_texture": 0.8333333333333334,
+              "dermatitis_like_irritation": 1.0,
+              "folliculitis_like_bumps": 0.0,
+              "hyperpigmentation_like_uneven_tone": 1.0
+            }
+          }
+        },
+        "monk_us_bucket": {
+          "MST1-3": {
+            "count": 88,
+            "accuracy": 0.9090909090909091,
+            "macro_recall": 0.6541666666666667,
+            "per_class_recall": {
+              "acne_like_texture": 0.9375,
+              "clinician_review": 0.3333333333333333,
+              "dermatitis_like_irritation": 1.0,
+              "folliculitis_like_bumps": 0.4,
+              "rosacea_like_redness": 0.6
+            }
+          },
+          "MST4-6": {
+            "count": 57,
+            "accuracy": 0.7894736842105263,
+            "macro_recall": 0.6537001897533207,
+            "per_class_recall": {
+              "acne_like_texture": 0.6470588235294118,
+              "clinician_review": 0.6666666666666666,
+              "dermatitis_like_irritation": 0.967741935483871,
+              "folliculitis_like_bumps": 0.3333333333333333
+            }
+          },
+          "MST7-10": {
+            "count": 11,
+            "accuracy": 1.0,
+            "macro_recall": 1.0,
+            "per_class_recall": {
+              "dermatitis_like_irritation": 1.0,
+              "hyperpigmentation_like_uneven_tone": 1.0,
+              "rosacea_like_redness": 1.0
+            }
+          }
+        }
+      }
+    }
+  ],
+  "interpretation": "Subgroup estimates are directionally useful but not definitive. Several buckets and labels have small validation counts, so worst-group metrics should be treated as an audit signal rather than a clinical claim."
+}

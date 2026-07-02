@@ -49,3 +49,7 @@ Every reported metric should include:
 - whether calibration was learned on a separate calibration fold
 - per-class recall and macro recall
 - subgroup metrics when skin-tone metadata is available
+
+## Current Subgroup Audit
+
+The current SCIN-only grouped evaluation includes a skin-tone subgroup audit in `models/grouped_scin_subgroup_metrics.json`. It reports Fitzpatrick and Monk buckets across five grouped split seeds. These metrics should be read as an audit signal only: the darkest Monk bucket has very small validation counts, so the project cannot claim subgroup fairness from this sample.

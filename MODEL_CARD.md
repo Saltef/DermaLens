@@ -30,12 +30,37 @@ A later methodological review identified a split-leakage risk: SCIN can contribu
 
 Under the corrected grouped SCIN-only protocol, the fixed deployed ONNX model with conservative prior calibration reached 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall across five split seeds. This is the cleanest deployed-model baseline currently reported, but it is still limited by small tail-class validation counts.
 
+### Skin-Tone Subgroup Audit
+
+I also evaluated the same grouped SCIN splits by available Fitzpatrick and Monk tone metadata. These are audit metrics, not fairness validation: several buckets are small and SCIN tone labels are image/dataset metadata rather than controlled clinical subgroup labels.
+
+Fitzpatrick bucket summary across five grouped split seeds:
+
+| Bucket | Mean Val Images | Accuracy | Macro Recall |
+| --- | ---: | ---: | ---: |
+| FST1-2 | 38.6 | 87.3% +/- 5.9 | 77.7% +/- 11.7 |
+| FST3-4 | 43.6 | 88.9% +/- 5.7 | 78.6% +/- 15.4 |
+| FST5-6 | 14.8 | 89.0% +/- 14.0 | 83.8% +/- 20.7 |
+| Unknown | 58.6 | 83.9% +/- 5.9 | 57.5% +/- 11.9 |
+
+Monk US bucket summary across five grouped split seeds:
+
+| Bucket | Mean Val Images | Accuracy | Macro Recall |
+| --- | ---: | ---: | ---: |
+| MST1-3 | 102.4 | 87.9% +/- 2.7 | 63.3% +/- 9.6 |
+| MST4-6 | 49.4 | 83.6% +/- 5.5 | 70.2% +/- 7.6 |
+| MST7-10 | 4.8 | 75.0% +/- 50.0 | 75.0% +/- 50.0 |
+
+The subgroup audit does not show an obvious aggregate drop for darker Fitzpatrick buckets in this small SCIN-only sample, but the darkest Monk bucket is too underpowered to interpret. The right next step is not to claim fairness; it is to expand and stratify the evaluation set.
+
+Artifact: `models/grouped_scin_subgroup_metrics.json`.
+
 ## Known Limitations
 
 - Broad labels overlap visually, especially acne, folliculitis, and dermatitis-like irritation.
 - Public datasets are noisy and not fully face-specific.
 - Performance has not been clinically validated.
-- Performance may vary by lighting, camera processing, makeup, filters, and skin tone.
+- Performance may vary by lighting, camera processing, makeup, filters, and skin tone. The current subgroup audit is underpowered for the darkest Monk bucket.
 - Region summaries are approximate and do not use a landmark-based face detector yet.
 
 ## Safety Behavior
