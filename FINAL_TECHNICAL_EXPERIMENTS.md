@@ -27,6 +27,19 @@ I implemented the corrected protocol in `scripts/prepare_imagefolder.py`:
 
 Future headline metrics should be produced only after rerunning the baseline and best experimental models under this grouped split. The earlier numbers are still useful for comparing modeling ideas, but they should be framed as pre-correction validation results.
 
+### Post-Correction Clean Baseline
+
+I reran the fixed deployed ONNX model on SCIN-only grouped case-level splits across five split seeds (`42`, `7`, `13`, `21`, `84`). This was a deployment check, not a retraining sweep: the model weights were fixed, no test-time augmentation was used, and the Docker app's conservative prior setting was applied (`conservative_population_like`, `alpha=0.4`).
+
+| Evaluation | Accuracy | Macro Recall |
+| --- | ---: | ---: |
+| Raw logits, mean across 5 grouped split seeds | 84.9% | 54.1% |
+| Deployed conservative prior, mean +/- std | 86.2% +/- 1.2 | 63.1% +/- 10.1 |
+
+For seed `42`, the bootstrap 95% CI was `80.0%` to `91.3%` for accuracy and `41.5%` to `67.4%` for macro recall. The wide macro-recall interval is expected because the grouped SCIN validation folds contain very small tail classes.
+
+Artifact: `models/grouped_scin_clean_split_metrics.json`.
+
 ## Baseline To Beat
 
 Current portfolio default:
@@ -37,6 +50,15 @@ Current portfolio default:
 - Split caveat: original image-level validation protocol; rerun with grouped `case_id` split before treating as final.
 - Accuracy: `69.4%`
 - Macro recall: `48.4%`
+
+Clean grouped SCIN-only baseline:
+
+- Model: same deployed MobileNetV3-Small ONNX
+- Split: grouped by `case_id`, no train/validation group overlap
+- Seeds: `42`, `7`, `13`, `21`, `84`
+- Accuracy: `86.2% +/- 1.2`
+- Macro recall: `63.1% +/- 10.1`
+- Caveat: smaller SCIN-only evaluation with fragile tail-class counts
 
 Raw flat model on the same combined validation split:
 

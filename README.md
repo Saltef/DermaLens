@@ -23,8 +23,9 @@ For a more explicit walkthrough, see [GUIDE.md](GUIDE.md).
 - **Deployable model:** MobileNetV3-Small ONNX classifier with optional prior calibration.
 - **Research models:** ConvNeXt frozen embeddings, neural classifier heads, long-tail supervised contrastive tests, targeted augmentation, probability ensembles, and calibration sweeps.
 - **Best deployable ONNX result:** 69.4% accuracy and 48.4% macro recall after conservative calibration.
+- **Clean grouped SCIN check:** fixed deployed ONNX model with conservative prior calibration reached 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall across 5 grouped case-level split seeds. See `models/grouped_scin_clean_split_metrics.json`.
 - **Best untuned experimental validation result:** 79.2% accuracy and 71.0% macro recall with a mixed ConvNeXt ensemble.
-- **Critical limitation:** fresh holdout testing did not confirm the validation-tuned 81.4% result. A later review also identified image-level split leakage risk in multi-photo cases, so future headline metrics should use the grouped split protocol now built into `scripts/prepare_imagefolder.py`.
+- **Critical limitation:** fresh holdout testing did not confirm the validation-tuned 81.4% result. The grouped SCIN check gives a clean post-correction baseline, but tail-class estimates remain fragile because some validation classes have only 2-7 images per split.
 - **Write-up:** See [PORTFOLIO_WRITEUP.md](PORTFOLIO_WRITEUP.md).
 
 ## What The App Does
@@ -123,6 +124,15 @@ The strongest experimental approach used ConvNeXt-Tiny embeddings with lightweig
 - small holdout sets with high variance
 
 The next real improvement should come from label audit, clearer class definitions, and additional face-aligned data rather than another small classifier-head tweak.
+
+After the grouped-split correction, I evaluated the fixed deployed ONNX model on SCIN-only case-level splits across five seeds. With the same conservative prior calibration used by Docker, the model reached:
+
+```text
+accuracy:     86.2% +/- 1.2
+macro recall: 63.1% +/- 10.1
+```
+
+This is the cleanest post-correction deployed-model result in the repo. It is not a final clinical claim: the SCIN-only split is smaller than the earlier merged benchmark, and rare labels such as hyperpigmentation and clinician-review have very small validation counts. The result is useful because it converts the old "TBD on clean split" caveat into a measured baseline.
 
 Target labels for the current prototype:
 

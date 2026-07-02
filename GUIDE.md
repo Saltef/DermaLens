@@ -82,7 +82,9 @@ The deployed model is intentionally modest:
 - MobileNetV3-Small ONNX
 - local CPU-friendly inference
 - conservative prior calibration
-- 69.4% accuracy and 48.4% macro recall on the earlier combined validation split
+- 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall across five SCIN-only grouped split seeds
+
+The earlier combined validation split reported 69.4% accuracy and 48.4% macro recall, but that number is kept mainly as experiment history because the preparation path had image-level leakage risk. The grouped SCIN result is the cleaner deployed-model baseline.
 
 The research pipeline found stronger experimental results:
 

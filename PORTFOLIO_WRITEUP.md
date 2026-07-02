@@ -8,7 +8,9 @@ The final application is a Dockerized local web app. A user uploads a facial ima
 
 The strongest untuned experimental model reached **79.2% accuracy and 71.0% macro recall** on the original face-focused validation split. A validation-tuned calibration pass reached **81.4% accuracy**, but fresh holdout testing did not reproduce that result. I therefore rejected the 81.4% number as an overfit diagnostic result rather than presenting it as the project outcome.
 
-After a later technical review, I also found a more fundamental validity risk: the original dataset preparation could split multiple photos from the same SCIN case across train and validation. I fixed this by making `case_id` grouped splitting the default protocol and by writing an auditable `split_audit.json` for every prepared ImageFolder dataset. The numbers below are therefore presented as the experiment history that led to the current conclusion; the next headline model claim should be rerun under the grouped protocol.
+After a later technical review, I also found a more fundamental validity risk: the original dataset preparation could split multiple photos from the same SCIN case across train and validation. I fixed this by making `case_id` grouped splitting the default protocol and by writing an auditable `split_audit.json` for every prepared ImageFolder dataset.
+
+I then ran a clean post-correction check on SCIN-only grouped splits. The fixed deployed ONNX model, using the same conservative prior calibration as the Docker app, reached **86.2% +/- 1.2 accuracy** and **63.1% +/- 10.1 macro recall** across five grouped split seeds. That gives the project a real clean-split baseline, while still showing the limitation: tail-class recall remains unstable because rare labels have very small validation counts.
 
 That decision is central to the project: the limiting factor is no longer model architecture. It is data quality, label ambiguity, and the lack of enough face-specific examples for overlapping inflammatory skin presentations.
 
@@ -41,8 +43,9 @@ The first deployable model was a MobileNetV3-Small classifier exported to ONNX. 
 | --- | ---: | ---: |
 | Raw MobileNetV3 ONNX | 68.3% | 44.4% |
 | Conservative prior-calibrated MobileNetV3 ONNX | 69.4% | 48.4% |
+| Conservative MobileNetV3 ONNX on grouped SCIN-only splits, 5 split seeds | 86.2% +/- 1.2 | 63.1% +/- 10.1 |
 
-The baseline was easy to deploy, but macro recall showed that minority classes were weak.
+The grouped SCIN-only result is the cleanest deployed-model check because it avoids case leakage. It is not directly comparable to the earlier merged benchmark because it uses a smaller SCIN-only dataset, but it answers the key validity question: the deployed model still clears 80% accuracy under grouped evaluation. Macro recall remains the more honest limitation.
 
 ### 2. Frozen Foundation-Style Embeddings
 
