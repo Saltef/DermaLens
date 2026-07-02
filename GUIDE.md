@@ -54,7 +54,7 @@ What the tests cover:
 - API upload rejection for non-images, corrupt images, and large files
 - EXIF stripping
 - safe storage-name handling
-- facial-region bounds
+- detector-backed facial-region bounds
 - model probability helpers
 - grouped split leakage checks
 
@@ -88,7 +88,9 @@ The earlier combined validation split reported 69.4% accuracy and 48.4% macro re
 
 The repo also includes a subgroup audit by Fitzpatrick and Monk tone metadata in `models/grouped_scin_subgroup_metrics.json`. Read it as an example of fairness-aware evaluation mechanics, not proof that the model is fair; the darkest Monk bucket is too small for that.
 
-There is also one clean grouped-split modeling improvement: `models/grouped_scin_decoupled_logit_head_metrics.json`. It freezes the ONNX image model and retrains only a class-balanced head over its logits. Macro recall improves from 63.1% to 73.1%, while accuracy drops from 86.2% to 75.1%. That is the key trade-off to understand.
+There is also one grouped-split modeling improvement: `models/grouped_scin_decoupled_logit_head_metrics.json`. It freezes the ONNX image model and retrains only a class-balanced head over its logits. Macro recall improves from 63.1% to 73.1%, while accuracy drops from 86.2% to 75.1%. That is the key trade-off to understand. A later review found that the stored artifact selected C on the evaluation fold; the script has now been corrected to select C on a nested grouped calibration split and should be rerun before publishing a refreshed final number.
+
+The high-leverage foundation-model path is implemented in `scripts/evaluate_derm_foundation_embeddings.py`. It extracts `google/derm-foundation` embeddings, trains a class-balanced linear probe, selects C on nested calibration data, and evaluates on the held-out grouped fold. The committed artifact is currently blocked because the model is gated on Hugging Face and the raw SCIN data is not committed.
 
 The research pipeline found stronger experimental results:
 

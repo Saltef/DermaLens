@@ -1,0 +1,8 @@
+{
+  "status": "blocked",
+  "protocol": "Derm Foundation embedding experiment under grouped SCIN protocol.",
+  "foundation_model": "google/derm-foundation",
+  "reason": "Local SCIN manifest/images are not present in this checkout. A direct access attempt to google/derm-foundation also returned a gated-repo 401 without authenticated terms acceptance.",
+  "next_step": "Restore data/raw/scin locally, accept the google/derm-foundation terms on Hugging Face, run `huggingface-cli login`, then rerun this script.",
+  "source": "https://huggingface.co/google/derm-foundation"
+}

@@ -32,6 +32,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--alpha", type=float, default=0.4)
     parser.add_argument("--seeds", default="42,7,13,21,84")
     parser.add_argument("--val-ratio", type=float, default=0.2)
+    parser.add_argument("--calibration-ratio", type=float, default=0.2)
     parser.add_argument("--output", required=True)
     return parser.parse_args()
 
@@ -53,9 +54,18 @@ def main() -> None:
         train_rows, val_rows = _dedup_like_imagefolder(train_rows, val_rows, Path(args.image_root))
         train_rows = [row for row in train_rows if row["image_path"] in logit_cache]
         val_rows = [row for row in val_rows if row["image_path"] in logit_cache]
+        head_train_rows, calibration_rows = _grouped_split(
+            train_rows,
+            val_ratio=args.calibration_ratio,
+            seed=seed + 10_000,
+        )
 
         x_train = np.vstack([logit_cache[row["image_path"]] for row in train_rows])
         y_train = np.array([labels.index(row["label"]) for row in train_rows])
+        x_head_train = np.vstack([logit_cache[row["image_path"]] for row in head_train_rows])
+        y_head_train = np.array([labels.index(row["label"]) for row in head_train_rows])
+        x_calibration = np.vstack([logit_cache[row["image_path"]] for row in calibration_rows])
+        y_calibration = np.array([labels.index(row["label"]) for row in calibration_rows])
         x_val = np.vstack([logit_cache[row["image_path"]] for row in val_rows])
         y_val = np.array([labels.index(row["label"]) for row in val_rows])
 
@@ -65,8 +75,8 @@ def main() -> None:
         deployed_preds = np.argmax(x_val + correction, axis=1)
         deployed_metrics = _metrics_from_indices(y_val, deployed_preds, labels)
 
-        best_head = None
-        head_results = []
+        best_calibration = None
+        calibration_sweep = []
         for c_value in [0.03, 0.1, 0.3, 1.0, 3.0, 10.0]:
             model = make_pipeline(
                 StandardScaler(),
@@ -77,32 +87,49 @@ def main() -> None:
                     random_state=seed,
                 ),
             )
-            model.fit(x_train, y_train)
-            pred = model.predict(x_val)
-            metrics = _metrics_from_indices(y_val, pred, labels)
+            model.fit(x_head_train, y_head_train)
+            pred = model.predict(x_calibration)
+            metrics = _metrics_from_indices(y_calibration, pred, labels)
             metrics["c"] = c_value
-            head_results.append(metrics)
-            if best_head is None or (metrics["macro_recall"], metrics["accuracy"]) > (
-                best_head["macro_recall"],
-                best_head["accuracy"],
+            calibration_sweep.append(metrics)
+            if best_calibration is None or (metrics["macro_recall"], metrics["accuracy"]) > (
+                best_calibration["macro_recall"],
+                best_calibration["accuracy"],
             ):
-                best_head = metrics
+                best_calibration = metrics
 
-        assert best_head is not None
+        assert best_calibration is not None
+        final_head = make_pipeline(
+            StandardScaler(),
+            LogisticRegression(
+                C=best_calibration["c"],
+                class_weight="balanced",
+                max_iter=2000,
+                random_state=seed,
+            ),
+        )
+        final_head.fit(x_train, y_train)
+        final_pred = final_head.predict(x_val)
+        final_metrics = _metrics_from_indices(y_val, final_pred, labels)
+        final_metrics["c"] = best_calibration["c"]
         split_results.append(
             {
                 "seed": seed,
                 "train_images": len(train_rows),
+                "head_train_images": len(head_train_rows),
+                "calibration_images": len(calibration_rows),
                 "val_images": len(val_rows),
                 "deployed_conservative_prior": deployed_metrics,
-                "best_decoupled_balanced_logit_head": best_head,
-                "head_sweep": head_results,
+                "nested_decoupled_balanced_logit_head": final_metrics,
+                "best_calibration_result": best_calibration,
+                "calibration_sweep": calibration_sweep,
             }
         )
         print(
             f"seed={seed} deployed_acc={deployed_metrics['accuracy']:.4f} "
             f"deployed_macro={deployed_metrics['macro_recall']:.4f} "
-            f"head_acc={best_head['accuracy']:.4f} head_macro={best_head['macro_recall']:.4f} c={best_head['c']}"
+            f"head_acc={final_metrics['accuracy']:.4f} head_macro={final_metrics['macro_recall']:.4f} "
+            f"c={final_metrics['c']} calibration_macro={best_calibration['macro_recall']:.4f}"
         )
 
     payload = {
@@ -115,10 +142,14 @@ def main() -> None:
         "group_key": "case_id",
         "seeds": seeds,
         "baseline": "deployed_conservative_prior",
-        "candidate": "best_decoupled_balanced_logit_head",
+        "candidate": "nested_decoupled_balanced_logit_head",
+        "selection_protocol": (
+            "C is selected on a nested grouped calibration split carved from training data only; "
+            "the grouped evaluation fold is used once for final reporting."
+        ),
         "summary": {
             "deployed_conservative_prior": _summarize(split_results, "deployed_conservative_prior", labels),
-            "best_decoupled_balanced_logit_head": _summarize(split_results, "best_decoupled_balanced_logit_head", labels),
+            "nested_decoupled_balanced_logit_head": _summarize(split_results, "nested_decoupled_balanced_logit_head", labels),
         },
         "split_results": split_results,
         "interpretation": (

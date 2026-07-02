@@ -22,9 +22,11 @@ For a more explicit walkthrough, see [GUIDE.md](GUIDE.md).
 - **Privacy:** EXIF stripping, localhost binding, no upload retention by default.
 - **Deployable model:** MobileNetV3-Small ONNX classifier with optional prior calibration.
 - **Research models:** ConvNeXt frozen embeddings, neural classifier heads, long-tail supervised contrastive tests, targeted augmentation, probability ensembles, and calibration sweeps.
+- **Runtime polish:** ONNX inference runs off the async event loop, uploads have a decompression-bomb guard, and facial region summaries now use an OpenCV face detector with a geometry fallback.
 - **Best deployable ONNX result:** 69.4% accuracy and 48.4% macro recall after conservative calibration.
 - **Clean grouped SCIN check:** fixed deployed ONNX model with conservative prior calibration reached 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall across 5 grouped case-level split seeds. See `models/grouped_scin_clean_split_metrics.json`.
-- **Clean grouped modeling win:** a decoupled balanced head over frozen ONNX logits lifted macro recall to 73.1% +/- 10.1, a +9.9 point gain over the deployed operating point, with an accuracy trade-off to 75.1% +/- 2.0.
+- **Grouped modeling win, pre-nested C selection:** a decoupled balanced head over frozen ONNX logits lifted macro recall to 73.1% +/- 10.1, a +9.9 point gain over the deployed operating point, with an accuracy trade-off to 75.1% +/- 2.0. The script now nests C-selection inside the training fold; rerun with local SCIN data before treating this as the final refreshed number.
+- **Derm Foundation attempt:** `scripts/evaluate_derm_foundation_embeddings.py` implements the high-leverage Derm Foundation embedding probe under the same grouped/nested protocol. This checkout records a blocked run because `google/derm-foundation` is gated and raw SCIN data is intentionally not committed.
 - **Subgroup audit:** Fitzpatrick/Monk subgroup metrics are now reported in `models/grouped_scin_subgroup_metrics.json`; darker Monk buckets are too small for fairness claims.
 - **Best untuned experimental validation result:** 79.2% accuracy and 71.0% macro recall with a mixed ConvNeXt ensemble.
 - **Critical limitation:** fresh holdout testing did not confirm the validation-tuned 81.4% result. The grouped SCIN check gives a clean post-correction baseline, but tail-class estimates remain fragile because some validation classes have only 2-7 images per split.
@@ -51,7 +53,7 @@ Browser UI
        - no retention by default
     -> preprocessing
        - resize
-       - simple facial-region crop
+       - OpenCV face-detected region crop with fallback geometry
        - quality checks
     -> classifier adapter
        - ONNX deployed model
@@ -145,7 +147,20 @@ deployed prior baseline:   86.2% +/- 1.2 accuracy, 63.1% +/- 10.1 macro recall
 decoupled balanced head:   75.1% +/- 2.0 accuracy, 73.1% +/- 10.1 macro recall
 ```
 
-The win is in tail recall, not raw accuracy. Folliculitis recall rose from 44.4% to 70.1%, clinician-review from 45.0% to 68.0%, hyperpigmentation from 40.0% to 73.3%, and rosacea from 68.6% to 77.1%. This is not the default app setting, but it demonstrates that the grouped protocol can measure a real modeling improvement.
+The win is in tail recall, not raw accuracy. Folliculitis recall rose from 44.4% to 70.1%, clinician-review from 45.0% to 68.0%, hyperpigmentation from 40.0% to 73.3%, and rosacea from 68.6% to 77.1%. This is not the default app setting, but it demonstrates that the grouped protocol can measure a real modeling improvement. A later review found that C was selected on the evaluation fold in this artifact; the script has been corrected to select C on a nested grouped calibration split and should be rerun when the local data is restored.
+
+## Foundation Embedding Experiment
+
+The repo now includes a direct Derm Foundation embedding experiment:
+
+```powershell
+python scripts/evaluate_derm_foundation_embeddings.py `
+  --manifest data/raw/scin/face_skin_manifest.csv `
+  --image-root data/raw/scin/images `
+  --output models/grouped_scin_derm_foundation_embedding_metrics.json
+```
+
+This uses Google's `google/derm-foundation` embedding model as a frozen representation, trains a class-balanced linear probe, selects C on a nested grouped calibration split, and evaluates once on the held-out grouped fold. In this checkout the run is blocked, not failed: the model requires accepting Hugging Face terms while logged in, and the raw SCIN images are not stored in Git. The blocked status is saved in `models/grouped_scin_derm_foundation_embedding_metrics.json`.
 
 Target labels for the current prototype:
 

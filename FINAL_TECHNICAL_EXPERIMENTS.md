@@ -91,9 +91,21 @@ Per-class recall moved as follows:
 | hyperpigmentation_like_uneven_tone | 40.0% | 73.3% | +33.3 |
 | rosacea_like_redness | 68.6% | 77.1% | +8.6 |
 
-Decision: this is a real tail-recall modeling win, not the new default app model. It demonstrates that a class-balanced decoupled head can move the metric the project cares about, while making the accuracy/macro-recall trade-off explicit.
+Decision: this is a useful tail-recall modeling signal, not the new default app model. It demonstrates that a class-balanced decoupled head can move the metric the project cares about, while making the accuracy/macro-recall trade-off explicit. A later review found that this artifact selected C on the evaluation fold; `scripts/evaluate_decoupled_logit_head.py` now selects C on a nested grouped calibration split and should be rerun with local SCIN data before this is treated as the final refreshed result.
 
 Artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`.
+
+Final high-leverage experiment implementation:
+
+- Script: `scripts/evaluate_derm_foundation_embeddings.py`
+- Representation: `google/derm-foundation` embeddings
+- Head: class-balanced logistic regression
+- Selection: C chosen on a nested grouped calibration split carved from the training fold
+- Evaluation: held-out grouped SCIN fold used once
+
+The current committed artifact is blocked rather than completed because the Derm Foundation checkpoint is gated behind Hugging Face terms and the local raw SCIN data is intentionally gitignored.
+
+Artifact: `models/grouped_scin_derm_foundation_embedding_metrics.json`.
 
 ## Baseline To Beat
 

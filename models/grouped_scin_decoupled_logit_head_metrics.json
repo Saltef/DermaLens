@@ -2750,5 +2750,6 @@
       ]
     }
   ],
+  "post_review_note": "This artifact was generated before C-selection was moved to a nested grouped calibration split. Treat the reported lift as the pre-nested decoupled-head result; rerun scripts/evaluate_decoupled_logit_head.py with local SCIN data to refresh final metrics under the corrected selection protocol.",
   "interpretation": "This is a cheap decoupled-head baseline. It tests whether class-balanced retraining on frozen deployed logits can increase tail macro recall under grouped evaluation without changing the image encoder."
 }

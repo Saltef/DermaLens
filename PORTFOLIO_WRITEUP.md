@@ -14,7 +14,7 @@ I then ran a clean post-correction check on SCIN-only grouped splits. The fixed 
 
 I also added a skin-tone subgroup audit using SCIN Fitzpatrick and Monk metadata. The audit did not show an obvious aggregate drop across Fitzpatrick buckets in the small SCIN-only sample, but the darkest Monk bucket was too small to interpret. I treat that as a process win rather than a fairness claim: the project now has the machinery to report subgroup performance and the discipline to say when the subgroup data is underpowered.
 
-Finally, I ran one modeling improvement under the corrected protocol: a decoupled cRT-style head. I froze the deployed ONNX image model, used its logits as a compact representation, and retrained only a class-balanced logistic head on each grouped split. This produced a real macro-recall lift: **63.1% to 73.1% macro recall** across five grouped split seeds. The trade-off was lower accuracy, **86.2% to 75.1%**, so I frame it as a tail-sensitive operating point rather than a replacement for the default app model.
+Finally, I ran one modeling improvement under the corrected grouped split: a decoupled cRT-style head. I froze the deployed ONNX image model, used its logits as a compact representation, and retrained only a class-balanced logistic head on each grouped split. This produced a macro-recall lift: **63.1% to 73.1% macro recall** across five grouped split seeds. The trade-off was lower accuracy, **86.2% to 75.1%**, so I frame it as a tail-sensitive operating point rather than a replacement for the default app model. A later review found that this artifact selected C on the evaluation fold, so the code has been corrected to use a nested grouped calibration split and the number should be refreshed before being treated as final.
 
 That decision is central to the project: the limiting factor is no longer model architecture. It is data quality, label ambiguity, and the lack of enough face-specific examples for overlapping inflammatory skin presentations.
 
@@ -52,7 +52,9 @@ The first deployable model was a MobileNetV3-Small classifier exported to ONNX. 
 
 The grouped SCIN-only result is the cleanest deployed-model check because it avoids case leakage. It is not directly comparable to the earlier merged benchmark because it uses a smaller SCIN-only dataset, but it answers the key validity question: the deployed model still clears 80% accuracy under grouped evaluation. Macro recall remains the more honest limitation.
 
-The decoupled head moves that limitation in the right direction. Compared with the deployed grouped baseline, it improves folliculitis recall from 44.4% to 70.1%, clinician-review from 45.0% to 68.0%, hyperpigmentation from 40.0% to 73.3%, and rosacea from 68.6% to 77.1%. It gives up majority-class dermatitis recall, which explains the accuracy drop.
+The decoupled head moves that limitation in the right direction. Compared with the deployed grouped baseline, it improves folliculitis recall from 44.4% to 70.1%, clinician-review from 45.0% to 68.0%, hyperpigmentation from 40.0% to 73.3%, and rosacea from 68.6% to 77.1%. It gives up majority-class dermatitis recall, which explains the accuracy drop. Because the artifact predates nested C-selection, I treat this as a strong pre-nested signal rather than the final refreshed result.
+
+I also implemented the most important next experiment: a direct Derm Foundation embedding probe. It uses `google/derm-foundation` as the frozen representation, trains a class-balanced linear classifier, selects C on nested grouped calibration data, and evaluates once on the held-out grouped fold. The run is blocked in this public checkout because the model requires Hugging Face terms acceptance and the raw SCIN images are intentionally excluded from Git.
 
 ### 2. Frozen Foundation-Style Embeddings
 

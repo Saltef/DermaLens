@@ -4,7 +4,7 @@ import io
 
 from PIL import Image
 
-from api.preprocessing import clean_image, prepare_regions
+from api.preprocessing import clean_image, detect_face_box, prepare_regions
 from api.privacy import safe_storage_name
 
 
@@ -33,3 +33,9 @@ def test_prepare_regions_stays_inside_bounds() -> None:
         left, top, right, bottom = region.box
         assert 0 <= left < right <= image.width
         assert 0 <= top < bottom <= image.height
+
+
+def test_face_detector_falls_back_to_image_center_on_blank_image() -> None:
+    image = Image.new("RGB", (100, 200), "white")
+
+    assert detect_face_box(image) == (10, 4, 90, 196)

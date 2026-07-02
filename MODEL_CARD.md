@@ -57,9 +57,13 @@ Artifact: `models/grouped_scin_subgroup_metrics.json`.
 
 ### Tail-Sensitive Head
 
-I tested a decoupled balanced head under the same grouped SCIN protocol. The deployed ONNX image model was frozen, and only a class-balanced logistic head over the frozen logits was retrained. This improved macro recall from 63.1% +/- 10.1 to 73.1% +/- 10.1 across five grouped split seeds, mainly by lifting clinician-review, folliculitis, hyperpigmentation, and rosacea recall. Accuracy dropped from 86.2% +/- 1.2 to 75.1% +/- 2.0, so this is documented as a tail-sensitive operating point rather than the default app model.
+I tested a decoupled balanced head under the same grouped SCIN protocol. The deployed ONNX image model was frozen, and only a class-balanced logistic head over the frozen logits was retrained. This improved macro recall from 63.1% +/- 10.1 to 73.1% +/- 10.1 across five grouped split seeds, mainly by lifting clinician-review, folliculitis, hyperpigmentation, and rosacea recall. Accuracy dropped from 86.2% +/- 1.2 to 75.1% +/- 2.0, so this is documented as a tail-sensitive operating point rather than the default app model. A later review found that this artifact selected C on the evaluation fold; the script now performs C-selection on a nested grouped calibration split and should be rerun before this is treated as the final refreshed score.
 
 Artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`.
+
+I also added a Derm Foundation embedding evaluation script using `google/derm-foundation` as the frozen representation with the same grouped/nested protocol. The run is currently blocked in this checkout because the model is gated behind Hugging Face terms and raw SCIN data is intentionally not committed.
+
+Artifact: `models/grouped_scin_derm_foundation_embedding_metrics.json`.
 
 ## Known Limitations
 
@@ -67,7 +71,7 @@ Artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`.
 - Public datasets are noisy and not fully face-specific.
 - Performance has not been clinically validated.
 - Performance may vary by lighting, camera processing, makeup, filters, and skin tone. The current subgroup audit is underpowered for the darkest Monk bucket.
-- Region summaries are approximate and do not use a landmark-based face detector yet.
+- Region summaries use an OpenCV frontal-face detector with a geometry fallback; this is better than the original fixed crop but still not a landmark-grade facial analysis pipeline.
 
 ## Safety Behavior
 
