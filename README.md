@@ -26,7 +26,7 @@ For a more explicit walkthrough, see [GUIDE.md](GUIDE.md).
 - **Best deployable ONNX result:** 69.4% accuracy and 48.4% macro recall after conservative calibration.
 - **Clean grouped SCIN check:** fixed deployed ONNX model with conservative prior calibration reached 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall across 5 grouped case-level split seeds. See `models/grouped_scin_clean_split_metrics.json`.
 - **Grouped modeling win, pre-nested C selection:** a decoupled balanced head over frozen ONNX logits lifted macro recall to 73.1% +/- 10.1, a +9.9 point gain over the deployed operating point, with an accuracy trade-off to 75.1% +/- 2.0. The script now nests C-selection inside the training fold; rerun with local SCIN data before treating this as the final refreshed number.
-- **Derm Foundation attempt:** `scripts/evaluate_derm_foundation_embeddings.py` implements the high-leverage Derm Foundation embedding probe under the same grouped/nested protocol. This checkout records a blocked run because `google/derm-foundation` is gated and raw SCIN data is intentionally not committed.
+- **Derm Foundation result:** the high-leverage dermatology-specific embedding probe completed, but it was not a Pareto win: 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall across the same grouped split seeds.
 - **Subgroup audit:** Fitzpatrick/Monk subgroup metrics are now reported in `models/grouped_scin_subgroup_metrics.json`; darker Monk buckets are too small for fairness claims.
 - **Best untuned experimental validation result:** 79.2% accuracy and 71.0% macro recall with a mixed ConvNeXt ensemble.
 - **Critical limitation:** fresh holdout testing did not confirm the validation-tuned 81.4% result. The grouped SCIN check gives a clean post-correction baseline, but tail-class estimates remain fragile because some validation classes have only 2-7 images per split.
@@ -160,7 +160,16 @@ python scripts/evaluate_derm_foundation_embeddings.py `
   --output models/grouped_scin_derm_foundation_embedding_metrics.json
 ```
 
-This uses Google's `google/derm-foundation` embedding model as a frozen representation, trains a class-balanced linear probe, selects C on a nested grouped calibration split, and evaluates once on the held-out grouped fold. In this checkout the run is blocked, not failed: the model requires accepting Hugging Face terms while logged in, and the raw SCIN images are not stored in Git. The blocked status is saved in `models/grouped_scin_derm_foundation_embedding_metrics.json`.
+This uses Google's `google/derm-foundation` embedding model as a frozen representation, trains a class-balanced linear probe, selects C on a nested grouped calibration split, and evaluates once on the held-out grouped fold.
+
+The completed result did **not** improve the model:
+
+```text
+deployed grouped baseline: 86.2% +/- 1.2 accuracy, 63.1% +/- 10.1 macro recall
+Derm Foundation probe:     66.8% +/- 6.9 accuracy, 33.8% +/- 5.9 macro recall
+```
+
+The failure mode was the tail: hyperpigmentation recall stayed at 0.0 and folliculitis/rosacea recall remained weak. I also sanity-checked logistic-probe variants with and without class weighting; none recovered the deployed grouped baseline. This is a useful negative result because it shows that a dermatology foundation representation alone does not solve noisy task-specific label mapping.
 
 Target labels for the current prototype:
 

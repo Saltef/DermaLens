@@ -54,7 +54,9 @@ The grouped SCIN-only result is the cleanest deployed-model check because it avo
 
 The decoupled head moves that limitation in the right direction. Compared with the deployed grouped baseline, it improves folliculitis recall from 44.4% to 70.1%, clinician-review from 45.0% to 68.0%, hyperpigmentation from 40.0% to 73.3%, and rosacea from 68.6% to 77.1%. It gives up majority-class dermatitis recall, which explains the accuracy drop. Because the artifact predates nested C-selection, I treat this as a strong pre-nested signal rather than the final refreshed result.
 
-I also implemented the most important next experiment: a direct Derm Foundation embedding probe. It uses `google/derm-foundation` as the frozen representation, trains a class-balanced linear classifier, selects C on nested grouped calibration data, and evaluates once on the held-out grouped fold. The run is blocked in this public checkout because the model requires Hugging Face terms acceptance and the raw SCIN images are intentionally excluded from Git.
+I also ran the most important next experiment: a direct Derm Foundation embedding probe. It used `google/derm-foundation` as the frozen representation, trained a class-balanced linear classifier, selected C on nested grouped calibration data, and evaluated once on the held-out grouped fold. This did not land the hoped-for Pareto result. The probe reached **66.8% +/- 6.9 accuracy** and **33.8% +/- 5.9 macro recall**, below the deployed grouped baseline. A compact sanity sweep with and without class weighting also failed to recover the baseline.
+
+That negative result is instructive: dermatology-specific pretraining does not automatically fix this task when the downstream labels are mapped, noisy, imbalanced, and face-specific. The bottleneck remains label/data quality, not simply representation strength.
 
 ### 2. Frozen Foundation-Style Embeddings
 

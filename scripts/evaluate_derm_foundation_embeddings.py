@@ -172,6 +172,14 @@ def _load_or_build_embeddings(args: argparse.Namespace, rows: list[dict], image_
         values = payload["embeddings"]
         return {image_path: values[idx] for idx, image_path in enumerate(image_paths)}
 
+    precomputed = _load_precomputed_scin_embeddings(args.foundation_model, rows)
+    if precomputed:
+        image_paths = [row["image_path"] for row in rows if row["image_path"] in precomputed]
+        embeddings = np.vstack([precomputed[image_path] for image_path in image_paths]).astype(np.float32)
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+        np.savez_compressed(cache_path, image_paths=np.array(image_paths), embeddings=embeddings)
+        return {image_path: embeddings[idx] for idx, image_path in enumerate(image_paths)}
+
     import tensorflow as tf
     from huggingface_hub import from_pretrained_keras
 
@@ -199,6 +207,30 @@ def _load_or_build_embeddings(args: argparse.Namespace, rows: list[dict], image_
     cache_path.parent.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(cache_path, image_paths=np.array(image_paths), embeddings=embeddings)
     return {image_path: embeddings[idx] for idx, image_path in enumerate(image_paths)}
+
+
+def _load_precomputed_scin_embeddings(model_name: str, rows: list[dict]) -> dict[str, np.ndarray]:
+    from huggingface_hub import snapshot_download
+
+    snapshot = Path(
+        snapshot_download(
+            model_name,
+            allow_patterns=["scin_dataset_precomputed_embeddings.npz"],
+        )
+    )
+    path = snapshot / "scin_dataset_precomputed_embeddings.npz"
+    if not path.exists():
+        return {}
+
+    row_paths = {row["image_path"] for row in rows}
+    payload = np.load(path, allow_pickle=True)
+    embeddings = {
+        image_path: payload[image_path].astype(np.float32)
+        for image_path in payload.files
+        if image_path in row_paths
+    }
+    print(f"loaded {len(embeddings)} precomputed Derm Foundation embeddings")
+    return embeddings
 
 
 def _image_example(path: Path, tf) -> bytes:

@@ -103,7 +103,16 @@ Final high-leverage experiment implementation:
 - Selection: C chosen on a nested grouped calibration split carved from the training fold
 - Evaluation: held-out grouped SCIN fold used once
 
-The current committed artifact is blocked rather than completed because the Derm Foundation checkpoint is gated behind Hugging Face terms and the local raw SCIN data is intentionally gitignored.
+The completed result did not produce a Pareto improvement:
+
+| Model / probe | Accuracy | Macro recall |
+| --- | ---: | ---: |
+| Deployed grouped ONNX baseline | 86.2% +/- 1.2 | 63.1% +/- 10.1 |
+| Derm Foundation linear probe | 66.8% +/- 6.9 | 33.8% +/- 5.9 |
+
+The failure mode was concentrated in the tail classes. Hyperpigmentation stayed at 0.0 mean recall, folliculitis reached only 20.9%, and rosacea reached 20.0%. I also ran a compact sanity sweep over logistic probes with and without class weighting and with macro-first versus accuracy-first C selection; none recovered the deployed grouped baseline.
+
+Interpretation: the dermatology foundation representation is not enough to rescue this mapped SCIN task. The model retains broad dermatitis signal, but the labels used in this prototype remain too noisy and imbalanced for a simple linear probe to separate the rare face-focused classes.
 
 Artifact: `models/grouped_scin_derm_foundation_embedding_metrics.json`.
 

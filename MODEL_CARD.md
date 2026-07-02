@@ -61,7 +61,7 @@ I tested a decoupled balanced head under the same grouped SCIN protocol. The dep
 
 Artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`.
 
-I also added a Derm Foundation embedding evaluation script using `google/derm-foundation` as the frozen representation with the same grouped/nested protocol. The run is currently blocked in this checkout because the model is gated behind Hugging Face terms and raw SCIN data is intentionally not committed.
+I also ran a Derm Foundation embedding evaluation using `google/derm-foundation` as the frozen representation with the same grouped/nested protocol. This did not produce a Pareto improvement. The class-balanced linear probe reached 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall, below the deployed grouped baseline at 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall. The main failure was tail recall: hyperpigmentation stayed at 0.0 mean recall, and folliculitis/rosacea remained weak.
 
 Artifact: `models/grouped_scin_derm_foundation_embedding_metrics.json`.
 

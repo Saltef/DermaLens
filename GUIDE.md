@@ -90,7 +90,7 @@ The repo also includes a subgroup audit by Fitzpatrick and Monk tone metadata in
 
 There is also one grouped-split modeling improvement: `models/grouped_scin_decoupled_logit_head_metrics.json`. It freezes the ONNX image model and retrains only a class-balanced head over its logits. Macro recall improves from 63.1% to 73.1%, while accuracy drops from 86.2% to 75.1%. That is the key trade-off to understand. A later review found that the stored artifact selected C on the evaluation fold; the script has now been corrected to select C on a nested grouped calibration split and should be rerun before publishing a refreshed final number.
 
-The high-leverage foundation-model path is implemented in `scripts/evaluate_derm_foundation_embeddings.py`. It extracts `google/derm-foundation` embeddings, trains a class-balanced linear probe, selects C on nested calibration data, and evaluates on the held-out grouped fold. The committed artifact is currently blocked because the model is gated on Hugging Face and the raw SCIN data is not committed.
+The high-leverage foundation-model path is implemented in `scripts/evaluate_derm_foundation_embeddings.py`. It extracts `google/derm-foundation` embeddings, trains a class-balanced linear probe, selects C on nested calibration data, and evaluates on the held-out grouped fold. The completed result is negative: 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall, well below the deployed grouped baseline. Read this as evidence that dermatology-specific embeddings are not automatically enough when the downstream labels are noisy, mapped, imbalanced, and face-focused.
 
 The research pipeline found stronger experimental results:
 
