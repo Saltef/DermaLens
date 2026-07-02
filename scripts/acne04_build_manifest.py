@@ -4,7 +4,6 @@ import argparse
 import csv
 from pathlib import Path
 
-
 SEVERITY_LABELS = {
     0: "acne_mild",
     1: "acne_moderate",

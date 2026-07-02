@@ -9,7 +9,6 @@ import shutil
 from collections import defaultdict
 from pathlib import Path
 
-
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
 
 

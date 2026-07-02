@@ -9,10 +9,9 @@ from pathlib import Path
 from PIL import Image, ImageOps
 from PIL.Image import DecompressionBombError
 
+from api.classifier import classify_regions
 from api.preprocessing import clean_image, prepare_regions
 from api.privacy import safe_storage_name
-from api.classifier import classify_regions
-
 
 Image.MAX_IMAGE_PIXELS = 24_000_000
 

@@ -14,7 +14,6 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import datasets, models
 
-
 BACKBONES = ["mobilenet_v3_small", "efficientnet_b0", "convnext_tiny", "swin_t", "vit_b_16"]
 
 

@@ -6,7 +6,6 @@ import json
 import shutil
 from pathlib import Path
 
-
 DEFAULT_GROUPS = {
     "texture_bumps": ["acne_like_texture", "folliculitis_like_bumps"],
     "redness_irritation": ["dermatitis_like_irritation", "rosacea_like_redness"],

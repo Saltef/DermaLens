@@ -9,7 +9,6 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-
 DEFAULT_MODEL_PATH = Path(os.getenv("MODEL_PATH", "/app/models/skin_classifier.onnx"))
 DEFAULT_LABEL_MAP_PATH = Path(os.getenv("LABEL_MAP_PATH", "/app/models/label_map.json"))
 DEFAULT_PRIOR_PROFILE_PATH = Path(os.getenv("PRIOR_PROFILE_PATH", "/app/models/prior_profiles.json"))

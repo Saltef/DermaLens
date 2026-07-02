@@ -6,7 +6,6 @@ import json
 import shutil
 from pathlib import Path
 
-
 DEFAULT_TARGETS = {
     "clinician_review": 160,
     "folliculitis_like_bumps": 180,

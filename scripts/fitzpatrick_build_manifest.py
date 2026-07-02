@@ -6,7 +6,6 @@ import random
 import urllib.request
 from pathlib import Path
 
-
 CSV_URL = "https://raw.githubusercontent.com/mattgroh/fitzpatrick17k/main/fitzpatrick17k.csv"
 TARGET_LABELS = {
     "acne_like_texture",

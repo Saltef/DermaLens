@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import io
+from dataclasses import dataclass
 
 from PIL import Image, ImageStat
-
 
 MAX_SIDE = 1280
 

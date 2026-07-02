@@ -7,7 +7,6 @@ import random
 import urllib.request
 from pathlib import Path
 
-
 SCIN_BASE_URL = "https://storage.googleapis.com/dx-scin-public-data"
 IMAGE_COLUMNS = ["image_1_path", "image_2_path", "image_3_path"]
 TARGET_LABELS = {

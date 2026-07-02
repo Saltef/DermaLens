@@ -2,14 +2,13 @@ import os
 from pathlib import Path
 from typing import Annotated
 
+import uvicorn
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.concurrency import run_in_threadpool
-import uvicorn
 
 from api.pipeline import analyze_upload
-
 
 APP_ROOT = Path(__file__).resolve().parent.parent
 FRONTEND_ROOT = APP_ROOT / "frontend"
