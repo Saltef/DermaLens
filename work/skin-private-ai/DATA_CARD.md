@@ -1,4 +1,4 @@
-# Data Card: DermaLens Local
+# Data Card: DermaLens
 
 ## Data Policy
 

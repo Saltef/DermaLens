@@ -17,7 +17,7 @@ PRIVATE_DATA_ROOT = APP_ROOT / "private-data"
 MAX_UPLOAD_BYTES = 12 * 1024 * 1024
 
 app = FastAPI(
-    title="DermaLens Local",
+    title="DermaLens",
     version="0.1.0",
     description="Local-first facial skin screening prototype with no photo retention by default.",
 )

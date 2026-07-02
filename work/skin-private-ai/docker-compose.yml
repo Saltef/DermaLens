@@ -1,5 +1,5 @@
 services:
-  dermalens-local:
+  dermalens:
     build:
       context: .
       dockerfile: Dockerfile

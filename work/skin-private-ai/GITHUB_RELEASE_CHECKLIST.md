@@ -31,7 +31,7 @@
 
 ## Suggested Repository Description
 
-DermaLens Local: privacy-preserving facial skin screening with FastAPI, ONNX Runtime, Docker, EXIF stripping, and critical ML evaluation.
+DermaLens: privacy-preserving facial skin screening with FastAPI, ONNX Runtime, Docker, EXIF stripping, and critical ML evaluation.
 
 ## Test Commands Before Push
 

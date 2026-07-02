@@ -1,6 +1,6 @@
-# DermaLens Local: Technical Experiment Report
+# DermaLens: Technical Experiment Report
 
-This report documents the modeling work behind DermaLens Local, a privacy-preserving facial skin screening prototype. The goal was not to force a single leaderboard number, but to understand which modeling strategies actually improve a small, imbalanced, face-focused dermatology dataset under local deployment constraints.
+This report documents the modeling work behind DermaLens, a privacy-preserving facial skin screening prototype. The goal was not to force a single leaderboard number, but to understand which modeling strategies actually improve a small, imbalanced, face-focused dermatology dataset under local deployment constraints.
 
 The experimental arc is intentionally critical:
 

@@ -1,8 +1,8 @@
-# Model Card: DermaLens Local
+# Model Card: DermaLens
 
 ## Intended Use
 
-DermaLens Local is a portfolio research prototype for private, local-first facial skin image screening. It is designed to demonstrate computer vision workflow design, privacy-preserving inference, model evaluation, and critical reporting.
+DermaLens is a portfolio research prototype for private, local-first facial skin image screening. It is designed to demonstrate computer vision workflow design, privacy-preserving inference, model evaluation, and critical reporting.
 
 It is not a medical device, diagnostic system, triage system, or replacement for clinician review.
 

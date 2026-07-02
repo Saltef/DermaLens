@@ -1,8 +1,8 @@
-# DermaLens Local: Private Facial Skin Screening with Local Vision Models
+# DermaLens: Private Facial Skin Screening with Local Vision Models
 
 ## Executive Summary
 
-DermaLens Local is a portfolio machine-learning project that asks a practical question: how far can a privacy-preserving facial skin screening system go when inference runs locally and the available labeled data is small, imbalanced, and noisy?
+DermaLens is a portfolio machine-learning project that asks a practical question: how far can a privacy-preserving facial skin screening system go when inference runs locally and the available labeled data is small, imbalanced, and noisy?
 
 The final application is a Dockerized local web app. A user uploads a facial image, the system strips metadata, runs local inference, and returns cautious screening-style signals for broad facial skin patterns such as acne-like texture, dermatitis-like irritation, folliculitis-like bumps, rosacea-like redness, hyperpigmentation-like uneven tone, and clinician-review cases.
 
