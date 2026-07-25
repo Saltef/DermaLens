@@ -31,12 +31,14 @@ Future headline metrics should be produced only after rerunning the baseline and
 
 I reran the fixed deployed ONNX model on SCIN-only grouped case-level splits across five split seeds (`42`, `7`, `13`, `21`, `84`). This was a deployment check, not a retraining sweep: the model weights were fixed, no test-time augmentation was used, and the Docker app's conservative prior setting was applied (`conservative_population_like`, `alpha=0.4`).
 
+A later audit found that this result is contaminated as a clean model-holdout estimate. The grouped split prevents `case_id` overlap between the newly constructed train and validation folds, but the fixed deployed ONNX model had already been fine-tuned on SCIN-derived head/neck data. Nothing in this artifact excludes the original model-training cases from the new validation folds. The result is therefore retained as a fixed-model diagnostic, not as the headline baseline.
+
 | Evaluation | Accuracy | Macro Recall |
 | --- | ---: | ---: |
 | Raw logits, mean across 5 grouped split seeds | 84.9% | 54.1% |
 | Deployed conservative prior, mean +/- std | 86.2% +/- 1.2 | 63.1% +/- 10.1 |
 
-For seed `42`, the bootstrap 95% CI was `80.0%` to `91.3%` for accuracy and `41.5%` to `67.4%` for macro recall. The wide macro-recall interval is expected because the grouped SCIN validation folds contain very small tail classes.
+For seed `42`, the bootstrap 95% CI was `80.0%` to `91.3%` for accuracy and `41.5%` to `67.4%` for macro recall. This wider interval should be read alongside, and not hidden behind, the tighter five-seed standard deviation. The tail-class supports are too small for stable per-class claims.
 
 Artifact: `models/grouped_scin_clean_split_metrics.json`.
 
@@ -77,7 +79,7 @@ I then tested one modeling improvement under the same grouped protocol. This was
 
 | Model | Accuracy | Macro Recall |
 | --- | ---: | ---: |
-| Deployed conservative-prior ONNX baseline | 86.2% +/- 1.2 | 63.1% +/- 10.1 |
+| Fixed conservative-prior ONNX diagnostic | 86.2% +/- 1.2 | 63.1% +/- 10.1 |
 | Decoupled balanced logit head | 75.1% +/- 2.0 | 73.1% +/- 10.1 |
 
 Per-class recall moved as follows:
@@ -91,7 +93,7 @@ Per-class recall moved as follows:
 | hyperpigmentation_like_uneven_tone | 40.0% | 73.3% | +33.3 |
 | rosacea_like_redness | 68.6% | 77.1% | +8.6 |
 
-Decision: this is a useful tail-recall modeling signal, not the new default app model. It demonstrates that a class-balanced decoupled head can move the metric the project cares about, while making the accuracy/macro-recall trade-off explicit. A later review found that this artifact selected C on the evaluation fold; `scripts/evaluate_decoupled_logit_head.py` now selects C on a nested grouped calibration split and should be rerun with local SCIN data before this is treated as the final refreshed result.
+Decision: this is a useful experiment log, not a validated modeling win. It suggests a class-balanced decoupled head can alter tail behavior, but it should not be compared against the fixed ONNX diagnostic as though that diagnostic were a clean held-out baseline. A later review also found that this artifact selected C on the evaluation fold; `scripts/evaluate_decoupled_logit_head.py` now selects C on a nested grouped calibration split and should be rerun with local SCIN data before this is treated as the final refreshed result.
 
 Artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`.
 
@@ -103,16 +105,16 @@ Final high-leverage experiment implementation:
 - Selection: C chosen on a nested grouped calibration split carved from the training fold
 - Evaluation: held-out grouped SCIN fold used once
 
-The completed result did not produce a Pareto improvement:
+The completed result was:
 
 | Model / probe | Accuracy | Macro recall |
 | --- | ---: | ---: |
-| Deployed grouped ONNX baseline | 86.2% +/- 1.2 | 63.1% +/- 10.1 |
+| Fixed grouped ONNX diagnostic | 86.2% +/- 1.2 | 63.1% +/- 10.1 |
 | Derm Foundation linear probe | 66.8% +/- 6.9 | 33.8% +/- 5.9 |
 
-The failure mode was concentrated in the tail classes. Hyperpigmentation stayed at 0.0 mean recall, folliculitis reached only 20.9%, and rosacea reached 20.0%. I also ran a compact sanity sweep over logistic probes with and without class weighting and with macro-first versus accuracy-first C selection; none recovered the deployed grouped baseline.
+The failure mode was concentrated in the tail classes. Hyperpigmentation stayed at 0.0 mean recall, folliculitis reached only 20.9%, and rosacea reached 20.0%. I also ran a compact sanity sweep over logistic probes with and without class weighting and with macro-first versus accuracy-first C selection; none recovered the fixed ONNX diagnostic.
 
-Interpretation: the dermatology foundation representation is not enough to rescue this mapped SCIN task. The model retains broad dermatitis signal, but the labels used in this prototype remain too noisy and imbalanced for a simple linear probe to separate the rare face-focused classes.
+Interpretation: the dermatology foundation linear probe did not rescue this mapped SCIN task, but this experiment does not prove Derm Foundation is inferior to a fair MobileNet baseline. The fair comparison requires retraining MobileNetV3 on each grouped training fold and evaluating each fold's untouched cases.
 
 Artifact: `models/grouped_scin_derm_foundation_embedding_metrics.json`.
 
@@ -127,14 +129,14 @@ Current portfolio default:
 - Accuracy: `69.4%`
 - Macro recall: `48.4%`
 
-Clean grouped SCIN-only baseline:
+Fixed grouped SCIN-only diagnostic:
 
 - Model: same deployed MobileNetV3-Small ONNX
 - Split: grouped by `case_id`, no train/validation group overlap
 - Seeds: `42`, `7`, `13`, `21`, `84`
 - Accuracy: `86.2% +/- 1.2`
 - Macro recall: `63.1% +/- 10.1`
-- Caveat: smaller SCIN-only evaluation with fragile tail-class counts
+- Caveat: fixed-model evaluation may include original training cases and has fragile tail-class counts
 
 Raw flat model on the same combined validation split:
 

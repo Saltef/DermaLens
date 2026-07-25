@@ -52,4 +52,4 @@ Every reported metric should include:
 
 ## Current Subgroup Audit
 
-The current SCIN-only grouped evaluation includes a skin-tone subgroup audit in `models/grouped_scin_subgroup_metrics.json`. It reports Fitzpatrick and Monk buckets across five grouped split seeds. These metrics should be read as an audit signal only: the darkest Monk bucket has very small validation counts, so the project cannot claim subgroup fairness from this sample.
+The current SCIN-only grouped evaluation includes a skin-tone subgroup workflow demo in `models/grouped_scin_subgroup_metrics.json`. It reports Fitzpatrick and Monk buckets across five grouped split seeds. These metrics should be read as audit mechanics only: the darkest Monk bucket has very small validation counts, SCIN's tone labels are retrospective image estimates, and the fixed ONNX model evaluation is not a clean model holdout unless original training cases are excluded.

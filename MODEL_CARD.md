@@ -28,11 +28,11 @@ The current deployable ONNX model reached 69.4% accuracy and 48.4% macro recall 
 
 A later methodological review identified a split-leakage risk: SCIN can contribute multiple photos per case, and older preparation code split at the image level. The corrected protocol now requires grouped train/validation splits by `case_id` and writes a `split_audit.json` artifact.
 
-Under the corrected grouped SCIN-only protocol, the fixed deployed ONNX model with conservative prior calibration reached 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall across five split seeds. This is the cleanest deployed-model baseline currently reported, but it is still limited by small tail-class validation counts.
+Under the corrected grouped SCIN-only protocol, the fixed deployed ONNX model with conservative prior calibration reached 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall across five split seeds. This is now classified as a fixed-model diagnostic, not a clean held-out baseline. The grouped split prevents overlap between the newly constructed folds, but the fixed ONNX model was previously fine-tuned on SCIN-derived head/neck data. Without the original model-training case list, this run cannot prove that validation cases were unseen by the deployed model.
 
 ### Skin-Tone Subgroup Audit
 
-I also evaluated the same grouped SCIN splits by available Fitzpatrick and Monk tone metadata. These are audit metrics, not fairness validation: several buckets are small and SCIN tone labels are image/dataset metadata rather than controlled clinical subgroup labels.
+I also evaluated the same grouped SCIN splits by available Fitzpatrick and Monk tone metadata. These are workflow-demo metrics, not fairness validation: several buckets are small, SCIN tone labels are retrospective image metadata rather than controlled clinical subgroup labels, and the fixed-model evaluation itself is not a clean model holdout.
 
 Fitzpatrick bucket summary across five grouped split seeds:
 
@@ -51,17 +51,17 @@ Monk US bucket summary across five grouped split seeds:
 | MST4-6 | 49.4 | 83.6% +/- 5.5 | 70.2% +/- 7.6 |
 | MST7-10 | 4.8 | 75.0% +/- 50.0 | 75.0% +/- 50.0 |
 
-The subgroup audit does not show an obvious aggregate drop for darker Fitzpatrick buckets in this small SCIN-only sample, but the darkest Monk bucket is too underpowered to interpret. The right next step is not to claim fairness; it is to expand and stratify the evaluation set.
+The subgroup workflow does not show an obvious aggregate drop for darker Fitzpatrick buckets in this small SCIN-only sample, but the darkest Monk bucket is too underpowered to interpret. The right next step is not to claim fairness; it is to expand and stratify the evaluation set.
 
 Artifact: `models/grouped_scin_subgroup_metrics.json`.
 
 ### Tail-Sensitive Head
 
-I tested a decoupled balanced head under the same grouped SCIN protocol. The deployed ONNX image model was frozen, and only a class-balanced logistic head over the frozen logits was retrained. This improved macro recall from 63.1% +/- 10.1 to 73.1% +/- 10.1 across five grouped split seeds, mainly by lifting clinician-review, folliculitis, hyperpigmentation, and rosacea recall. Accuracy dropped from 86.2% +/- 1.2 to 75.1% +/- 2.0, so this is documented as a tail-sensitive operating point rather than the default app model. A later review found that this artifact selected C on the evaluation fold; the script now performs C-selection on a nested grouped calibration split and should be rerun before this is treated as the final refreshed score.
+I tested a decoupled balanced head under the same grouped SCIN protocol. The deployed ONNX image model was frozen, and only a class-balanced logistic head over the frozen logits was retrained. The artifact reports 75.1% +/- 2.0 accuracy and 73.1% +/- 10.1 macro recall, but it should not be compared as a clean improvement over the 86.2% fixed-model diagnostic because that diagnostic may include cases seen during original model training. A later review also found that this artifact selected C on the evaluation fold; the script now performs C-selection on a nested grouped calibration split and should be rerun before this is treated as a final score.
 
 Artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`.
 
-I also ran a Derm Foundation embedding evaluation using `google/derm-foundation` as the frozen representation with the same grouped/nested protocol. This did not produce a Pareto improvement. The class-balanced linear probe reached 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall, below the deployed grouped baseline at 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall. The main failure was tail recall: hyperpigmentation stayed at 0.0 mean recall, and folliculitis/rosacea remained weak.
+I also ran a Derm Foundation embedding evaluation using `google/derm-foundation` as the frozen representation with the same grouped/nested protocol. The class-balanced linear probe reached 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall. This is a completed experiment, but it does not support the stronger claim that Derm Foundation is worse than a fair MobileNet baseline, because that fair fold-retrained MobileNet baseline has not yet been run. The narrower conclusion is that a simple linear probe over Derm Foundation embeddings did not solve the current mapped tail-label problem.
 
 Artifact: `models/grouped_scin_derm_foundation_embedding_metrics.json`.
 
@@ -70,7 +70,9 @@ Artifact: `models/grouped_scin_derm_foundation_embedding_metrics.json`.
 - Broad labels overlap visually, especially acne, folliculitis, and dermatitis-like irritation.
 - Public datasets are noisy and not fully face-specific.
 - Performance has not been clinically validated.
-- Performance may vary by lighting, camera processing, makeup, filters, and skin tone. The current subgroup audit is underpowered for the darkest Monk bucket.
+- The reported 86.2% grouped SCIN fixed-model check is contaminated as a model-holdout estimate unless the original ONNX training cases can be excluded or the model is retrained per grouped fold.
+- Several tail labels have validation support too small for meaningful mean +/- std recall. Metrics for labels with only a few images should be treated as undefined/underpowered diagnostics.
+- Performance may vary by lighting, camera processing, makeup, filters, and skin tone. The current subgroup workflow is underpowered for the darkest Monk bucket.
 - Region summaries use an OpenCV frontal-face detector with a geometry fallback; this is better than the original fixed crop but still not a landmark-grade facial analysis pipeline.
 
 ## Safety Behavior
@@ -81,6 +83,6 @@ The UI and API present outputs as non-diagnostic screening observations. The app
 
 1. Rebuild manifests with strict label confidence settings.
 2. Prepare ImageFolder data with grouped `case_id` splitting.
-3. Rerun baseline ONNX and frozen-embedding experiments.
-4. Report accuracy, macro recall, per-class recall, seed variance, and confidence intervals.
-5. Add subgroup metrics by available Fitzpatrick or Monk skin-tone metadata.
+3. Retrain MobileNetV3 from scratch on each grouped training fold instead of evaluating one fixed SCIN-trained ONNX model.
+4. Compare Derm Foundation and decoupled-head probes against that fold-retrained baseline.
+5. Report accuracy, macro recall, per-class recall, seed variance, confidence intervals, and per-class support.

@@ -1,5 +1,7 @@
 {
   "protocol": "Fixed deployed ONNX model evaluated on SCIN-only grouped case splits; no retraining, no test-time augmentation.",
+  "validity_status": "fixed_model_diagnostic_not_clean_holdout",
+  "validity_note": "This artifact prevents case_id overlap inside each new grouped split, but it does not exclude cases used to fine-tune the fixed deployed ONNX model. Treat the 86.2% accuracy as a contaminated fixed-model diagnostic, not as a clean held-out model baseline.",
   "seeds": [
     42,
     7,
@@ -282,5 +284,5 @@
       }
     }
   },
-  "interpretation": "The clean grouped SCIN-only result gives the portfolio a real post-correction payoff on the deployed model, but tail-class estimates remain fragile because clinician_review, hyperpigmentation, and rosacea have very small validation counts."
+  "interpretation": "This fixed-model SCIN-only diagnostic is not a clean held-out model baseline because original ONNX training cases were not excluded. Tail-class estimates are also underpowered because clinician_review, hyperpigmentation, and rosacea have very small validation counts."
 }

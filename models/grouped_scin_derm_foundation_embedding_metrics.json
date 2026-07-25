@@ -1,6 +1,8 @@
 {
   "status": "completed",
   "protocol": "Derm Foundation embedding experiment: extract 6144-dimensional google/derm-foundation embeddings, train a class-balanced linear probe, select C on nested grouped calibration data, and report the held-out grouped SCIN fold once.",
+  "validity_status": "completed_probe_missing_fair_mobilenet_baseline",
+  "validity_note": "This is a completed Derm Foundation linear-probe result, but it should not be interpreted as proving Derm Foundation is worse than MobileNetV3. The fixed ONNX comparison artifact may be contaminated by original SCIN training cases; the fair comparison requires retraining MobileNetV3 on each grouped train fold.",
   "foundation_model": "google/derm-foundation",
   "group_key": "case_id",
   "selection_protocol": "Nested C selection; evaluation fold is not used for hyperparameter selection.",
@@ -3302,19 +3304,20 @@
       ]
     }
   ],
-  "comparison": {
-    "deployed_grouped_scin_baseline": {
+  "context_comparison_not_fair_baseline": {
+    "fixed_grouped_scin_onnx_diagnostic": {
       "accuracy_mean": 0.8616,
       "macro_recall_mean": 0.6314,
-      "artifact": "models/grouped_scin_clean_split_metrics.json"
+      "artifact": "models/grouped_scin_clean_split_metrics.json",
+      "validity_note": "Fixed-model diagnostic may include cases seen during original ONNX fine-tuning."
     },
     "derm_foundation_linear_probe": {
       "accuracy_mean": 0.6676,
       "macro_recall_mean": 0.3385
     },
-    "pareto_lift": false
+    "fair_pareto_claim_supported": false
   },
-  "sanity_check": "A compact logistic-probe sweep with and without class weighting, selecting C by either macro recall or accuracy-first calibration, also failed to recover the deployed grouped baseline. Best sanity-check setting reached about 69.4% accuracy and 29.7% macro recall.",
-  "interpretation": "Derm Foundation embeddings did not improve this mapped face-focused SCIN task under the grouped/nested protocol. The linear probe retained dermatitis signal but collapsed several tail labels, including 0.0 mean recall for hyperpigmentation_like_uneven_tone.",
+  "sanity_check": "A compact logistic-probe sweep with and without class weighting, selecting C by either macro recall or accuracy-first calibration, also failed to recover the fixed ONNX diagnostic. Best sanity-check setting reached about 69.4% accuracy and 29.7% macro recall.",
+  "interpretation": "Derm Foundation embeddings did not solve this mapped face-focused SCIN task with a simple linear probe. This is not evidence that Derm Foundation is worse than a fair MobileNetV3 baseline, because that fold-retrained baseline has not been run.",
   "reporting_note": "accuracy=0.6676+/-0.0694, macro_recall=0.3385+/-0.0593"
 }

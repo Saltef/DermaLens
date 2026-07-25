@@ -82,15 +82,15 @@ The deployed model is intentionally modest:
 - MobileNetV3-Small ONNX
 - local CPU-friendly inference
 - conservative prior calibration
-- 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall across five SCIN-only grouped split seeds
+- 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall across five SCIN-only grouped split seeds, now treated as a fixed-model diagnostic rather than a clean held-out model result
 
-The earlier combined validation split reported 69.4% accuracy and 48.4% macro recall, but that number is kept mainly as experiment history because the preparation path had image-level leakage risk. The grouped SCIN result is the cleaner deployed-model baseline.
+The earlier combined validation split reported 69.4% accuracy and 48.4% macro recall, but that number is kept mainly as experiment history because the preparation path had image-level leakage risk. The later grouped SCIN result fixed fold-level case overlap, but a second audit found that it is still not a clean model holdout because the fixed deployed ONNX model had already been trained on SCIN-derived head/neck images.
 
-The repo also includes a subgroup audit by Fitzpatrick and Monk tone metadata in `models/grouped_scin_subgroup_metrics.json`. Read it as an example of fairness-aware evaluation mechanics, not proof that the model is fair; the darkest Monk bucket is too small for that.
+The repo also includes a subgroup workflow by Fitzpatrick and Monk tone metadata in `models/grouped_scin_subgroup_metrics.json`. Read it as an example of fairness-aware evaluation mechanics, not proof that the model is fair; the darkest Monk bucket is too small, and SCIN's available tone labels are retrospective image estimates rather than controlled clinical subgroup labels.
 
-There is also one grouped-split modeling improvement: `models/grouped_scin_decoupled_logit_head_metrics.json`. It freezes the ONNX image model and retrains only a class-balanced head over its logits. Macro recall improves from 63.1% to 73.1%, while accuracy drops from 86.2% to 75.1%. That is the key trade-off to understand. A later review found that the stored artifact selected C on the evaluation fold; the script has now been corrected to select C on a nested grouped calibration split and should be rerun before publishing a refreshed final number.
+There is also one grouped-split decoupled-head artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`. It freezes the ONNX image model and retrains only a class-balanced head over its logits. Do not read it as a validated improvement over the fixed ONNX diagnostic: the baseline is contaminated as a model-holdout estimate, and the stored artifact predates nested C-selection. The script has now been corrected to select C on a nested grouped calibration split and should be rerun before publishing a refreshed final number.
 
-The high-leverage foundation-model path is implemented in `scripts/evaluate_derm_foundation_embeddings.py`. It extracts `google/derm-foundation` embeddings, trains a class-balanced linear probe, selects C on nested calibration data, and evaluates on the held-out grouped fold. The completed result is negative: 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall, well below the deployed grouped baseline. Read this as evidence that dermatology-specific embeddings are not automatically enough when the downstream labels are noisy, mapped, imbalanced, and face-focused.
+The high-leverage foundation-model path is implemented in `scripts/evaluate_derm_foundation_embeddings.py`. It extracts `google/derm-foundation` embeddings, trains a class-balanced linear probe, selects C on nested calibration data, and evaluates on the held-out grouped fold. The completed result is 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall. Read this as a completed probe result, not as evidence that Derm Foundation is worse than a fair MobileNet baseline; that fair grouped MobileNet retrain has not been run.
 
 The research pipeline found stronger experimental results:
 
@@ -98,7 +98,7 @@ The research pipeline found stronger experimental results:
 - Neural heads and ensembles reached higher original-validation performance.
 - A validation-tuned class-bias ensemble reached 81.4%, but fresh holdout testing did not reproduce it.
 
-The project therefore does not claim a validated 80% model. The honest conclusion is that the next improvement needs better data: cleaner labels, more face-specific examples, and grouped case-level evaluation.
+The project therefore does not claim a validated 80% model. The honest conclusion is that the next evidence-producing step is a fold-retrained grouped MobileNet baseline, followed by better data: cleaner labels, more face-specific examples, and enough tail support for meaningful macro recall.
 
 ## 6. What To Look For In The Code
 

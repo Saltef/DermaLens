@@ -10,13 +10,13 @@ The strongest untuned experimental model reached **79.2% accuracy and 71.0% macr
 
 After a later technical review, I also found a more fundamental validity risk: the original dataset preparation could split multiple photos from the same SCIN case across train and validation. I fixed this by making `case_id` grouped splitting the default protocol and by writing an auditable `split_audit.json` for every prepared ImageFolder dataset.
 
-I then ran a clean post-correction check on SCIN-only grouped splits. The fixed deployed ONNX model, using the same conservative prior calibration as the Docker app, reached **86.2% +/- 1.2 accuracy** and **63.1% +/- 10.1 macro recall** across five grouped split seeds. That gives the project a real clean-split baseline, while still showing the limitation: tail-class recall remains unstable because rare labels have very small validation counts.
+I then ran a post-correction check on SCIN-only grouped splits. The fixed deployed ONNX model, using the same conservative prior calibration as the Docker app, reached **86.2% +/- 1.2 accuracy** and **63.1% +/- 10.1 macro recall** across five grouped split seeds. A later audit found that this is not a clean held-out model result: the deployed model had already been fine-tuned on SCIN-derived head/neck images, and the grouped split only prevents overlap inside the new folds. Without the original training-case list, this check cannot exclude cases the model may have seen.
 
-I also added a skin-tone subgroup audit using SCIN Fitzpatrick and Monk metadata. The audit did not show an obvious aggregate drop across Fitzpatrick buckets in the small SCIN-only sample, but the darkest Monk bucket was too small to interpret. I treat that as a process win rather than a fairness claim: the project now has the machinery to report subgroup performance and the discipline to say when the subgroup data is underpowered.
+I also added a skin-tone subgroup workflow using SCIN Fitzpatrick and Monk metadata. The workflow did not show an obvious aggregate drop across Fitzpatrick buckets in the small SCIN-only sample, but the darkest Monk bucket was too small to interpret. I treat that as a process win rather than a fairness claim: the project now has the machinery to report subgroup performance and the discipline to say when the subgroup data is underpowered.
 
-Finally, I ran one modeling improvement under the corrected grouped split: a decoupled cRT-style head. I froze the deployed ONNX image model, used its logits as a compact representation, and retrained only a class-balanced logistic head on each grouped split. This produced a macro-recall lift: **63.1% to 73.1% macro recall** across five grouped split seeds. The trade-off was lower accuracy, **86.2% to 75.1%**, so I frame it as a tail-sensitive operating point rather than a replacement for the default app model. A later review found that this artifact selected C on the evaluation fold, so the code has been corrected to use a nested grouped calibration split and the number should be refreshed before being treated as final.
+Finally, I ran one modeling improvement under the corrected grouped split: a decoupled cRT-style head. I froze the deployed ONNX image model, used its logits as a compact representation, and retrained only a class-balanced logistic head on each grouped split. The artifact reports **75.1% accuracy** and **73.1% macro recall**, but I no longer frame it as a clean lift over the fixed ONNX result because that fixed ONNX result is contaminated as a model-holdout baseline. A later review also found that this artifact selected C on the evaluation fold, so the code has been corrected to use a nested grouped calibration split and the number should be refreshed before being treated as final.
 
-That decision is central to the project: the limiting factor is no longer model architecture. It is data quality, label ambiguity, and the lack of enough face-specific examples for overlapping inflammatory skin presentations.
+That decision changes the project story: the strongest remaining gap is not another paragraph of polish, but a fair fold-retrained MobileNetV3 baseline. Until that exists, the Derm Foundation and decoupled-head experiments are informative but not decisive.
 
 This is not a medical device and does not provide diagnosis.
 
@@ -47,16 +47,16 @@ The first deployable model was a MobileNetV3-Small classifier exported to ONNX. 
 | --- | ---: | ---: |
 | Raw MobileNetV3 ONNX | 68.3% | 44.4% |
 | Conservative prior-calibrated MobileNetV3 ONNX | 69.4% | 48.4% |
-| Conservative MobileNetV3 ONNX on grouped SCIN-only splits, 5 split seeds | 86.2% +/- 1.2 | 63.1% +/- 10.1 |
-| Decoupled balanced logit head on grouped SCIN-only splits, 5 split seeds | 75.1% +/- 2.0 | 73.1% +/- 10.1 |
+| Conservative MobileNetV3 ONNX on grouped SCIN-only splits, 5 split seeds | 86.2% +/- 1.2 | 63.1% +/- 10.1 | Fixed-model diagnostic; not clean model holdout |
+| Decoupled balanced logit head on grouped SCIN-only splits, 5 split seeds | 75.1% +/- 2.0 | 73.1% +/- 10.1 | Pre-nested C-selection artifact; not final |
 
-The grouped SCIN-only result is the cleanest deployed-model check because it avoids case leakage. It is not directly comparable to the earlier merged benchmark because it uses a smaller SCIN-only dataset, but it answers the key validity question: the deployed model still clears 80% accuracy under grouped evaluation. Macro recall remains the more honest limitation.
+The grouped SCIN-only result avoids case overlap inside each newly constructed split, but it does not answer the key validity question because the deployed model was already trained on SCIN-derived data. The fair comparison is still missing: retrain MobileNetV3 on each grouped training fold and evaluate each fold's untouched validation cases.
 
-The decoupled head moves that limitation in the right direction. Compared with the deployed grouped baseline, it improves folliculitis recall from 44.4% to 70.1%, clinician-review from 45.0% to 68.0%, hyperpigmentation from 40.0% to 73.3%, and rosacea from 68.6% to 77.1%. It gives up majority-class dermatitis recall, which explains the accuracy drop. Because the artifact predates nested C-selection, I treat this as a strong pre-nested signal rather than the final refreshed result.
+The decoupled head may move tail behavior in the right direction, but the artifact predates nested C-selection and its comparison baseline is not clean. I treat it as a strong experimental lead rather than a validated improvement.
 
-I also ran the most important next experiment: a direct Derm Foundation embedding probe. It used `google/derm-foundation` as the frozen representation, trained a class-balanced linear classifier, selected C on nested grouped calibration data, and evaluated once on the held-out grouped fold. This did not land the hoped-for Pareto result. The probe reached **66.8% +/- 6.9 accuracy** and **33.8% +/- 5.9 macro recall**, below the deployed grouped baseline. A compact sanity sweep with and without class weighting also failed to recover the baseline.
+I also ran the most important next experiment: a direct Derm Foundation embedding probe. It used `google/derm-foundation` as the frozen representation, trained a class-balanced linear classifier, selected C on nested grouped calibration data, and evaluated once on the held-out grouped fold. The probe reached **66.8% +/- 6.9 accuracy** and **33.8% +/- 5.9 macro recall**. This is a completed experiment, but it does not support the claim that Derm Foundation is worse than a fair MobileNet baseline because the fair MobileNet baseline has not been run.
 
-That negative result is instructive: dermatology-specific pretraining does not automatically fix this task when the downstream labels are mapped, noisy, imbalanced, and face-specific. The bottleneck remains label/data quality, not simply representation strength.
+The narrower result is still useful: a simple linear probe over Derm Foundation embeddings did not solve the current mapped tail-label problem. The broader scientific claim needs the missing fold-retrained baseline.
 
 ### 2. Frozen Foundation-Style Embeddings
 
@@ -158,7 +158,7 @@ This is where additional data is needed. Specifically, the project needs:
 
 The current model is not mainly limited by whether the classifier head is linear, neural, contrastive, or ensembled. It is limited by the ambiguity and sparsity of the supervised signal.
 
-An important methodological limitation was also discovered after the first round of experiments: SCIN can include several images per case, and the initial fallback split operated at the image level. That can inflate validation scores in medical imaging because same-case photos may be visually near-duplicate. I corrected the preparation code to split by case/group ID, added an overlap assertion, and added split audit metadata. This strengthens the project story because the process now rejects not only overfit calibration, but also leakage-prone evaluation.
+An important methodological limitation was also discovered after the first round of experiments: SCIN can include several images per case, and the initial fallback split operated at the image level. That can inflate validation scores in medical imaging because same-case photos may be visually near-duplicate. I corrected the preparation code to split by case/group ID, added an overlap assertion, and added split audit metadata. A later audit found a second limitation: fixed-model evaluation on newly grouped SCIN folds is still not clean if the fixed model had already been trained on the same case universe. The next correction is fold-level retraining.
 
 ## What This Project Demonstrates
 
@@ -171,12 +171,12 @@ This project demonstrates the full applied ML loop:
 - model comparison across compact CNNs, pretrained embedding backbones, transformer-style backbones, neural heads, and ensemble methods
 - literature-informed experiments such as long-tail supervised contrastive learning and frozen foundation-style representations
 - calibration, holdout confirmation, and rejection of an overfit result
-- discovery and correction of case-level split leakage risk
-- subgroup evaluation by available skin-tone metadata
-- a decoupled balanced-head experiment that improves tail macro recall on the grouped split
+- discovery of both image-level split leakage and fixed-model evaluation contamination
+- subgroup evaluation workflow by available skin-tone metadata, with underpowered buckets explicitly demoted
+- decoupled balanced-head and Derm Foundation experiments that are now framed as leads pending a fair fold-retrained baseline
 - error analysis that turns model failure into a concrete data acquisition plan
 
-The most important outcome is not just a score. It is a defensible conclusion: for this task, the next real improvement requires higher-quality face-specific labeled data, not another small architecture tweak.
+The most important outcome is not just a score. It is a defensible process: when a stronger critique found the headline was contaminated, the repo demoted the claim instead of defending it. The next result that matters is a fair grouped retrain/evaluate baseline.
 
 ## Local Demo
 

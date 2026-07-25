@@ -1,5 +1,7 @@
 {
   "protocol": "Decoupled cRT-style experiment: freeze the deployed ONNX image model, use its logits as a compact representation, and retrain only a class-balanced logistic head on each grouped SCIN split.",
+  "validity_status": "experiment_log_not_validated_win",
+  "validity_note": "Do not compare this artifact against the fixed deployed ONNX diagnostic as a clean baseline. The fixed ONNX model may have seen cases from the evaluation folds during original SCIN fine-tuning, and this stored artifact also predates nested C-selection.",
   "model": "models/skin_classifier.onnx",
   "manifest": "data/raw/scin/face_skin_manifest.csv",
   "group_key": "case_id",
@@ -2751,5 +2753,5 @@
     }
   ],
   "post_review_note": "This artifact was generated before C-selection was moved to a nested grouped calibration split. Treat the reported lift as the pre-nested decoupled-head result; rerun scripts/evaluate_decoupled_logit_head.py with local SCIN data to refresh final metrics under the corrected selection protocol.",
-  "interpretation": "This is a cheap decoupled-head baseline. It tests whether class-balanced retraining on frozen deployed logits can increase tail macro recall under grouped evaluation without changing the image encoder."
+  "interpretation": "This is an experiment log for class-balanced retraining on frozen deployed logits. It should be rerun with nested C-selection and compared against a fold-retrained MobileNetV3 baseline before being described as an improvement."
 }

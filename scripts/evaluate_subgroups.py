@@ -29,6 +29,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--alpha", type=float, default=0.4)
     parser.add_argument("--seeds", default="42,7,13,21,84")
     parser.add_argument("--val-ratio", type=float, default=0.2)
+    parser.add_argument(
+        "--trained-case-ids",
+        help=(
+            "Optional newline or CSV file of case_ids used to train the fixed ONNX model. "
+            "When supplied, those cases are excluded from evaluation folds."
+        ),
+    )
     parser.add_argument("--output", required=True)
     return parser.parse_args()
 
@@ -39,6 +46,7 @@ def main() -> None:
     target_prior = _read_profile(Path(args.prior_profiles), args.profile, labels)
     rows = _read_manifest(Path(args.manifest))
     seeds = [int(seed.strip()) for seed in args.seeds.split(",") if seed.strip()]
+    trained_case_ids = _read_case_ids(Path(args.trained_case_ids)) if args.trained_case_ids else set()
 
     session = ort.InferenceSession(args.model, providers=["CPUExecutionProvider"])
     input_name = session.get_inputs()[0].name
@@ -47,6 +55,7 @@ def main() -> None:
     for seed in seeds:
         train_rows, val_rows = _grouped_split(rows, val_ratio=args.val_ratio, seed=seed)
         train_rows, val_rows = _dedup_like_imagefolder(train_rows, val_rows, Path(args.image_root))
+        val_rows, excluded_seen_cases = _exclude_trained_cases(val_rows, trained_case_ids)
         train_prior = _training_prior(train_rows, labels)
         correction = _prior_correction(labels, train_prior, target_prior) * args.alpha
         evaluated = _evaluate_rows(session, input_name, val_rows, Path(args.image_root), labels, correction)
@@ -54,6 +63,7 @@ def main() -> None:
             {
                 "seed": seed,
                 "train_images": len(train_rows),
+                "excluded_seen_model_cases": excluded_seen_cases,
                 "val_images": len(evaluated),
                 "overall": _metrics(evaluated, labels),
                 "subgroups": {
@@ -75,6 +85,16 @@ def main() -> None:
         "group_key": "case_id",
         "profile": args.profile,
         "alpha": args.alpha,
+        "trained_case_exclusion": {
+            "provided": bool(trained_case_ids),
+            "case_count": len(trained_case_ids),
+            "warning": (
+                "No original model-training case list was supplied, so this run only prevents case overlap between "
+                "new folds. It does not prove that the fixed ONNX model had never seen evaluation cases."
+                if not trained_case_ids
+                else "Evaluation rows whose case_id appeared in the supplied model-training case list were excluded."
+            ),
+        },
         "seeds": seeds,
         "overall_summary": _summarize_overall(split_results),
         "subgroup_summary": {
@@ -109,6 +129,29 @@ def _read_profile(path: Path, profile_name: str, labels: list[str]) -> dict[str,
 def _read_manifest(path: Path) -> list[dict]:
     with path.open("r", encoding="utf-8-sig", newline="") as handle:
         return [row for row in csv.DictReader(handle) if row.get("image_path") and row.get("label") and row.get("case_id")]
+
+
+def _read_case_ids(path: Path) -> set[str]:
+    case_ids: set[str] = set()
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        sample = handle.read(4096)
+        handle.seek(0)
+        first_line = sample.splitlines()[0] if sample.splitlines() else ""
+        if "," in first_line:
+            for row in csv.DictReader(handle):
+                value = row.get("case_id") or row.get("group_id") or row.get("id")
+                if value:
+                    case_ids.add(value.strip())
+        else:
+            case_ids.update(line.strip() for line in handle if line.strip())
+    return case_ids
+
+
+def _exclude_trained_cases(rows: list[dict], trained_case_ids: set[str]) -> tuple[list[dict], int]:
+    if not trained_case_ids:
+        return rows, 0
+    kept = [row for row in rows if row["case_id"] not in trained_case_ids]
+    return kept, len(rows) - len(kept)
 
 
 def _grouped_split(rows: list[dict], *, val_ratio: float, seed: int) -> tuple[list[dict], list[dict]]:
@@ -237,8 +280,10 @@ def _metrics(rows: list[dict], labels: list[str]) -> dict:
         return {"count": 0, "accuracy": None, "macro_recall": None, "per_class_recall": {}}
     correct = sum(1 for row in rows if row["actual"] == row["predicted"])
     per_class = {}
+    per_class_support = {}
     for label in labels:
         label_rows = [row for row in rows if row["actual"] == label]
+        per_class_support[label] = len(label_rows)
         if label_rows:
             per_class[label] = sum(1 for row in label_rows if row["predicted"] == label) / len(label_rows)
     return {
@@ -246,6 +291,8 @@ def _metrics(rows: list[dict], labels: list[str]) -> dict:
         "accuracy": correct / len(rows),
         "macro_recall": sum(per_class.values()) / len(per_class) if per_class else None,
         "per_class_recall": per_class,
+        "per_class_support": per_class_support,
+        "low_support_labels": [label for label, count in per_class_support.items() if 0 < count < 10],
     }
 
 

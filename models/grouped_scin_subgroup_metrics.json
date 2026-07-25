@@ -1,5 +1,7 @@
 {
   "protocol": "SCIN-only grouped case-level subgroup evaluation using fixed deployed ONNX model and deployed conservative prior correction.",
+  "validity_status": "subgroup_workflow_demo_not_fairness_audit",
+  "validity_note": "This artifact demonstrates subgroup reporting mechanics only. The fixed ONNX model may have seen cases from these folds during original SCIN fine-tuning, subgroup buckets are underpowered, and SCIN tone labels are retrospective image estimates rather than controlled clinical subgroup labels.",
   "model": "models/skin_classifier.onnx",
   "manifest": "data/raw/scin/face_skin_manifest.csv",
   "group_key": "case_id",
