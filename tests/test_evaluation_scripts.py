@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import torch
+import pytest
 
 from scripts.evaluate_onnx import _build_metrics as _build_onnx_metrics
 from scripts.evaluate_subgroups import _exclude_trained_cases, _grouped_split, _metrics
 from scripts.run_grouped_mobilenet_baseline import _summary
-from scripts.train_export_onnx import _copy_state_dict
 
 
 def test_evaluate_subgroups_split_keeps_case_ids_disjoint() -> None:
@@ -107,6 +106,9 @@ def test_grouped_mobilenet_summary_aggregates_metrics() -> None:
 
 
 def test_train_export_best_state_copy_does_not_share_storage() -> None:
+    torch = pytest.importorskip("torch")
+    from scripts.train_export_onnx import _copy_state_dict
+
     model = torch.nn.Linear(2, 1)
     copied = _copy_state_dict(model)
     original_weight = copied["weight"].clone()

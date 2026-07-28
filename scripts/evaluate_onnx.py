@@ -7,7 +7,6 @@ from pathlib import Path
 import numpy as np
 import onnxruntime as ort
 from PIL import Image
-from torchvision import datasets
 
 IMAGENET_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
 IMAGENET_STD = np.array([0.229, 0.224, 0.225], dtype=np.float32)
@@ -24,6 +23,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
+    from torchvision import datasets
+
     args = parse_args()
     labels = _read_labels(Path(args.label_map))
     dataset = datasets.ImageFolder(args.data_dir)
