@@ -1,0 +1,1054 @@
+{
+  "protocol": "Fair grouped MobileNetV3 baseline: for each seed, build a case-level grouped SCIN split, train the image model only on that seed's training cases, export ONNX, and evaluate once on that seed's untouched validation cases.",
+  "validity_note": "This artifact is the intended baseline for comparing Derm Foundation and decoupled-head experiments. It should replace fixed-model grouped diagnostics as the clean modeling comparison once all configured seeds finish.",
+  "config": {
+    "manifest": "work\\skin-private-ai\\data\\raw\\scin\\face_skin_manifest.csv",
+    "image_root": "work\\skin-private-ai\\data\\raw\\scin",
+    "model": "mobilenet_v3_small",
+    "epochs": 8,
+    "batch_size": 32,
+    "class_weights": "balanced",
+    "select_metric": "macro_recall",
+    "seeds": [
+      42,
+      7,
+      13,
+      21,
+      84
+    ]
+  },
+  "summary": {
+    "accuracy": {
+      "mean": 0.4796329392153219,
+      "std": 0.031731776815120745,
+      "values": [
+        0.4866666666666667,
+        0.43529411764705883,
+        0.47770700636942676,
+        0.5241379310344828,
+        0.47435897435897434
+      ]
+    },
+    "macro_recall": {
+      "mean": 0.301776195222339,
+      "std": 0.052594873557414365,
+      "values": [
+        0.3919631955346241,
+        0.2925018631305733,
+        0.2696730305025236,
+        0.2597167325428195,
+        0.2950261544011544
+      ]
+    },
+    "per_class_recall": {
+      "acne_like_texture": {
+        "mean": 0.12120855109469911,
+        "std": 0.06691135777738302,
+        "values": [
+          0.11538461538461539,
+          0.08823529411764706,
+          0.1935483870967742,
+          0.17857142857142858,
+          0.030303030303030304
+        ]
+      },
+      "clinician_review": {
+        "mean": 0.22333333333333333,
+        "std": 0.18089284734953515,
+        "values": [
+          0.5,
+          0.25,
+          0.2,
+          0.0,
+          0.16666666666666666
+        ]
+      },
+      "dermatitis_like_irritation": {
+        "mean": 0.6377603085510231,
+        "std": 0.06590845839080385,
+        "values": [
+          0.5816326530612245,
+          0.5596330275229358,
+          0.6530612244897959,
+          0.717391304347826,
+          0.6770833333333334
+        ]
+      },
+      "folliculitis_like_bumps": {
+        "mean": 0.25692640692640695,
+        "std": 0.24249622076155716,
+        "values": [
+          0.5833333333333334,
+          0.42857142857142855,
+          0.0,
+          0.09090909090909091,
+          0.18181818181818182
+        ]
+      },
+      "hyperpigmentation_like_uneven_tone": {
+        "mean": 0.0,
+        "std": 0.0,
+        "values": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "rosacea_like_redness": {
+        "mean": 0.5714285714285714,
+        "std": 0.1010152544552211,
+        "values": [
+          0.5714285714285714,
+          0.42857142857142855,
+          0.5714285714285714,
+          0.5714285714285714,
+          0.7142857142857143
+        ]
+      }
+    },
+    "per_class_support": {
+      "acne_like_texture": {
+        "mean": 30.4,
+        "std": 3.361547262794322,
+        "values": [
+          26,
+          34,
+          31,
+          28,
+          33
+        ]
+      },
+      "clinician_review": {
+        "mean": 4.8,
+        "std": 0.8366600265340756,
+        "values": [
+          4,
+          4,
+          5,
+          5,
+          6
+        ]
+      },
+      "dermatitis_like_irritation": {
+        "mean": 98.6,
+        "std": 6.308724118235002,
+        "values": [
+          98,
+          109,
+          98,
+          92,
+          96
+        ]
+      },
+      "folliculitis_like_bumps": {
+        "mean": 12.2,
+        "std": 1.3038404810405297,
+        "values": [
+          12,
+          14,
+          13,
+          11,
+          11
+        ]
+      },
+      "hyperpigmentation_like_uneven_tone": {
+        "mean": 2.6,
+        "std": 0.5477225575051661,
+        "values": [
+          3,
+          2,
+          3,
+          2,
+          3
+        ]
+      },
+      "rosacea_like_redness": {
+        "mean": 7.0,
+        "std": 0.0,
+        "values": [
+          7,
+          7,
+          7,
+          7,
+          7
+        ]
+      }
+    },
+    "low_support_by_seed": {
+      "42": [
+        "clinician_review",
+        "hyperpigmentation_like_uneven_tone",
+        "rosacea_like_redness"
+      ],
+      "7": [
+        "clinician_review",
+        "hyperpigmentation_like_uneven_tone",
+        "rosacea_like_redness"
+      ],
+      "13": [
+        "clinician_review",
+        "hyperpigmentation_like_uneven_tone",
+        "rosacea_like_redness"
+      ],
+      "21": [
+        "clinician_review",
+        "hyperpigmentation_like_uneven_tone",
+        "rosacea_like_redness"
+      ],
+      "84": [
+        "clinician_review",
+        "hyperpigmentation_like_uneven_tone",
+        "rosacea_like_redness"
+      ]
+    }
+  },
+  "splits": [
+    {
+      "seed": 42,
+      "split_dir": "data\\processed\\scin_grouped_seed42",
+      "run_dir": "models\\experiments\\grouped_mobilenet_retrained\\seed42",
+      "metrics": {
+        "total": 150,
+        "accuracy": 0.4866666666666667,
+        "macro_recall": 0.3919631955346241,
+        "per_class_recall": {
+          "acne_like_texture": 0.11538461538461539,
+          "clinician_review": 0.5,
+          "dermatitis_like_irritation": 0.5816326530612245,
+          "folliculitis_like_bumps": 0.5833333333333334,
+          "hyperpigmentation_like_uneven_tone": 0.0,
+          "rosacea_like_redness": 0.5714285714285714
+        },
+        "per_class_support": {
+          "acne_like_texture": 26,
+          "clinician_review": 4,
+          "dermatitis_like_irritation": 98,
+          "folliculitis_like_bumps": 12,
+          "hyperpigmentation_like_uneven_tone": 3,
+          "rosacea_like_redness": 7
+        },
+        "low_support_labels": [
+          "clinician_review",
+          "hyperpigmentation_like_uneven_tone",
+          "rosacea_like_redness"
+        ],
+        "confusion": {
+          "acne_like_texture": {
+            "acne_like_texture": 3,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 9,
+            "folliculitis_like_bumps": 3,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 11
+          },
+          "clinician_review": {
+            "acne_like_texture": 0,
+            "clinician_review": 2,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 2
+          },
+          "dermatitis_like_irritation": {
+            "acne_like_texture": 6,
+            "clinician_review": 3,
+            "dermatitis_like_irritation": 57,
+            "folliculitis_like_bumps": 26,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 6
+          },
+          "folliculitis_like_bumps": {
+            "acne_like_texture": 0,
+            "clinician_review": 1,
+            "dermatitis_like_irritation": 4,
+            "folliculitis_like_bumps": 7,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 0
+          },
+          "hyperpigmentation_like_uneven_tone": {
+            "acne_like_texture": 0,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 1,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 2
+          },
+          "rosacea_like_redness": {
+            "acne_like_texture": 1,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 1,
+            "folliculitis_like_bumps": 1,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 4
+          }
+        },
+        "model": "models\\experiments\\grouped_mobilenet_retrained\\seed42\\skin_classifier.onnx",
+        "data_dir": "data\\processed\\scin_grouped_seed42\\val",
+        "labels": [
+          "acne_like_texture",
+          "clinician_review",
+          "dermatitis_like_irritation",
+          "folliculitis_like_bumps",
+          "hyperpigmentation_like_uneven_tone",
+          "rosacea_like_redness"
+        ]
+      },
+      "split_audit": {
+        "leakage_check": {
+          "group_overlap_count": 0,
+          "passed": true
+        },
+        "splits": {
+          "train": {
+            "images": 629,
+            "groups": 276,
+            "labels": {
+              "acne_like_texture": {
+                "images": 128,
+                "groups": 57
+              },
+              "clinician_review": {
+                "images": 16,
+                "groups": 7
+              },
+              "dermatitis_like_irritation": {
+                "images": 395,
+                "groups": 174
+              },
+              "folliculitis_like_bumps": {
+                "images": 46,
+                "groups": 20
+              },
+              "hyperpigmentation_like_uneven_tone": {
+                "images": 9,
+                "groups": 4
+              },
+              "rosacea_like_redness": {
+                "images": 35,
+                "groups": 14
+              }
+            }
+          },
+          "val": {
+            "images": 151,
+            "groups": 69,
+            "labels": {
+              "acne_like_texture": {
+                "images": 27,
+                "groups": 14
+              },
+              "clinician_review": {
+                "images": 4,
+                "groups": 2
+              },
+              "dermatitis_like_irritation": {
+                "images": 98,
+                "groups": 44
+              },
+              "folliculitis_like_bumps": {
+                "images": 12,
+                "groups": 5
+              },
+              "hyperpigmentation_like_uneven_tone": {
+                "images": 3,
+                "groups": 1
+              },
+              "rosacea_like_redness": {
+                "images": 7,
+                "groups": 3
+              }
+            }
+          }
+        },
+        "config": {
+          "manifest": "work\\skin-private-ai\\data\\raw\\scin\\face_skin_manifest.csv",
+          "path_column": "image_path",
+          "label_column": "label",
+          "group_column": "case_id",
+          "split_column": null,
+          "val_ratio": 0.2,
+          "seed": 42,
+          "allow_image_level_split": false
+        }
+      }
+    },
+    {
+      "seed": 7,
+      "split_dir": "data\\processed\\scin_grouped_seed7",
+      "run_dir": "models\\experiments\\grouped_mobilenet_retrained\\seed7",
+      "metrics": {
+        "total": 170,
+        "accuracy": 0.43529411764705883,
+        "macro_recall": 0.2925018631305733,
+        "per_class_recall": {
+          "acne_like_texture": 0.08823529411764706,
+          "clinician_review": 0.25,
+          "dermatitis_like_irritation": 0.5596330275229358,
+          "folliculitis_like_bumps": 0.42857142857142855,
+          "hyperpigmentation_like_uneven_tone": 0.0,
+          "rosacea_like_redness": 0.42857142857142855
+        },
+        "per_class_support": {
+          "acne_like_texture": 34,
+          "clinician_review": 4,
+          "dermatitis_like_irritation": 109,
+          "folliculitis_like_bumps": 14,
+          "hyperpigmentation_like_uneven_tone": 2,
+          "rosacea_like_redness": 7
+        },
+        "low_support_labels": [
+          "clinician_review",
+          "hyperpigmentation_like_uneven_tone",
+          "rosacea_like_redness"
+        ],
+        "confusion": {
+          "acne_like_texture": {
+            "acne_like_texture": 3,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 18,
+            "folliculitis_like_bumps": 4,
+            "hyperpigmentation_like_uneven_tone": 3,
+            "rosacea_like_redness": 6
+          },
+          "clinician_review": {
+            "acne_like_texture": 0,
+            "clinician_review": 1,
+            "dermatitis_like_irritation": 2,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 1
+          },
+          "dermatitis_like_irritation": {
+            "acne_like_texture": 5,
+            "clinician_review": 1,
+            "dermatitis_like_irritation": 61,
+            "folliculitis_like_bumps": 33,
+            "hyperpigmentation_like_uneven_tone": 1,
+            "rosacea_like_redness": 8
+          },
+          "folliculitis_like_bumps": {
+            "acne_like_texture": 0,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 8,
+            "folliculitis_like_bumps": 6,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 0
+          },
+          "hyperpigmentation_like_uneven_tone": {
+            "acne_like_texture": 0,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 2,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 0
+          },
+          "rosacea_like_redness": {
+            "acne_like_texture": 1,
+            "clinician_review": 1,
+            "dermatitis_like_irritation": 2,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 3
+          }
+        },
+        "model": "models\\experiments\\grouped_mobilenet_retrained\\seed7\\skin_classifier.onnx",
+        "data_dir": "data\\processed\\scin_grouped_seed7\\val",
+        "labels": [
+          "acne_like_texture",
+          "clinician_review",
+          "dermatitis_like_irritation",
+          "folliculitis_like_bumps",
+          "hyperpigmentation_like_uneven_tone",
+          "rosacea_like_redness"
+        ]
+      },
+      "split_audit": {
+        "leakage_check": {
+          "group_overlap_count": 0,
+          "passed": true
+        },
+        "splits": {
+          "train": {
+            "images": 610,
+            "groups": 276,
+            "labels": {
+              "acne_like_texture": {
+                "images": 121,
+                "groups": 57
+              },
+              "clinician_review": {
+                "images": 16,
+                "groups": 7
+              },
+              "dermatitis_like_irritation": {
+                "images": 384,
+                "groups": 174
+              },
+              "folliculitis_like_bumps": {
+                "images": 44,
+                "groups": 20
+              },
+              "hyperpigmentation_like_uneven_tone": {
+                "images": 10,
+                "groups": 4
+              },
+              "rosacea_like_redness": {
+                "images": 35,
+                "groups": 14
+              }
+            }
+          },
+          "val": {
+            "images": 170,
+            "groups": 69,
+            "labels": {
+              "acne_like_texture": {
+                "images": 34,
+                "groups": 14
+              },
+              "clinician_review": {
+                "images": 4,
+                "groups": 2
+              },
+              "dermatitis_like_irritation": {
+                "images": 109,
+                "groups": 44
+              },
+              "folliculitis_like_bumps": {
+                "images": 14,
+                "groups": 5
+              },
+              "hyperpigmentation_like_uneven_tone": {
+                "images": 2,
+                "groups": 1
+              },
+              "rosacea_like_redness": {
+                "images": 7,
+                "groups": 3
+              }
+            }
+          }
+        },
+        "config": {
+          "manifest": "work\\skin-private-ai\\data\\raw\\scin\\face_skin_manifest.csv",
+          "path_column": "image_path",
+          "label_column": "label",
+          "group_column": "case_id",
+          "split_column": null,
+          "val_ratio": 0.2,
+          "seed": 7,
+          "allow_image_level_split": false
+        }
+      }
+    },
+    {
+      "seed": 13,
+      "split_dir": "data\\processed\\scin_grouped_seed13",
+      "run_dir": "models\\experiments\\grouped_mobilenet_retrained\\seed13",
+      "metrics": {
+        "total": 157,
+        "accuracy": 0.47770700636942676,
+        "macro_recall": 0.2696730305025236,
+        "per_class_recall": {
+          "acne_like_texture": 0.1935483870967742,
+          "clinician_review": 0.2,
+          "dermatitis_like_irritation": 0.6530612244897959,
+          "folliculitis_like_bumps": 0.0,
+          "hyperpigmentation_like_uneven_tone": 0.0,
+          "rosacea_like_redness": 0.5714285714285714
+        },
+        "per_class_support": {
+          "acne_like_texture": 31,
+          "clinician_review": 5,
+          "dermatitis_like_irritation": 98,
+          "folliculitis_like_bumps": 13,
+          "hyperpigmentation_like_uneven_tone": 3,
+          "rosacea_like_redness": 7
+        },
+        "low_support_labels": [
+          "clinician_review",
+          "hyperpigmentation_like_uneven_tone",
+          "rosacea_like_redness"
+        ],
+        "confusion": {
+          "acne_like_texture": {
+            "acne_like_texture": 6,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 14,
+            "folliculitis_like_bumps": 2,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 9
+          },
+          "clinician_review": {
+            "acne_like_texture": 0,
+            "clinician_review": 1,
+            "dermatitis_like_irritation": 2,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 2
+          },
+          "dermatitis_like_irritation": {
+            "acne_like_texture": 13,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 64,
+            "folliculitis_like_bumps": 6,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 15
+          },
+          "folliculitis_like_bumps": {
+            "acne_like_texture": 1,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 11,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 1
+          },
+          "hyperpigmentation_like_uneven_tone": {
+            "acne_like_texture": 0,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 3
+          },
+          "rosacea_like_redness": {
+            "acne_like_texture": 2,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 1,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 4
+          }
+        },
+        "model": "models\\experiments\\grouped_mobilenet_retrained\\seed13\\skin_classifier.onnx",
+        "data_dir": "data\\processed\\scin_grouped_seed13\\val",
+        "labels": [
+          "acne_like_texture",
+          "clinician_review",
+          "dermatitis_like_irritation",
+          "folliculitis_like_bumps",
+          "hyperpigmentation_like_uneven_tone",
+          "rosacea_like_redness"
+        ]
+      },
+      "split_audit": {
+        "leakage_check": {
+          "group_overlap_count": 0,
+          "passed": true
+        },
+        "splits": {
+          "train": {
+            "images": 623,
+            "groups": 276,
+            "labels": {
+              "acne_like_texture": {
+                "images": 124,
+                "groups": 57
+              },
+              "clinician_review": {
+                "images": 15,
+                "groups": 7
+              },
+              "dermatitis_like_irritation": {
+                "images": 395,
+                "groups": 174
+              },
+              "folliculitis_like_bumps": {
+                "images": 45,
+                "groups": 20
+              },
+              "hyperpigmentation_like_uneven_tone": {
+                "images": 9,
+                "groups": 4
+              },
+              "rosacea_like_redness": {
+                "images": 35,
+                "groups": 14
+              }
+            }
+          },
+          "val": {
+            "images": 157,
+            "groups": 69,
+            "labels": {
+              "acne_like_texture": {
+                "images": 31,
+                "groups": 14
+              },
+              "clinician_review": {
+                "images": 5,
+                "groups": 2
+              },
+              "dermatitis_like_irritation": {
+                "images": 98,
+                "groups": 44
+              },
+              "folliculitis_like_bumps": {
+                "images": 13,
+                "groups": 5
+              },
+              "hyperpigmentation_like_uneven_tone": {
+                "images": 3,
+                "groups": 1
+              },
+              "rosacea_like_redness": {
+                "images": 7,
+                "groups": 3
+              }
+            }
+          }
+        },
+        "config": {
+          "manifest": "work\\skin-private-ai\\data\\raw\\scin\\face_skin_manifest.csv",
+          "path_column": "image_path",
+          "label_column": "label",
+          "group_column": "case_id",
+          "split_column": null,
+          "val_ratio": 0.2,
+          "seed": 13,
+          "allow_image_level_split": false
+        }
+      }
+    },
+    {
+      "seed": 21,
+      "split_dir": "data\\processed\\scin_grouped_seed21",
+      "run_dir": "models\\experiments\\grouped_mobilenet_retrained\\seed21",
+      "metrics": {
+        "total": 145,
+        "accuracy": 0.5241379310344828,
+        "macro_recall": 0.2597167325428195,
+        "per_class_recall": {
+          "acne_like_texture": 0.17857142857142858,
+          "clinician_review": 0.0,
+          "dermatitis_like_irritation": 0.717391304347826,
+          "folliculitis_like_bumps": 0.09090909090909091,
+          "hyperpigmentation_like_uneven_tone": 0.0,
+          "rosacea_like_redness": 0.5714285714285714
+        },
+        "per_class_support": {
+          "acne_like_texture": 28,
+          "clinician_review": 5,
+          "dermatitis_like_irritation": 92,
+          "folliculitis_like_bumps": 11,
+          "hyperpigmentation_like_uneven_tone": 2,
+          "rosacea_like_redness": 7
+        },
+        "low_support_labels": [
+          "clinician_review",
+          "hyperpigmentation_like_uneven_tone",
+          "rosacea_like_redness"
+        ],
+        "confusion": {
+          "acne_like_texture": {
+            "acne_like_texture": 5,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 9,
+            "folliculitis_like_bumps": 3,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 11
+          },
+          "clinician_review": {
+            "acne_like_texture": 0,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 5,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 0
+          },
+          "dermatitis_like_irritation": {
+            "acne_like_texture": 2,
+            "clinician_review": 6,
+            "dermatitis_like_irritation": 66,
+            "folliculitis_like_bumps": 11,
+            "hyperpigmentation_like_uneven_tone": 2,
+            "rosacea_like_redness": 5
+          },
+          "folliculitis_like_bumps": {
+            "acne_like_texture": 0,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 10,
+            "folliculitis_like_bumps": 1,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 0
+          },
+          "hyperpigmentation_like_uneven_tone": {
+            "acne_like_texture": 0,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 2,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 0
+          },
+          "rosacea_like_redness": {
+            "acne_like_texture": 0,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 2,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 1,
+            "rosacea_like_redness": 4
+          }
+        },
+        "model": "models\\experiments\\grouped_mobilenet_retrained\\seed21\\skin_classifier.onnx",
+        "data_dir": "data\\processed\\scin_grouped_seed21\\val",
+        "labels": [
+          "acne_like_texture",
+          "clinician_review",
+          "dermatitis_like_irritation",
+          "folliculitis_like_bumps",
+          "hyperpigmentation_like_uneven_tone",
+          "rosacea_like_redness"
+        ]
+      },
+      "split_audit": {
+        "leakage_check": {
+          "group_overlap_count": 0,
+          "passed": true
+        },
+        "splits": {
+          "train": {
+            "images": 633,
+            "groups": 276,
+            "labels": {
+              "acne_like_texture": {
+                "images": 125,
+                "groups": 57
+              },
+              "clinician_review": {
+                "images": 15,
+                "groups": 7
+              },
+              "dermatitis_like_irritation": {
+                "images": 401,
+                "groups": 174
+              },
+              "folliculitis_like_bumps": {
+                "images": 47,
+                "groups": 20
+              },
+              "hyperpigmentation_like_uneven_tone": {
+                "images": 10,
+                "groups": 4
+              },
+              "rosacea_like_redness": {
+                "images": 35,
+                "groups": 14
+              }
+            }
+          },
+          "val": {
+            "images": 147,
+            "groups": 69,
+            "labels": {
+              "acne_like_texture": {
+                "images": 30,
+                "groups": 14
+              },
+              "clinician_review": {
+                "images": 5,
+                "groups": 2
+              },
+              "dermatitis_like_irritation": {
+                "images": 92,
+                "groups": 44
+              },
+              "folliculitis_like_bumps": {
+                "images": 11,
+                "groups": 5
+              },
+              "hyperpigmentation_like_uneven_tone": {
+                "images": 2,
+                "groups": 1
+              },
+              "rosacea_like_redness": {
+                "images": 7,
+                "groups": 3
+              }
+            }
+          }
+        },
+        "config": {
+          "manifest": "work\\skin-private-ai\\data\\raw\\scin\\face_skin_manifest.csv",
+          "path_column": "image_path",
+          "label_column": "label",
+          "group_column": "case_id",
+          "split_column": null,
+          "val_ratio": 0.2,
+          "seed": 21,
+          "allow_image_level_split": false
+        }
+      }
+    },
+    {
+      "seed": 84,
+      "split_dir": "data\\processed\\scin_grouped_seed84",
+      "run_dir": "models\\experiments\\grouped_mobilenet_retrained\\seed84",
+      "metrics": {
+        "total": 156,
+        "accuracy": 0.47435897435897434,
+        "macro_recall": 0.2950261544011544,
+        "per_class_recall": {
+          "acne_like_texture": 0.030303030303030304,
+          "clinician_review": 0.16666666666666666,
+          "dermatitis_like_irritation": 0.6770833333333334,
+          "folliculitis_like_bumps": 0.18181818181818182,
+          "hyperpigmentation_like_uneven_tone": 0.0,
+          "rosacea_like_redness": 0.7142857142857143
+        },
+        "per_class_support": {
+          "acne_like_texture": 33,
+          "clinician_review": 6,
+          "dermatitis_like_irritation": 96,
+          "folliculitis_like_bumps": 11,
+          "hyperpigmentation_like_uneven_tone": 3,
+          "rosacea_like_redness": 7
+        },
+        "low_support_labels": [
+          "clinician_review",
+          "hyperpigmentation_like_uneven_tone",
+          "rosacea_like_redness"
+        ],
+        "confusion": {
+          "acne_like_texture": {
+            "acne_like_texture": 1,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 17,
+            "folliculitis_like_bumps": 2,
+            "hyperpigmentation_like_uneven_tone": 1,
+            "rosacea_like_redness": 12
+          },
+          "clinician_review": {
+            "acne_like_texture": 0,
+            "clinician_review": 1,
+            "dermatitis_like_irritation": 3,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 2
+          },
+          "dermatitis_like_irritation": {
+            "acne_like_texture": 2,
+            "clinician_review": 2,
+            "dermatitis_like_irritation": 65,
+            "folliculitis_like_bumps": 14,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 13
+          },
+          "folliculitis_like_bumps": {
+            "acne_like_texture": 0,
+            "clinician_review": 1,
+            "dermatitis_like_irritation": 7,
+            "folliculitis_like_bumps": 2,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 1
+          },
+          "hyperpigmentation_like_uneven_tone": {
+            "acne_like_texture": 0,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 3
+          },
+          "rosacea_like_redness": {
+            "acne_like_texture": 1,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 1,
+            "rosacea_like_redness": 5
+          }
+        },
+        "model": "models\\experiments\\grouped_mobilenet_retrained\\seed84\\skin_classifier.onnx",
+        "data_dir": "data\\processed\\scin_grouped_seed84\\val",
+        "labels": [
+          "acne_like_texture",
+          "clinician_review",
+          "dermatitis_like_irritation",
+          "folliculitis_like_bumps",
+          "hyperpigmentation_like_uneven_tone",
+          "rosacea_like_redness"
+        ]
+      },
+      "split_audit": {
+        "leakage_check": {
+          "group_overlap_count": 0,
+          "passed": true
+        },
+        "splits": {
+          "train": {
+            "images": 623,
+            "groups": 276,
+            "labels": {
+              "acne_like_texture": {
+                "images": 121,
+                "groups": 57
+              },
+              "clinician_review": {
+                "images": 14,
+                "groups": 7
+              },
+              "dermatitis_like_irritation": {
+                "images": 397,
+                "groups": 174
+              },
+              "folliculitis_like_bumps": {
+                "images": 47,
+                "groups": 20
+              },
+              "hyperpigmentation_like_uneven_tone": {
+                "images": 9,
+                "groups": 4
+              },
+              "rosacea_like_redness": {
+                "images": 35,
+                "groups": 14
+              }
+            }
+          },
+          "val": {
+            "images": 157,
+            "groups": 69,
+            "labels": {
+              "acne_like_texture": {
+                "images": 34,
+                "groups": 14
+              },
+              "clinician_review": {
+                "images": 6,
+                "groups": 2
+              },
+              "dermatitis_like_irritation": {
+                "images": 96,
+                "groups": 44
+              },
+              "folliculitis_like_bumps": {
+                "images": 11,
+                "groups": 5
+              },
+              "hyperpigmentation_like_uneven_tone": {
+                "images": 3,
+                "groups": 1
+              },
+              "rosacea_like_redness": {
+                "images": 7,
+                "groups": 3
+              }
+            }
+          }
+        },
+        "config": {
+          "manifest": "work\\skin-private-ai\\data\\raw\\scin\\face_skin_manifest.csv",
+          "path_column": "image_path",
+          "label_column": "label",
+          "group_column": "case_id",
+          "split_column": null,
+          "val_ratio": 0.2,
+          "seed": 84,
+          "allow_image_level_split": false
+        }
+      }
+    }
+  ]
+}

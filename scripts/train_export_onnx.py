@@ -109,7 +109,7 @@ def main() -> None:
         score = metrics[args.select_metric]
         if score >= best_score:
             best_score = score
-            best_state = {key: value.detach().cpu() for key, value in model.state_dict().items()}
+            best_state = _copy_state_dict(model)
 
     if best_state is not None:
         model.load_state_dict(best_state)
@@ -215,6 +215,10 @@ def _balanced_sampler(dataset: datasets.ImageFolder) -> WeightedRandomSampler:
         counts[label] += 1
     sample_weights = [float(1.0 / max(1.0, counts[label].item())) for label in labels]
     return WeightedRandomSampler(sample_weights, num_samples=len(sample_weights), replacement=True)
+
+
+def _copy_state_dict(model: nn.Module) -> dict[str, torch.Tensor]:
+    return {key: value.detach().cpu().clone() for key, value in model.state_dict().items()}
 
 
 def export_onnx(model: nn.Module, path: Path) -> None:

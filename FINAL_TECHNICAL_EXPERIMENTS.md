@@ -52,18 +52,18 @@ The key missing comparison from the audit is now implemented:
 - Evaluation: each seed's validation cases are used once after training
 - Reporting: accuracy, macro recall, per-class recall, per-class support, and low-support labels
 
-One smoke run has been executed to validate the machinery:
+The full five-seed run has been executed:
 
-| Run | Seed | Epochs | Accuracy | Macro Recall | Low-Support Labels |
+| Run | Seeds | Epochs | Accuracy | Macro Recall | Low-Support Labels |
 | --- | ---: | ---: | ---: | ---: | --- |
-| MobileNetV3 fair grouped smoke | 42 | 1 | 44.7% | 30.7% | clinician_review, hyperpigmentation_like_uneven_tone, rosacea_like_redness |
+| MobileNetV3 fair grouped retrain | 5 | 8 | 48.0% +/- 3.2 | 30.2% +/- 5.3 | clinician_review, hyperpigmentation_like_uneven_tone, rosacea_like_redness |
 
-This is not a model-quality result. One CPU epoch is intentionally undertrained. The value of this artifact is methodological: it proves the corrected baseline can be generated without comparing honest probes against a fixed model that may have seen evaluation cases.
+This is the clean MobileNet baseline for this repo. It is far below the fixed-model diagnostic, which confirms that the old 86.2% number should not travel as a held-out claim.
 
 Artifacts:
 
 - `scripts/run_grouped_mobilenet_baseline.py`
-- `models/grouped_scin_mobilenet_retrained_smoke_metrics.json`
+- `models/grouped_scin_mobilenet_retrained_baseline_metrics.json`
 
 ### Skin-Tone Subgroup Audit
 
@@ -133,13 +133,15 @@ The completed result was:
 | Model / probe | Accuracy | Macro recall |
 | --- | ---: | ---: |
 | Fixed grouped ONNX diagnostic | 86.2% +/- 1.2 | 63.1% +/- 10.1 |
+| Fair grouped MobileNetV3 retrain | 48.0% +/- 3.2 | 30.2% +/- 5.3 |
 | Derm Foundation linear probe | 66.8% +/- 6.9 | 33.8% +/- 5.9 |
 
 The failure mode was concentrated in the tail classes. Hyperpigmentation stayed at 0.0 mean recall, folliculitis reached only 20.9%, and rosacea reached 20.0%. I also ran a compact sanity sweep over logistic probes with and without class weighting and with macro-first versus accuracy-first C selection; none recovered the fixed ONNX diagnostic.
 
-Interpretation: the dermatology foundation linear probe did not rescue this mapped SCIN task, but this experiment does not prove Derm Foundation is inferior to a fair MobileNet baseline. The fair comparison requires running the full MobileNetV3 grouped retrain, not comparing against the contaminated fixed-model diagnostic or the deliberately undertrained smoke run.
+Interpretation: the dermatology foundation linear probe produces a fair Pareto lift over the fold-retrained MobileNetV3 baseline: +18.8 accuracy points and +3.7 macro-recall points. The result is scientifically useful because it shows that dermatology-specific representation learning helps under the corrected protocol. It is not a solved classifier: absolute macro recall remains low and hyperpigmentation is still unsolved.
 
 Artifact: `models/grouped_scin_derm_foundation_embedding_metrics.json`.
+Fair comparison artifact: `models/grouped_scin_fair_model_comparison_metrics.json`.
 
 ## Baseline To Beat
 
@@ -161,14 +163,15 @@ Fixed grouped SCIN-only diagnostic:
 - Macro recall: `63.1% +/- 10.1`
 - Caveat: fixed-model evaluation may include original training cases and has fragile tail-class counts
 
-Fair grouped MobileNet smoke:
+Fair grouped MobileNet retrain:
 
-- Model: MobileNetV3-Small retrained on seed 42 grouped training cases
+- Model: MobileNetV3-Small retrained separately on each grouped training fold
 - Split: grouped by `case_id`, no train/validation group overlap
-- Epochs: `1`
-- Accuracy: `44.7%`
-- Macro recall: `30.7%`
-- Caveat: smoke test only; use the full runner for a real baseline
+- Epochs: `8`
+- Seeds: `42`, `7`, `13`, `21`, `84`
+- Accuracy: `48.0% +/- 3.2`
+- Macro recall: `30.2% +/- 5.3`
+- Caveat: tail labels remain underpowered; clinician_review averages 4.8 validation images, hyperpigmentation 2.6, and rosacea 7.0
 
 Raw flat model on the same combined validation split:
 

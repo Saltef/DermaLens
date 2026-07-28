@@ -82,11 +82,11 @@ The deployed model is intentionally modest:
 - MobileNetV3-Small ONNX
 - local CPU-friendly inference
 - conservative prior calibration
-- no final clean grouped retrain headline yet
+- fair grouped retrain baseline: 48.0% +/- 3.2 accuracy and 30.2% +/- 5.3 macro recall
 
 The earlier combined validation split reported 69.4% accuracy and 48.4% macro recall, but that number is kept mainly as experiment history because the preparation path had image-level leakage risk. The later grouped SCIN result fixed fold-level case overlap, but a second audit found that it is still not a clean model holdout because the fixed deployed ONNX model had already been trained on SCIN-derived head/neck images.
 
-The repo now includes the missing fair-baseline runner:
+The repo includes the fair-baseline runner:
 
 ```powershell
 python scripts/run_grouped_mobilenet_baseline.py `
@@ -97,13 +97,13 @@ python scripts/run_grouped_mobilenet_baseline.py `
   --epochs 8
 ```
 
-A one-seed, one-epoch CPU smoke run of that path reached 44.7% accuracy and 30.7% macro recall. That smoke number is deliberately not a model-quality claim; it proves the corrected experiment machinery runs end to end and emits low-support warnings.
+The completed five-seed run reached 48.0% +/- 3.2 accuracy and 30.2% +/- 5.3 macro recall. This lower result is the fair baseline; the old 86.2% fixed-model number stays in the repo only as a contaminated diagnostic.
 
 The repo also includes a subgroup workflow by Fitzpatrick and Monk tone metadata in `models/grouped_scin_subgroup_metrics.json`. Read it as an example of fairness-aware evaluation mechanics, not proof that the model is fair; the darkest Monk bucket is too small, and SCIN's available tone labels are retrospective image estimates rather than controlled clinical subgroup labels.
 
 There is also one grouped-split decoupled-head artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`. It freezes the ONNX image model and retrains only a class-balanced head over its logits. Do not read it as a validated improvement over the fixed ONNX diagnostic: the baseline is contaminated as a model-holdout estimate, and the stored artifact predates nested C-selection. The script has now been corrected to select C on a nested grouped calibration split and should be rerun before publishing a refreshed final number.
 
-The high-leverage foundation-model path is implemented in `scripts/evaluate_derm_foundation_embeddings.py`. It extracts `google/derm-foundation` embeddings, trains a class-balanced linear probe, selects C on nested calibration data, and evaluates on the held-out grouped fold. The completed result is 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall. Read this as a completed probe result, not as evidence that Derm Foundation is worse than a fair MobileNet baseline; the fair grouped MobileNet retrain now has a runner and smoke artifact, but not a full 5-seed trained result.
+The high-leverage foundation-model path is implemented in `scripts/evaluate_derm_foundation_embeddings.py`. It extracts `google/derm-foundation` embeddings, trains a class-balanced linear probe, selects C on nested calibration data, and evaluates on the held-out grouped fold. The completed result is 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall. Compared with the fair MobileNet baseline, Derm Foundation improves accuracy by 18.8 points and macro recall by 3.7 points. That is the strongest clean modeling result in the repo, but it still does not solve the low-support tail classes.
 
 The research pipeline found stronger experimental results:
 

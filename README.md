@@ -23,12 +23,12 @@ For a more explicit walkthrough, see [GUIDE.md](GUIDE.md).
 - **Deployable model:** MobileNetV3-Small ONNX classifier with optional prior calibration.
 - **Research models:** ConvNeXt frozen embeddings, neural classifier heads, long-tail supervised contrastive tests, targeted augmentation, probability ensembles, and calibration sweeps.
 - **Runtime polish:** ONNX inference runs off the async event loop, uploads have a decompression-bomb guard, and facial region summaries now use an OpenCV face detector with a geometry fallback.
-- **Current clean-result status:** no final fold-retrained grouped MobileNet headline is claimed yet. The missing fair baseline is now implemented in `scripts/run_grouped_mobilenet_baseline.py`.
-- **Fair-baseline smoke check:** a one-seed, one-epoch CPU smoke run completed at 44.7% accuracy and 30.7% macro recall. This is not a performance claim; it verifies the corrected grouped retrain/evaluate harness. See `models/grouped_scin_mobilenet_retrained_smoke_metrics.json`.
+- **Fair grouped MobileNet baseline:** retraining MobileNetV3-Small separately on five grouped SCIN folds reached 48.0% +/- 3.2 accuracy and 30.2% +/- 5.3 macro recall. See `models/grouped_scin_mobilenet_retrained_baseline_metrics.json`.
+- **Fair Derm Foundation comparison:** the Derm Foundation linear probe reached 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall, a fair Pareto lift over the fold-retrained MobileNet baseline. See `models/grouped_scin_fair_model_comparison_metrics.json`.
 - **Legacy deployable ONNX result:** 69.4% accuracy and 48.4% macro recall after conservative calibration on the earlier combined validation path. This is retained as experiment history because the original split path had leakage risk.
 - **Fixed-model SCIN diagnostic, not a clean held-out headline:** the deployed ONNX model reached 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall on grouped SCIN folds, but the model was previously fine-tuned on SCIN-derived head/neck data. Grouping prevents overlap inside the new folds; it does not prove the fixed model had never seen those validation cases. See `models/grouped_scin_clean_split_metrics.json`.
 - **Grouped modeling experiments:** the decoupled head and Derm Foundation probe are useful experiment artifacts, but they should be compared only against the fold-retrained MobileNet baseline, not against the contaminated fixed-model diagnostic.
-- **Derm Foundation result:** the dermatology-specific embedding probe completed at 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall across grouped split seeds. This is a result, but not evidence by itself that Derm Foundation is inferior to a fair MobileNet baseline because that fair retrained baseline has only been smoke-tested so far.
+- **Derm Foundation result:** the dermatology-specific embedding probe completed at 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall across grouped split seeds. It improves over the fair MobileNet baseline, but it does not solve the tail-label problem.
 - **Subgroup workflow demo:** Fitzpatrick/Monk subgroup metrics are reported in `models/grouped_scin_subgroup_metrics.json`, but the buckets are too small and the tone labels too noisy for fairness claims.
 - **Best untuned experimental validation result:** 79.2% accuracy and 71.0% macro recall with a mixed ConvNeXt ensemble.
 - **Critical limitation:** fresh holdout testing did not confirm the validation-tuned 81.4% result, and the later fixed-model grouped SCIN check is not a clean model holdout because original training-case exclusion was not available. Some tail classes have fewer than 10 validation images per split, so per-class recall and macro recall are underpowered diagnostics rather than stable evidence.
@@ -153,7 +153,13 @@ python scripts/run_grouped_mobilenet_baseline.py `
   --num-workers 0
 ```
 
-I ran a one-seed, one-epoch CPU smoke check of that path. It reached 44.7% accuracy and 30.7% macro recall on seed 42, with clinician_review, hyperpigmentation, and rosacea flagged as low-support validation labels. This smoke result is not a model-quality claim; it confirms that the fair grouped retrain/evaluate loop is executable and produces support-aware metrics.
+The completed five-seed fair baseline reached:
+
+```text
+fair MobileNetV3 retrain: 48.0% +/- 3.2 accuracy, 30.2% +/- 5.3 macro recall
+```
+
+This is much lower than the contaminated fixed-model diagnostic, which confirms that the audit found a real validity problem rather than a documentation nuance. It also makes the foundation-model comparison fair.
 
 The subgroup workflow now reports Fitzpatrick and Monk tone buckets across the same five grouped split seeds. It is useful as a fairness-aware reporting demonstration, but it is not strong enough for a fairness claim because some buckets have only a handful of validation images and SCIN's own documentation notes that Fitzpatrick and Monk scales were not intended for retrospective estimation from images.
 
@@ -184,10 +190,10 @@ The completed Derm Foundation probe result was:
 ```text
 fixed ONNX diagnostic: 86.2% +/- 1.2 accuracy, 63.1% +/- 10.1 macro recall
 Derm Foundation probe: 66.8% +/- 6.9 accuracy, 33.8% +/- 5.9 macro recall
-fair MobileNet smoke: 44.7% accuracy, 30.7% macro recall after 1 CPU epoch
+fair MobileNet retrain: 48.0% +/- 3.2 accuracy, 30.2% +/- 5.3 macro recall
 ```
 
-This should not be interpreted as proof that Derm Foundation is worse than a fair MobileNet baseline, because the fixed ONNX diagnostic is not a fair fold-retrained baseline and the smoke MobileNet run is intentionally undertrained. The useful conclusion is narrower: the simple Derm Foundation linear probe did not solve the mapped tail-label problem in this setup. Hyperpigmentation recall stayed at 0.0 and folliculitis/rosacea recall remained weak, but those tail estimates are numerically tiny.
+This is now a fair comparison: Derm Foundation improved mean accuracy by 18.8 points and mean macro recall by 3.7 points versus the fold-retrained MobileNet baseline. The useful conclusion is still restrained: the simple Derm Foundation linear probe provides a defensible representation gain, but it does not solve the mapped tail-label problem. Hyperpigmentation recall stayed at 0.0 and several tail estimates are numerically tiny.
 
 ## Current Validity Status
 
@@ -195,9 +201,9 @@ The current repo now distinguishes between validated machinery and unresolved mo
 
 1. Implemented: grouped ImageFolder preparation with case-level leakage audits.
 2. Implemented: support-aware ONNX evaluation with low-support label flags.
-3. Implemented: fair grouped MobileNet retrain/evaluate runner.
-4. Smoke-tested: one-seed, one-epoch MobileNet retrain on seed 42.
-5. Still needed for a headline: full 5-seed MobileNet retrain at real epochs, then compare Derm Foundation and decoupled-head probes against that fair baseline.
+3. Completed: fair grouped MobileNet retrain/evaluate runner across five seeds.
+4. Completed: Derm Foundation comparison against that fair MobileNet baseline.
+5. Still needed for stronger science: more face-specific data or a label audit for the low-support/overlapping tail classes.
 6. Any metric involving labels with fewer than about 10 validation examples should be described as underpowered, not as a stable tail-class result.
 
 Target labels for the current prototype:

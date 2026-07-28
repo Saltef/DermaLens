@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import torch
+
 from scripts.evaluate_onnx import _build_metrics as _build_onnx_metrics
 from scripts.evaluate_subgroups import _exclude_trained_cases, _grouped_split, _metrics
 from scripts.run_grouped_mobilenet_baseline import _summary
+from scripts.train_export_onnx import _copy_state_dict
 
 
 def test_evaluate_subgroups_split_keeps_case_ids_disjoint() -> None:
@@ -101,3 +104,15 @@ def test_grouped_mobilenet_summary_aggregates_metrics() -> None:
     assert summary["summary"]["macro_recall"]["values"] == [0.4, 0.6]
     assert summary["summary"]["per_class_support"]["tail"]["values"] == [2, 3]
     assert summary["summary"]["low_support_by_seed"] == {"1": ["tail"], "2": ["tail"]}
+
+
+def test_train_export_best_state_copy_does_not_share_storage() -> None:
+    model = torch.nn.Linear(2, 1)
+    copied = _copy_state_dict(model)
+    original_weight = copied["weight"].clone()
+
+    with torch.no_grad():
+        model.weight.add_(10)
+
+    assert torch.equal(copied["weight"], original_weight)
+    assert not torch.equal(copied["weight"], model.state_dict()["weight"])

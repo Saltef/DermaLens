@@ -30,7 +30,7 @@ A later methodological review identified a split-leakage risk: SCIN can contribu
 
 Under the corrected grouped SCIN-only protocol, the fixed deployed ONNX model with conservative prior calibration reached 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall across five split seeds. This is now classified as a contaminated fixed-model diagnostic, not a clean held-out baseline. The grouped split prevents overlap between the newly constructed folds, but the fixed ONNX model was previously fine-tuned on SCIN-derived head/neck data. Without the original model-training case list, this run cannot prove that validation cases were unseen by the deployed model.
 
-The missing fair comparison is now implemented in `scripts/run_grouped_mobilenet_baseline.py`: each seed prepares a grouped split, trains MobileNet only on that seed's training cases, exports ONNX, evaluates once on untouched validation cases, and aggregates support-aware metrics. A one-seed, one-epoch CPU smoke run completed at 44.7% accuracy and 30.7% macro recall. This is a harness-validation artifact, not a deployable performance claim.
+The fair comparison has now been run with `scripts/run_grouped_mobilenet_baseline.py`: each seed prepares a grouped split, trains MobileNet only on that seed's training cases, exports ONNX, evaluates once on untouched validation cases, and aggregates support-aware metrics. The five-seed fair MobileNet baseline reached 48.0% +/- 3.2 accuracy and 30.2% +/- 5.3 macro recall.
 
 ### Skin-Tone Subgroup Audit
 
@@ -63,7 +63,7 @@ I tested a decoupled balanced head under the same grouped SCIN protocol. The dep
 
 Artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`.
 
-I also ran a Derm Foundation embedding evaluation using `google/derm-foundation` as the frozen representation with the same grouped/nested protocol. The class-balanced linear probe reached 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall. This is a completed experiment, but it does not support the stronger claim that Derm Foundation is worse than a fair MobileNet baseline, because the fair fold-retrained MobileNet baseline has only been smoke-tested so far. The narrower conclusion is that a simple linear probe over Derm Foundation embeddings did not solve the current mapped tail-label problem.
+I also ran a Derm Foundation embedding evaluation using `google/derm-foundation` as the frozen representation with the same grouped/nested protocol. The class-balanced linear probe reached 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall. Compared with the fair fold-retrained MobileNet baseline, this is a Pareto lift: +18.8 accuracy points and +3.7 macro-recall points. The narrower caution is that a simple linear probe over Derm Foundation embeddings still did not solve the current mapped tail-label problem.
 
 Artifact: `models/grouped_scin_derm_foundation_embedding_metrics.json`.
 
@@ -85,6 +85,6 @@ The UI and API present outputs as non-diagnostic screening observations. The app
 
 1. Rebuild manifests with strict label confidence settings.
 2. Prepare ImageFolder data with grouped `case_id` splitting.
-3. Run `scripts/run_grouped_mobilenet_baseline.py` for the full 5-seed MobileNetV3 retrain.
-4. Compare Derm Foundation and decoupled-head probes against that fold-retrained baseline.
-5. Report accuracy, macro recall, per-class recall, seed variance, confidence intervals, and per-class support.
+3. Treat the fair fold-retrained MobileNetV3 result, not the fixed-model diagnostic, as the baseline for future modeling comparisons.
+4. Rerun decoupled-head probes against fair representations or mark them as fixed-encoder experiment logs.
+5. Add enough validated face-specific tail examples before treating macro recall as stable evidence.
