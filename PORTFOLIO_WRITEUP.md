@@ -14,7 +14,7 @@ I then ran a post-correction check on SCIN-only grouped splits. The fixed deploy
 
 I also added a skin-tone subgroup workflow using SCIN Fitzpatrick and Monk metadata. The workflow did not show an obvious aggregate drop across Fitzpatrick buckets in the small SCIN-only sample, but the darkest Monk bucket was too small to interpret. I treat that as a process win rather than a fairness claim: the project now has the machinery to report subgroup performance and the discipline to say when the subgroup data is underpowered.
 
-Finally, I ran one modeling improvement under the corrected grouped split: a decoupled cRT-style head. I froze the deployed ONNX image model, used its logits as a compact representation, and retrained only a class-balanced logistic head on each grouped split. The artifact reports **75.1% accuracy** and **73.1% macro recall**, but I no longer frame it as a clean lift over the fixed ONNX result because that fixed ONNX result is contaminated as a model-holdout baseline. A later review also found that this artifact selected C on the evaluation fold, so the code has been corrected to use a nested grouped calibration split and the number should be refreshed before being treated as final.
+Finally, I ran one fixed-encoder operating-point experiment under the corrected grouped split: a decoupled cRT-style head. I froze the deployed ONNX image model, used its logits as a compact representation, and retrained only a class-balanced logistic head on each grouped split. The refreshed artifact selects C on a nested grouped calibration split and reports **75.3% accuracy** and **70.7% macro recall**. I do not frame it as a clean representation benchmark because the frozen encoder comes from the previously SCIN-trained deployed model, but it does show how head retraining can change the accuracy/recall tradeoff.
 
 That decision changed the project story: the strongest remaining gap was a fair fold-retrained MobileNetV3 baseline. I ran that baseline across five grouped SCIN seeds. It reached **48.0% +/- 3.2 accuracy** and **30.2% +/- 5.3 macro recall**, far below the contaminated fixed-model diagnostic. Against that fair baseline, the Derm Foundation probe became a clean modeling result: **66.8% +/- 6.9 accuracy** and **33.8% +/- 5.9 macro recall**, a Pareto lift of **+18.8 accuracy points** and **+3.7 macro-recall points**. The model is still not clinically strong, but the experiment now demonstrates both scientific correction and measurable improvement.
 
@@ -50,11 +50,11 @@ The first deployable model was a MobileNetV3-Small classifier exported to ONNX. 
 | Conservative MobileNetV3 ONNX on grouped SCIN-only splits, 5 split seeds | 86.2% +/- 1.2 | 63.1% +/- 10.1 | Fixed-model diagnostic; not clean model holdout |
 | Fair grouped MobileNetV3 retrain, 5 split seeds | 48.0% +/- 3.2 | 30.2% +/- 5.3 | Clean baseline |
 | Derm Foundation linear probe, 5 grouped split seeds | 66.8% +/- 6.9 | 33.8% +/- 5.9 | Fair Pareto lift over retrained MobileNet |
-| Decoupled balanced logit head on grouped SCIN-only splits, 5 split seeds | 75.1% +/- 2.0 | 73.1% +/- 10.1 | Pre-nested C-selection artifact; not final |
+| Nested decoupled balanced logit head on grouped SCIN-only splits, 5 split seeds | 75.3% +/- 1.7 | 70.7% +/- 11.4 | Fixed-encoder operating point; not clean representation benchmark |
 
 The grouped SCIN-only fixed-model result avoids case overlap inside each newly constructed split, but it does not answer the key validity question because the deployed model was already trained on SCIN-derived data. The fair comparison is the fold-retrained MobileNetV3 result: train a new model on each grouped training fold and evaluate each fold's untouched validation cases.
 
-The decoupled head may move tail behavior in the right direction, but the artifact predates nested C-selection and its comparison baseline is not clean. I treat it as a strong experimental lead rather than a validated improvement.
+The decoupled head moves the fixed encoder toward a more tail-sensitive operating point, but its comparison baseline is not clean because the frozen deployed encoder may have seen SCIN-derived cases. I treat it as useful operating-point evidence rather than a validated representation improvement.
 
 I also ran the most important next experiment: a direct Derm Foundation embedding probe. It used `google/derm-foundation` as the frozen representation, trained a class-balanced linear classifier, selected C on nested grouped calibration data, and evaluated once on the held-out grouped fold. The probe reached **66.8% +/- 6.9 accuracy** and **33.8% +/- 5.9 macro recall**. Compared against the fair MobileNet baseline, Derm Foundation improved both accuracy and macro recall.
 
@@ -175,7 +175,7 @@ This project demonstrates the full applied ML loop:
 - calibration, holdout confirmation, and rejection of an overfit result
 - discovery of both image-level split leakage and fixed-model evaluation contamination
 - subgroup evaluation workflow by available skin-tone metadata, with underpowered buckets explicitly demoted
-- decoupled balanced-head and Derm Foundation experiments that are now framed as leads pending a fair fold-retrained baseline
+- decoupled balanced-head and Derm Foundation experiments separated by validity class: fixed-encoder operating point versus clean fair representation comparison
 - error analysis that turns model failure into a concrete data acquisition plan
 
 The most important outcome is not just a score. It is a defensible process: when a stronger critique found the headline was contaminated, the repo demoted the claim instead of defending it. The next result that matters is a fair grouped retrain/evaluate baseline.

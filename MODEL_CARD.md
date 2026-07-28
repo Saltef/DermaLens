@@ -59,7 +59,7 @@ Artifact: `models/grouped_scin_subgroup_metrics.json`.
 
 ### Tail-Sensitive Head
 
-I tested a decoupled balanced head under the same grouped SCIN protocol. The deployed ONNX image model was frozen, and only a class-balanced logistic head over the frozen logits was retrained. The artifact reports 75.1% +/- 2.0 accuracy and 73.1% +/- 10.1 macro recall, but it should not be compared as a clean improvement over the 86.2% fixed-model diagnostic because that diagnostic may include cases seen during original model training. A later review also found that this artifact selected C on the evaluation fold; the script now performs C-selection on a nested grouped calibration split and should be rerun before this is treated as a final score.
+I tested a decoupled balanced head under the same grouped SCIN protocol. The deployed ONNX image model was frozen, and only a class-balanced logistic head over the frozen logits was retrained. The refreshed artifact selects C on a nested grouped calibration split and reports 75.3% +/- 1.7 accuracy and 70.7% +/- 11.4 macro recall. This should be read as a fixed-encoder operating-point result, not as a clean representation benchmark, because the frozen deployed encoder may include information from original SCIN-derived fine-tuning cases.
 
 Artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`.
 

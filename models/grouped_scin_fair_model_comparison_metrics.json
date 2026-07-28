@@ -333,5 +333,102 @@
     }
   },
   "interpretation": "Derm Foundation embeddings provide a fair Pareto lift over the fold-retrained MobileNetV3 baseline in this experiment, but the absolute macro recall remains low and several tail labels are too underpowered for stable per-class claims.",
-  "tail_support_note": "Across fair MobileNet folds, clinician_review averages 4.8 validation images, hyperpigmentation averages 2.6, and rosacea averages 7.0. Treat their recall as underpowered diagnostics, not stable tail-class evidence."
+  "tail_support_note": "Across fair MobileNet folds, clinician_review averages 4.8 validation images, hyperpigmentation averages 2.6, and rosacea averages 7.0. Treat their recall as underpowered diagnostics, not stable tail-class evidence.",
+  "fixed_encoder_head_experiment_not_clean_representation_benchmark": {
+    "nested_decoupled_balanced_logit_head": {
+      "accuracy": {
+        "mean": 0.7533106708023053,
+        "std": 0.01696463936512948,
+        "values": [
+          0.7666666666666667,
+          0.7647058823529411,
+          0.732484076433121,
+          0.7655172413793103,
+          0.7371794871794872
+        ]
+      },
+      "macro_recall": {
+        "mean": 0.7072611699931335,
+        "std": 0.11440108225593938,
+        "values": [
+          0.6865297401011686,
+          0.814936525068743,
+          0.5244535034857615,
+          0.7892010163749293,
+          0.721185064935065
+        ]
+      },
+      "per_class_recall": {
+        "acne_like_texture": {
+          "mean": 0.723692405001703,
+          "std": 0.04362908948646982,
+          "values": [
+            0.6923076923076923,
+            0.7352941176470589,
+            0.7741935483870968,
+            0.75,
+            0.6666666666666666
+          ]
+        },
+        "clinician_review": {
+          "mean": 0.64,
+          "std": 0.1781852968120546,
+          "values": [
+            0.75,
+            0.75,
+            0.4,
+            0.8,
+            0.5
+          ]
+        },
+        "dermatitis_like_irritation": {
+          "mean": 0.7793085143909977,
+          "std": 0.013397097574803524,
+          "values": [
+            0.7959183673469388,
+            0.7614678899082569,
+            0.7857142857142857,
+            0.782608695652174,
+            0.7708333333333334
+          ]
+        },
+        "folliculitis_like_bumps": {
+          "mean": 0.7196137196137197,
+          "std": 0.13058735538987964,
+          "values": [
+            0.8333333333333334,
+            0.7857142857142857,
+            0.6153846153846154,
+            0.5454545454545454,
+            0.8181818181818182
+          ]
+        },
+        "hyperpigmentation_like_uneven_tone": {
+          "mean": 0.6666666666666666,
+          "std": 0.4714045207910317,
+          "values": [
+            0.3333333333333333,
+            1.0,
+            0.0,
+            1.0,
+            1.0
+          ]
+        },
+        "rosacea_like_redness": {
+          "mean": 0.7142857142857143,
+          "std": 0.14285714285714285,
+          "values": [
+            0.7142857142857143,
+            0.8571428571428571,
+            0.5714285714285714,
+            0.8571428571428571,
+            0.5714285714285714
+          ]
+        }
+      },
+      "artifact": "models/grouped_scin_decoupled_logit_head_metrics.json",
+      "validity_note": "C-selection is now nested inside each grouped training fold, so the evaluation fold is not used for head hyperparameter selection. However, the frozen logits come from the previously SCIN-trained deployed ONNX encoder, so this remains a fixed-encoder head experiment rather than a clean representation benchmark."
+    },
+    "interpretation": "This refreshed nested head result is useful for operating-point analysis, but it is excluded from the clean representation comparison because it uses frozen logits from the previously SCIN-trained deployed ONNX encoder."
+  }
 }

@@ -103,7 +103,7 @@ I then tested one modeling improvement under the same grouped protocol. This was
 | Model | Accuracy | Macro Recall |
 | --- | ---: | ---: |
 | Fixed conservative-prior ONNX diagnostic | 86.2% +/- 1.2 | 63.1% +/- 10.1 |
-| Decoupled balanced logit head | 75.1% +/- 2.0 | 73.1% +/- 10.1 |
+| Nested decoupled balanced logit head | 75.3% +/- 1.7 | 70.7% +/- 11.4 |
 
 Per-class recall moved as follows:
 
@@ -116,7 +116,7 @@ Per-class recall moved as follows:
 | hyperpigmentation_like_uneven_tone | 40.0% | 73.3% | +33.3 |
 | rosacea_like_redness | 68.6% | 77.1% | +8.6 |
 
-Decision: this is a useful experiment log, not a validated modeling win. It suggests a class-balanced decoupled head can alter tail behavior, but it should not be compared against the fixed ONNX diagnostic as though that diagnostic were a clean held-out baseline. A later review also found that this artifact selected C on the evaluation fold; `scripts/evaluate_decoupled_logit_head.py` now selects C on a nested grouped calibration split and should be rerun with local SCIN data before this is treated as the final refreshed result.
+Decision: this is a useful fixed-encoder operating-point result, not a clean representation benchmark. Nested C-selection confirms that a class-balanced decoupled head can trade accuracy for macro recall on the deployed encoder, but the frozen encoder may have seen SCIN-derived cases during original fine-tuning. It should therefore be reported separately from the fair MobileNet versus Derm Foundation comparison.
 
 Artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`.
 

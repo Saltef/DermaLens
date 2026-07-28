@@ -1,8 +1,6 @@
 {
   "protocol": "Decoupled cRT-style experiment: freeze the deployed ONNX image model, use its logits as a compact representation, and retrain only a class-balanced logistic head on each grouped SCIN split.",
-  "validity_status": "experiment_log_not_validated_win",
-  "validity_note": "Do not compare this artifact against the fixed deployed ONNX diagnostic as a clean baseline. The fixed ONNX model may have seen cases from the evaluation folds during original SCIN fine-tuning, and this stored artifact also predates nested C-selection.",
-  "model": "models/skin_classifier.onnx",
+  "model": "models\\skin_classifier.onnx",
   "manifest": "data/raw/scin/face_skin_manifest.csv",
   "group_key": "case_id",
   "seeds": [
@@ -13,7 +11,8 @@
     84
   ],
   "baseline": "deployed_conservative_prior",
-  "candidate": "best_decoupled_balanced_logit_head",
+  "candidate": "nested_decoupled_balanced_logit_head",
+  "selection_protocol": "C is selected on a nested grouped calibration split carved from training data only; the grouped evaluation fold is used once for final reporting.",
   "summary": {
     "deployed_conservative_prior": {
       "accuracy": {
@@ -107,79 +106,79 @@
         }
       }
     },
-    "best_decoupled_balanced_logit_head": {
+    "nested_decoupled_balanced_logit_head": {
       "accuracy": {
-        "mean": 0.7507547341699355,
-        "std": 0.02044694268275191,
+        "mean": 0.7533106708023053,
+        "std": 0.01696463936512948,
         "values": [
           0.7666666666666667,
           0.7647058823529411,
-          0.7261146496815286,
+          0.732484076433121,
           0.7655172413793103,
-          0.7307692307692307
+          0.7371794871794872
         ]
       },
       "macro_recall": {
-        "mean": 0.7305527344194905,
-        "std": 0.10098948630991157,
+        "mean": 0.7072611699931335,
+        "std": 0.11440108225593938,
         "values": [
-          0.7403846153846154,
+          0.6865297401011686,
           0.814936525068743,
-          0.5580611400887898,
+          0.5244535034857615,
           0.7892010163749293,
-          0.7501803751803752
+          0.721185064935065
         ]
       },
       "per_class_recall": {
         "acne_like_texture": {
-          "mean": 0.7301440179049287,
-          "std": 0.05409388658079485,
+          "mean": 0.723692405001703,
+          "std": 0.04362908948646982,
           "values": [
             0.6923076923076923,
             0.7352941176470589,
-            0.8064516129032258,
+            0.7741935483870968,
             0.75,
             0.6666666666666666
           ]
         },
         "clinician_review": {
-          "mean": 0.68,
-          "std": 0.12549900398011135,
+          "mean": 0.64,
+          "std": 0.1781852968120546,
           "values": [
             0.75,
             0.75,
-            0.6,
+            0.4,
             0.8,
             0.5
           ]
         },
         "dermatitis_like_irritation": {
-          "mean": 0.7669785824182086,
-          "std": 0.016240529940534498,
+          "mean": 0.7793085143909977,
+          "std": 0.013397097574803524,
           "values": [
-            0.7857142857142857,
+            0.7959183673469388,
             0.7614678899082569,
-            0.7551020408163265,
+            0.7857142857142857,
             0.782608695652174,
-            0.75
+            0.7708333333333334
           ]
         },
         "folliculitis_like_bumps": {
-          "mean": 0.7014319014319015,
-          "std": 0.11927104356454019,
+          "mean": 0.7196137196137197,
+          "std": 0.13058735538987964,
           "values": [
             0.8333333333333334,
             0.7857142857142857,
             0.6153846153846154,
             0.5454545454545454,
-            0.7272727272727273
+            0.8181818181818182
           ]
         },
         "hyperpigmentation_like_uneven_tone": {
-          "mean": 0.7333333333333333,
-          "std": 0.4346134936801766,
+          "mean": 0.6666666666666666,
+          "std": 0.4714045207910317,
           "values": [
-            0.6666666666666666,
+            0.3333333333333333,
             1.0,
             0.0,
             1.0,
@@ -187,14 +186,14 @@
           ]
         },
         "rosacea_like_redness": {
-          "mean": 0.7714285714285714,
-          "std": 0.12777531299998796,
+          "mean": 0.7142857142857143,
+          "std": 0.14285714285714285,
           "values": [
             0.7142857142857143,
             0.8571428571428571,
             0.5714285714285714,
             0.8571428571428571,
-            0.8571428571428571
+            0.5714285714285714
           ]
         }
       }
@@ -204,6 +203,8 @@
     {
       "seed": 42,
       "train_images": 628,
+      "head_train_images": 501,
+      "calibration_images": 127,
       "val_images": 150,
       "deployed_conservative_prior": {
         "accuracy": 0.86,
@@ -267,23 +268,23 @@
           }
         }
       },
-      "best_decoupled_balanced_logit_head": {
+      "nested_decoupled_balanced_logit_head": {
         "accuracy": 0.7666666666666667,
-        "macro_recall": 0.7403846153846154,
+        "macro_recall": 0.6865297401011686,
         "per_class_recall": {
           "acne_like_texture": 0.6923076923076923,
           "clinician_review": 0.75,
-          "dermatitis_like_irritation": 0.7857142857142857,
+          "dermatitis_like_irritation": 0.7959183673469388,
           "folliculitis_like_bumps": 0.8333333333333334,
-          "hyperpigmentation_like_uneven_tone": 0.6666666666666666,
+          "hyperpigmentation_like_uneven_tone": 0.3333333333333333,
           "rosacea_like_redness": 0.7142857142857143
         },
         "confusion": {
           "acne_like_texture": {
             "acne_like_texture": 18,
             "clinician_review": 0,
-            "dermatitis_like_irritation": 2,
-            "folliculitis_like_bumps": 3,
+            "dermatitis_like_irritation": 1,
+            "folliculitis_like_bumps": 4,
             "hyperpigmentation_like_uneven_tone": 0,
             "rosacea_like_redness": 3
           },
@@ -298,9 +299,9 @@
           "dermatitis_like_irritation": {
             "acne_like_texture": 5,
             "clinician_review": 3,
-            "dermatitis_like_irritation": 77,
+            "dermatitis_like_irritation": 78,
             "folliculitis_like_bumps": 10,
-            "hyperpigmentation_like_uneven_tone": 1,
+            "hyperpigmentation_like_uneven_tone": 0,
             "rosacea_like_redness": 2
           },
           "folliculitis_like_bumps": {
@@ -312,11 +313,11 @@
             "rosacea_like_redness": 0
           },
           "hyperpigmentation_like_uneven_tone": {
-            "acne_like_texture": 1,
+            "acne_like_texture": 2,
             "clinician_review": 0,
             "dermatitis_like_irritation": 0,
             "folliculitis_like_bumps": 0,
-            "hyperpigmentation_like_uneven_tone": 2,
+            "hyperpigmentation_like_uneven_tone": 1,
             "rosacea_like_redness": 0
           },
           "rosacea_like_redness": {
@@ -328,383 +329,446 @@
             "rosacea_like_redness": 5
           }
         },
-        "c": 0.03
+        "c": 0.1
       },
-      "head_sweep": [
+      "best_calibration_result": {
+        "accuracy": 0.6850393700787402,
+        "macro_recall": 0.5800414862914863,
+        "per_class_recall": {
+          "acne_like_texture": 0.7083333333333334,
+          "clinician_review": 0.5,
+          "dermatitis_like_irritation": 0.6875,
+          "folliculitis_like_bumps": 0.7272727272727273,
+          "hyperpigmentation_like_uneven_tone": 0.0,
+          "rosacea_like_redness": 0.8571428571428571
+        },
+        "confusion": {
+          "acne_like_texture": {
+            "acne_like_texture": 17,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 1,
+            "folliculitis_like_bumps": 5,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 1
+          },
+          "clinician_review": {
+            "acne_like_texture": 0,
+            "clinician_review": 1,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 1,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 0
+          },
+          "dermatitis_like_irritation": {
+            "acne_like_texture": 9,
+            "clinician_review": 1,
+            "dermatitis_like_irritation": 55,
+            "folliculitis_like_bumps": 12,
+            "hyperpigmentation_like_uneven_tone": 2,
+            "rosacea_like_redness": 1
+          },
+          "folliculitis_like_bumps": {
+            "acne_like_texture": 1,
+            "clinician_review": 1,
+            "dermatitis_like_irritation": 1,
+            "folliculitis_like_bumps": 8,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 0
+          },
+          "hyperpigmentation_like_uneven_tone": {
+            "acne_like_texture": 0,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 3
+          },
+          "rosacea_like_redness": {
+            "acne_like_texture": 0,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 1,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 6
+          }
+        },
+        "c": 0.1
+      },
+      "calibration_sweep": [
         {
-          "accuracy": 0.7666666666666667,
-          "macro_recall": 0.7403846153846154,
+          "accuracy": 0.6692913385826772,
+          "macro_recall": 0.5758748196248197,
           "per_class_recall": {
-            "acne_like_texture": 0.6923076923076923,
-            "clinician_review": 0.75,
-            "dermatitis_like_irritation": 0.7857142857142857,
-            "folliculitis_like_bumps": 0.8333333333333334,
-            "hyperpigmentation_like_uneven_tone": 0.6666666666666666,
-            "rosacea_like_redness": 0.7142857142857143
+            "acne_like_texture": 0.7083333333333334,
+            "clinician_review": 0.5,
+            "dermatitis_like_irritation": 0.6625,
+            "folliculitis_like_bumps": 0.7272727272727273,
+            "hyperpigmentation_like_uneven_tone": 0.0,
+            "rosacea_like_redness": 0.8571428571428571
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 18,
+              "acne_like_texture": 17,
               "clinician_review": 0,
-              "dermatitis_like_irritation": 2,
-              "folliculitis_like_bumps": 3,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 3
-            },
-            "clinician_review": {
-              "acne_like_texture": 0,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 5,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 1
             },
+            "clinician_review": {
+              "acne_like_texture": 0,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 0,
+              "folliculitis_like_bumps": 1,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 0
+            },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 5,
+              "acne_like_texture": 9,
               "clinician_review": 3,
-              "dermatitis_like_irritation": 77,
-              "folliculitis_like_bumps": 10,
-              "hyperpigmentation_like_uneven_tone": 1,
+              "dermatitis_like_irritation": 53,
+              "folliculitis_like_bumps": 11,
+              "hyperpigmentation_like_uneven_tone": 2,
               "rosacea_like_redness": 2
             },
             "folliculitis_like_bumps": {
               "acne_like_texture": 1,
               "clinician_review": 1,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 10,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 8,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
-              "acne_like_texture": 1,
+              "acne_like_texture": 0,
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 0
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 3
             },
             "rosacea_like_redness": {
               "acne_like_texture": 0,
-              "clinician_review": 1,
+              "clinician_review": 0,
               "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 5
+              "rosacea_like_redness": 6
             }
           },
           "c": 0.03
         },
         {
-          "accuracy": 0.7666666666666667,
-          "macro_recall": 0.6865297401011686,
+          "accuracy": 0.6850393700787402,
+          "macro_recall": 0.5800414862914863,
           "per_class_recall": {
-            "acne_like_texture": 0.6923076923076923,
-            "clinician_review": 0.75,
-            "dermatitis_like_irritation": 0.7959183673469388,
-            "folliculitis_like_bumps": 0.8333333333333334,
-            "hyperpigmentation_like_uneven_tone": 0.3333333333333333,
-            "rosacea_like_redness": 0.7142857142857143
+            "acne_like_texture": 0.7083333333333334,
+            "clinician_review": 0.5,
+            "dermatitis_like_irritation": 0.6875,
+            "folliculitis_like_bumps": 0.7272727272727273,
+            "hyperpigmentation_like_uneven_tone": 0.0,
+            "rosacea_like_redness": 0.8571428571428571
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 18,
+              "acne_like_texture": 17,
               "clinician_review": 0,
               "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 4,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 3
-            },
-            "clinician_review": {
-              "acne_like_texture": 0,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 0,
+              "folliculitis_like_bumps": 5,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 1
             },
-            "dermatitis_like_irritation": {
-              "acne_like_texture": 5,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 78,
-              "folliculitis_like_bumps": 10,
+            "clinician_review": {
+              "acne_like_texture": 0,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 0,
+              "folliculitis_like_bumps": 1,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 2
+              "rosacea_like_redness": 0
+            },
+            "dermatitis_like_irritation": {
+              "acne_like_texture": 9,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 55,
+              "folliculitis_like_bumps": 12,
+              "hyperpigmentation_like_uneven_tone": 2,
+              "rosacea_like_redness": 1
             },
             "folliculitis_like_bumps": {
               "acne_like_texture": 1,
               "clinician_review": 1,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 10,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 8,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
-              "acne_like_texture": 2,
+              "acne_like_texture": 0,
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 0
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 3
             },
             "rosacea_like_redness": {
               "acne_like_texture": 0,
-              "clinician_review": 1,
+              "clinician_review": 0,
               "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 5
+              "rosacea_like_redness": 6
             }
           },
           "c": 0.1
         },
         {
-          "accuracy": 0.7733333333333333,
-          "macro_recall": 0.692939996511425,
+          "accuracy": 0.6614173228346457,
+          "macro_recall": 0.48281926406926406,
           "per_class_recall": {
-            "acne_like_texture": 0.7307692307692307,
-            "clinician_review": 0.75,
-            "dermatitis_like_irritation": 0.7959183673469388,
-            "folliculitis_like_bumps": 0.8333333333333334,
-            "hyperpigmentation_like_uneven_tone": 0.3333333333333333,
-            "rosacea_like_redness": 0.7142857142857143
+            "acne_like_texture": 0.625,
+            "clinician_review": 0.0,
+            "dermatitis_like_irritation": 0.6875,
+            "folliculitis_like_bumps": 0.7272727272727273,
+            "hyperpigmentation_like_uneven_tone": 0.0,
+            "rosacea_like_redness": 0.8571428571428571
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 19,
-              "clinician_review": 0,
-              "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 3,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 3
-            },
-            "clinician_review": {
-              "acne_like_texture": 0,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 0,
+              "acne_like_texture": 15,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 2,
+              "folliculitis_like_bumps": 5,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 1
             },
-            "dermatitis_like_irritation": {
-              "acne_like_texture": 4,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 78,
-              "folliculitis_like_bumps": 11,
+            "clinician_review": {
+              "acne_like_texture": 0,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 0,
+              "folliculitis_like_bumps": 2,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 2
+              "rosacea_like_redness": 0
+            },
+            "dermatitis_like_irritation": {
+              "acne_like_texture": 8,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 55,
+              "folliculitis_like_bumps": 13,
+              "hyperpigmentation_like_uneven_tone": 2,
+              "rosacea_like_redness": 1
             },
             "folliculitis_like_bumps": {
               "acne_like_texture": 1,
               "clinician_review": 1,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 10,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 8,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
-              "acne_like_texture": 2,
+              "acne_like_texture": 0,
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 0
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 3
             },
             "rosacea_like_redness": {
               "acne_like_texture": 0,
-              "clinician_review": 1,
+              "clinician_review": 0,
               "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 5
+              "rosacea_like_redness": 6
             }
           },
           "c": 0.3
         },
         {
-          "accuracy": 0.7733333333333333,
-          "macro_recall": 0.6976495726495727,
+          "accuracy": 0.7007874015748031,
+          "macro_recall": 0.5063041125541126,
           "per_class_recall": {
-            "acne_like_texture": 0.7692307692307693,
-            "clinician_review": 0.75,
-            "dermatitis_like_irritation": 0.7857142857142857,
-            "folliculitis_like_bumps": 0.8333333333333334,
-            "hyperpigmentation_like_uneven_tone": 0.3333333333333333,
-            "rosacea_like_redness": 0.7142857142857143
+            "acne_like_texture": 0.625,
+            "clinician_review": 0.0,
+            "dermatitis_like_irritation": 0.7375,
+            "folliculitis_like_bumps": 0.8181818181818182,
+            "hyperpigmentation_like_uneven_tone": 0.0,
+            "rosacea_like_redness": 0.8571428571428571
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 20,
-              "clinician_review": 0,
-              "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 2,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 3
-            },
-            "clinician_review": {
-              "acne_like_texture": 0,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 0,
+              "acne_like_texture": 15,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 2,
+              "folliculitis_like_bumps": 5,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 1
             },
-            "dermatitis_like_irritation": {
-              "acne_like_texture": 4,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 77,
-              "folliculitis_like_bumps": 12,
+            "clinician_review": {
+              "acne_like_texture": 0,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 0,
+              "folliculitis_like_bumps": 2,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 2
+              "rosacea_like_redness": 0
+            },
+            "dermatitis_like_irritation": {
+              "acne_like_texture": 5,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 59,
+              "folliculitis_like_bumps": 12,
+              "hyperpigmentation_like_uneven_tone": 2,
+              "rosacea_like_redness": 1
             },
             "folliculitis_like_bumps": {
               "acne_like_texture": 1,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 10,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 9,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
-              "acne_like_texture": 2,
+              "acne_like_texture": 0,
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 0
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 3
             },
             "rosacea_like_redness": {
               "acne_like_texture": 0,
-              "clinician_review": 1,
+              "clinician_review": 0,
               "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 5
+              "rosacea_like_redness": 6
             }
           },
           "c": 1.0
         },
         {
-          "accuracy": 0.7733333333333333,
-          "macro_recall": 0.6976495726495727,
+          "accuracy": 0.7007874015748031,
+          "macro_recall": 0.5063041125541126,
           "per_class_recall": {
-            "acne_like_texture": 0.7692307692307693,
-            "clinician_review": 0.75,
-            "dermatitis_like_irritation": 0.7857142857142857,
-            "folliculitis_like_bumps": 0.8333333333333334,
-            "hyperpigmentation_like_uneven_tone": 0.3333333333333333,
-            "rosacea_like_redness": 0.7142857142857143
+            "acne_like_texture": 0.625,
+            "clinician_review": 0.0,
+            "dermatitis_like_irritation": 0.7375,
+            "folliculitis_like_bumps": 0.8181818181818182,
+            "hyperpigmentation_like_uneven_tone": 0.0,
+            "rosacea_like_redness": 0.8571428571428571
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 20,
-              "clinician_review": 0,
-              "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 2,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 3
-            },
-            "clinician_review": {
-              "acne_like_texture": 0,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 0,
+              "acne_like_texture": 15,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 2,
+              "folliculitis_like_bumps": 5,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 1
             },
-            "dermatitis_like_irritation": {
-              "acne_like_texture": 4,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 77,
-              "folliculitis_like_bumps": 12,
+            "clinician_review": {
+              "acne_like_texture": 0,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 0,
+              "folliculitis_like_bumps": 2,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 2
+              "rosacea_like_redness": 0
+            },
+            "dermatitis_like_irritation": {
+              "acne_like_texture": 5,
+              "clinician_review": 2,
+              "dermatitis_like_irritation": 59,
+              "folliculitis_like_bumps": 12,
+              "hyperpigmentation_like_uneven_tone": 1,
+              "rosacea_like_redness": 1
             },
             "folliculitis_like_bumps": {
               "acne_like_texture": 1,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 10,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 9,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
-              "acne_like_texture": 2,
+              "acne_like_texture": 0,
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 0
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 3
             },
             "rosacea_like_redness": {
               "acne_like_texture": 0,
-              "clinician_review": 1,
+              "clinician_review": 0,
               "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 5
+              "rosacea_like_redness": 6
             }
           },
           "c": 3.0
         },
         {
-          "accuracy": 0.78,
-          "macro_recall": 0.6993502529216814,
+          "accuracy": 0.7007874015748031,
+          "macro_recall": 0.5063041125541126,
           "per_class_recall": {
-            "acne_like_texture": 0.7692307692307693,
-            "clinician_review": 0.75,
-            "dermatitis_like_irritation": 0.7959183673469388,
-            "folliculitis_like_bumps": 0.8333333333333334,
-            "hyperpigmentation_like_uneven_tone": 0.3333333333333333,
-            "rosacea_like_redness": 0.7142857142857143
+            "acne_like_texture": 0.625,
+            "clinician_review": 0.0,
+            "dermatitis_like_irritation": 0.7375,
+            "folliculitis_like_bumps": 0.8181818181818182,
+            "hyperpigmentation_like_uneven_tone": 0.0,
+            "rosacea_like_redness": 0.8571428571428571
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 20,
-              "clinician_review": 0,
-              "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 2,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 3
-            },
-            "clinician_review": {
-              "acne_like_texture": 0,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 0,
+              "acne_like_texture": 15,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 2,
+              "folliculitis_like_bumps": 5,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 1
             },
+            "clinician_review": {
+              "acne_like_texture": 0,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 0,
+              "folliculitis_like_bumps": 2,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 0
+            },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 3,
+              "acne_like_texture": 5,
               "clinician_review": 3,
-              "dermatitis_like_irritation": 78,
+              "dermatitis_like_irritation": 59,
               "folliculitis_like_bumps": 12,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 2
+              "rosacea_like_redness": 1
             },
             "folliculitis_like_bumps": {
               "acne_like_texture": 1,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 10,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 9,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
-              "acne_like_texture": 2,
+              "acne_like_texture": 0,
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 0
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 3
             },
             "rosacea_like_redness": {
               "acne_like_texture": 0,
-              "clinician_review": 1,
+              "clinician_review": 0,
               "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 5
+              "rosacea_like_redness": 6
             }
           },
           "c": 10.0
@@ -714,6 +778,8 @@
     {
       "seed": 7,
       "train_images": 608,
+      "head_train_images": 479,
+      "calibration_images": 129,
       "val_images": 170,
       "deployed_conservative_prior": {
         "accuracy": 0.8470588235294118,
@@ -777,7 +843,7 @@
           }
         }
       },
-      "best_decoupled_balanced_logit_head": {
+      "nested_decoupled_balanced_logit_head": {
         "accuracy": 0.7647058823529411,
         "macro_recall": 0.814936525068743,
         "per_class_recall": {
@@ -840,174 +906,111 @@
         },
         "c": 0.1
       },
-      "head_sweep": [
-        {
-          "accuracy": 0.7294117647058823,
-          "macro_recall": 0.7782649757150567,
-          "per_class_recall": {
-            "acne_like_texture": 0.6764705882352942,
-            "clinician_review": 0.75,
-            "dermatitis_like_irritation": 0.7431192660550459,
-            "folliculitis_like_bumps": 0.6428571428571429,
-            "hyperpigmentation_like_uneven_tone": 1.0,
-            "rosacea_like_redness": 0.8571428571428571
-          },
-          "confusion": {
-            "acne_like_texture": {
-              "acne_like_texture": 23,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 3,
-              "folliculitis_like_bumps": 5,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 1
-            },
-            "clinician_review": {
-              "acne_like_texture": 0,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 1
-            },
-            "dermatitis_like_irritation": {
-              "acne_like_texture": 7,
-              "clinician_review": 7,
-              "dermatitis_like_irritation": 81,
-              "folliculitis_like_bumps": 7,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 5
-            },
-            "folliculitis_like_bumps": {
-              "acne_like_texture": 1,
-              "clinician_review": 2,
-              "dermatitis_like_irritation": 2,
-              "folliculitis_like_bumps": 9,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 0
-            },
-            "hyperpigmentation_like_uneven_tone": {
-              "acne_like_texture": 0,
-              "clinician_review": 0,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 0
-            },
-            "rosacea_like_redness": {
-              "acne_like_texture": 0,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 6
-            }
-          },
-          "c": 0.03
+      "best_calibration_result": {
+        "accuracy": 0.7984496124031008,
+        "macro_recall": 0.8521133259505352,
+        "per_class_recall": {
+          "acne_like_texture": 0.9166666666666666,
+          "clinician_review": 1.0,
+          "dermatitis_like_irritation": 0.7674418604651163,
+          "folliculitis_like_bumps": 0.7142857142857143,
+          "hyperpigmentation_like_uneven_tone": 1.0,
+          "rosacea_like_redness": 0.7142857142857143
         },
-        {
-          "accuracy": 0.7647058823529411,
-          "macro_recall": 0.814936525068743,
-          "per_class_recall": {
-            "acne_like_texture": 0.7352941176470589,
-            "clinician_review": 0.75,
-            "dermatitis_like_irritation": 0.7614678899082569,
-            "folliculitis_like_bumps": 0.7857142857142857,
-            "hyperpigmentation_like_uneven_tone": 1.0,
-            "rosacea_like_redness": 0.8571428571428571
+        "confusion": {
+          "acne_like_texture": {
+            "acne_like_texture": 22,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 1,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 1,
+            "rosacea_like_redness": 0
           },
-          "confusion": {
-            "acne_like_texture": {
-              "acne_like_texture": 25,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 2,
-              "folliculitis_like_bumps": 5,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 0
-            },
-            "clinician_review": {
-              "acne_like_texture": 0,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 1
-            },
-            "dermatitis_like_irritation": {
-              "acne_like_texture": 7,
-              "clinician_review": 6,
-              "dermatitis_like_irritation": 83,
-              "folliculitis_like_bumps": 8,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 3
-            },
-            "folliculitis_like_bumps": {
-              "acne_like_texture": 0,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 2,
-              "folliculitis_like_bumps": 11,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 0
-            },
-            "hyperpigmentation_like_uneven_tone": {
-              "acne_like_texture": 0,
-              "clinician_review": 0,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 0
-            },
-            "rosacea_like_redness": {
-              "acne_like_texture": 0,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 6
-            }
+          "clinician_review": {
+            "acne_like_texture": 0,
+            "clinician_review": 2,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 0
           },
-          "c": 0.1
+          "dermatitis_like_irritation": {
+            "acne_like_texture": 5,
+            "clinician_review": 4,
+            "dermatitis_like_irritation": 66,
+            "folliculitis_like_bumps": 8,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 3
+          },
+          "folliculitis_like_bumps": {
+            "acne_like_texture": 1,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 1,
+            "folliculitis_like_bumps": 5,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 0
+          },
+          "hyperpigmentation_like_uneven_tone": {
+            "acne_like_texture": 0,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 3,
+            "rosacea_like_redness": 0
+          },
+          "rosacea_like_redness": {
+            "acne_like_texture": 0,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 1,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 1,
+            "rosacea_like_redness": 5
+          }
         },
+        "c": 0.1
+      },
+      "calibration_sweep": [
         {
-          "accuracy": 0.7529411764705882,
-          "macro_recall": 0.7862250404749056,
+          "accuracy": 0.7596899224806202,
+          "macro_recall": 0.8274040236249539,
           "per_class_recall": {
-            "acne_like_texture": 0.7058823529411765,
-            "clinician_review": 0.75,
-            "dermatitis_like_irritation": 0.7614678899082569,
-            "folliculitis_like_bumps": 0.7857142857142857,
+            "acne_like_texture": 0.7916666666666666,
+            "clinician_review": 1.0,
+            "dermatitis_like_irritation": 0.7441860465116279,
+            "folliculitis_like_bumps": 0.7142857142857143,
             "hyperpigmentation_like_uneven_tone": 1.0,
             "rosacea_like_redness": 0.7142857142857143
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 24,
+              "acne_like_texture": 19,
               "clinician_review": 1,
-              "dermatitis_like_irritation": 3,
-              "folliculitis_like_bumps": 5,
-              "hyperpigmentation_like_uneven_tone": 1,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 1,
+              "hyperpigmentation_like_uneven_tone": 2,
               "rosacea_like_redness": 0
             },
             "clinician_review": {
               "acne_like_texture": 0,
-              "clinician_review": 3,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 1
+              "rosacea_like_redness": 0
             },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 7,
-              "clinician_review": 6,
-              "dermatitis_like_irritation": 83,
-              "folliculitis_like_bumps": 9,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 2
+              "acne_like_texture": 6,
+              "clinician_review": 5,
+              "dermatitis_like_irritation": 64,
+              "folliculitis_like_bumps": 8,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 3
             },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 0,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 2,
-              "folliculitis_like_bumps": 11,
+              "acne_like_texture": 1,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 5,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
@@ -1016,13 +1019,139 @@
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
+              "hyperpigmentation_like_uneven_tone": 3,
               "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
               "acne_like_texture": 0,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 0,
+              "hyperpigmentation_like_uneven_tone": 1,
+              "rosacea_like_redness": 5
+            }
+          },
+          "c": 0.03
+        },
+        {
+          "accuracy": 0.7984496124031008,
+          "macro_recall": 0.8521133259505352,
+          "per_class_recall": {
+            "acne_like_texture": 0.9166666666666666,
+            "clinician_review": 1.0,
+            "dermatitis_like_irritation": 0.7674418604651163,
+            "folliculitis_like_bumps": 0.7142857142857143,
+            "hyperpigmentation_like_uneven_tone": 1.0,
+            "rosacea_like_redness": 0.7142857142857143
+          },
+          "confusion": {
+            "acne_like_texture": {
+              "acne_like_texture": 22,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 0,
+              "hyperpigmentation_like_uneven_tone": 1,
+              "rosacea_like_redness": 0
+            },
+            "clinician_review": {
+              "acne_like_texture": 0,
               "clinician_review": 2,
               "dermatitis_like_irritation": 0,
+              "folliculitis_like_bumps": 0,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 0
+            },
+            "dermatitis_like_irritation": {
+              "acne_like_texture": 5,
+              "clinician_review": 4,
+              "dermatitis_like_irritation": 66,
+              "folliculitis_like_bumps": 8,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 3
+            },
+            "folliculitis_like_bumps": {
+              "acne_like_texture": 1,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 5,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 0
+            },
+            "hyperpigmentation_like_uneven_tone": {
+              "acne_like_texture": 0,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 0,
+              "folliculitis_like_bumps": 0,
+              "hyperpigmentation_like_uneven_tone": 3,
+              "rosacea_like_redness": 0
+            },
+            "rosacea_like_redness": {
+              "acne_like_texture": 0,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 0,
+              "hyperpigmentation_like_uneven_tone": 1,
+              "rosacea_like_redness": 5
+            }
+          },
+          "c": 0.1
+        },
+        {
+          "accuracy": 0.8062015503875969,
+          "macro_recall": 0.8321797711332595,
+          "per_class_recall": {
+            "acne_like_texture": 0.9166666666666666,
+            "clinician_review": 1.0,
+            "dermatitis_like_irritation": 0.7906976744186046,
+            "folliculitis_like_bumps": 0.5714285714285714,
+            "hyperpigmentation_like_uneven_tone": 1.0,
+            "rosacea_like_redness": 0.7142857142857143
+          },
+          "confusion": {
+            "acne_like_texture": {
+              "acne_like_texture": 22,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 0,
+              "hyperpigmentation_like_uneven_tone": 1,
+              "rosacea_like_redness": 0
+            },
+            "clinician_review": {
+              "acne_like_texture": 0,
+              "clinician_review": 2,
+              "dermatitis_like_irritation": 0,
+              "folliculitis_like_bumps": 0,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 0
+            },
+            "dermatitis_like_irritation": {
+              "acne_like_texture": 4,
+              "clinician_review": 2,
+              "dermatitis_like_irritation": 68,
+              "folliculitis_like_bumps": 7,
+              "hyperpigmentation_like_uneven_tone": 3,
+              "rosacea_like_redness": 2
+            },
+            "folliculitis_like_bumps": {
+              "acne_like_texture": 2,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 4,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 0
+            },
+            "hyperpigmentation_like_uneven_tone": {
+              "acne_like_texture": 0,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 0,
+              "folliculitis_like_bumps": 0,
+              "hyperpigmentation_like_uneven_tone": 3,
+              "rosacea_like_redness": 0
+            },
+            "rosacea_like_redness": {
+              "acne_like_texture": 1,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 5
@@ -1031,47 +1160,47 @@
           "c": 0.3
         },
         {
-          "accuracy": 0.7529411764705882,
-          "macro_recall": 0.7758493305579113,
+          "accuracy": 0.8217054263565892,
+          "macro_recall": 0.841062200073828,
           "per_class_recall": {
-            "acne_like_texture": 0.7058823529411765,
-            "clinician_review": 0.75,
-            "dermatitis_like_irritation": 0.7706422018348624,
-            "folliculitis_like_bumps": 0.7142857142857143,
+            "acne_like_texture": 0.9583333333333334,
+            "clinician_review": 1.0,
+            "dermatitis_like_irritation": 0.8023255813953488,
+            "folliculitis_like_bumps": 0.5714285714285714,
             "hyperpigmentation_like_uneven_tone": 1.0,
             "rosacea_like_redness": 0.7142857142857143
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 24,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 3,
-              "folliculitis_like_bumps": 5,
-              "hyperpigmentation_like_uneven_tone": 1,
+              "acne_like_texture": 23,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 0,
+              "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "clinician_review": {
               "acne_like_texture": 0,
-              "clinician_review": 3,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 1
+              "rosacea_like_redness": 0
             },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 7,
-              "clinician_review": 6,
-              "dermatitis_like_irritation": 84,
-              "folliculitis_like_bumps": 9,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 1
+              "acne_like_texture": 4,
+              "clinician_review": 2,
+              "dermatitis_like_irritation": 69,
+              "folliculitis_like_bumps": 6,
+              "hyperpigmentation_like_uneven_tone": 3,
+              "rosacea_like_redness": 2
             },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 1,
+              "acne_like_texture": 2,
               "clinician_review": 0,
-              "dermatitis_like_irritation": 2,
-              "folliculitis_like_bumps": 10,
-              "hyperpigmentation_like_uneven_tone": 1,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 4,
+              "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
@@ -1079,13 +1208,13 @@
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
+              "hyperpigmentation_like_uneven_tone": 3,
               "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 0,
-              "clinician_review": 2,
-              "dermatitis_like_irritation": 0,
+              "acne_like_texture": 1,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 5
@@ -1094,47 +1223,47 @@
           "c": 1.0
         },
         {
-          "accuracy": 0.7529411764705882,
-          "macro_recall": 0.7758493305579113,
+          "accuracy": 0.8449612403100775,
+          "macro_recall": 0.8468761535622001,
           "per_class_recall": {
-            "acne_like_texture": 0.7058823529411765,
-            "clinician_review": 0.75,
-            "dermatitis_like_irritation": 0.7706422018348624,
-            "folliculitis_like_bumps": 0.7142857142857143,
+            "acne_like_texture": 0.9583333333333334,
+            "clinician_review": 1.0,
+            "dermatitis_like_irritation": 0.8372093023255814,
+            "folliculitis_like_bumps": 0.5714285714285714,
             "hyperpigmentation_like_uneven_tone": 1.0,
             "rosacea_like_redness": 0.7142857142857143
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 24,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 3,
-              "folliculitis_like_bumps": 5,
-              "hyperpigmentation_like_uneven_tone": 1,
+              "acne_like_texture": 23,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 0,
+              "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "clinician_review": {
               "acne_like_texture": 0,
-              "clinician_review": 3,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 1
+              "rosacea_like_redness": 0
             },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 7,
-              "clinician_review": 6,
-              "dermatitis_like_irritation": 84,
-              "folliculitis_like_bumps": 9,
+              "acne_like_texture": 2,
+              "clinician_review": 2,
+              "dermatitis_like_irritation": 72,
+              "folliculitis_like_bumps": 5,
               "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 1
+              "rosacea_like_redness": 3
             },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 1,
+              "acne_like_texture": 2,
               "clinician_review": 0,
-              "dermatitis_like_irritation": 2,
-              "folliculitis_like_bumps": 10,
-              "hyperpigmentation_like_uneven_tone": 1,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 4,
+              "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
@@ -1142,13 +1271,13 @@
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
+              "hyperpigmentation_like_uneven_tone": 3,
               "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 0,
-              "clinician_review": 2,
-              "dermatitis_like_irritation": 0,
+              "acne_like_texture": 1,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 5
@@ -1157,47 +1286,47 @@
           "c": 3.0
         },
         {
-          "accuracy": 0.7529411764705882,
-          "macro_recall": 0.7758493305579113,
+          "accuracy": 0.8449612403100775,
+          "macro_recall": 0.8468761535622001,
           "per_class_recall": {
-            "acne_like_texture": 0.7058823529411765,
-            "clinician_review": 0.75,
-            "dermatitis_like_irritation": 0.7706422018348624,
-            "folliculitis_like_bumps": 0.7142857142857143,
+            "acne_like_texture": 0.9583333333333334,
+            "clinician_review": 1.0,
+            "dermatitis_like_irritation": 0.8372093023255814,
+            "folliculitis_like_bumps": 0.5714285714285714,
             "hyperpigmentation_like_uneven_tone": 1.0,
             "rosacea_like_redness": 0.7142857142857143
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 24,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 3,
-              "folliculitis_like_bumps": 5,
-              "hyperpigmentation_like_uneven_tone": 1,
+              "acne_like_texture": 23,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 0,
+              "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "clinician_review": {
               "acne_like_texture": 0,
-              "clinician_review": 3,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 1
+              "rosacea_like_redness": 0
             },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 6,
-              "clinician_review": 6,
-              "dermatitis_like_irritation": 84,
-              "folliculitis_like_bumps": 9,
-              "hyperpigmentation_like_uneven_tone": 3,
-              "rosacea_like_redness": 1
+              "acne_like_texture": 2,
+              "clinician_review": 2,
+              "dermatitis_like_irritation": 72,
+              "folliculitis_like_bumps": 5,
+              "hyperpigmentation_like_uneven_tone": 2,
+              "rosacea_like_redness": 3
             },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 1,
+              "acne_like_texture": 2,
               "clinician_review": 0,
-              "dermatitis_like_irritation": 2,
-              "folliculitis_like_bumps": 10,
-              "hyperpigmentation_like_uneven_tone": 1,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 4,
+              "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
@@ -1205,13 +1334,13 @@
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
+              "hyperpigmentation_like_uneven_tone": 3,
               "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 0,
-              "clinician_review": 2,
-              "dermatitis_like_irritation": 0,
+              "acne_like_texture": 1,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 5
@@ -1224,6 +1353,8 @@
     {
       "seed": 13,
       "train_images": 621,
+      "head_train_images": 497,
+      "calibration_images": 124,
       "val_images": 157,
       "deployed_conservative_prior": {
         "accuracy": 0.8535031847133758,
@@ -1287,45 +1418,45 @@
           }
         }
       },
-      "best_decoupled_balanced_logit_head": {
-        "accuracy": 0.7261146496815286,
-        "macro_recall": 0.5580611400887898,
+      "nested_decoupled_balanced_logit_head": {
+        "accuracy": 0.732484076433121,
+        "macro_recall": 0.5244535034857615,
         "per_class_recall": {
-          "acne_like_texture": 0.8064516129032258,
-          "clinician_review": 0.6,
-          "dermatitis_like_irritation": 0.7551020408163265,
+          "acne_like_texture": 0.7741935483870968,
+          "clinician_review": 0.4,
+          "dermatitis_like_irritation": 0.7857142857142857,
           "folliculitis_like_bumps": 0.6153846153846154,
           "hyperpigmentation_like_uneven_tone": 0.0,
           "rosacea_like_redness": 0.5714285714285714
         },
         "confusion": {
           "acne_like_texture": {
-            "acne_like_texture": 25,
+            "acne_like_texture": 24,
             "clinician_review": 0,
             "dermatitis_like_irritation": 1,
             "folliculitis_like_bumps": 3,
-            "hyperpigmentation_like_uneven_tone": 1,
+            "hyperpigmentation_like_uneven_tone": 2,
             "rosacea_like_redness": 1
           },
           "clinician_review": {
             "acne_like_texture": 0,
-            "clinician_review": 3,
+            "clinician_review": 2,
             "dermatitis_like_irritation": 0,
-            "folliculitis_like_bumps": 1,
+            "folliculitis_like_bumps": 2,
             "hyperpigmentation_like_uneven_tone": 0,
             "rosacea_like_redness": 1
           },
           "dermatitis_like_irritation": {
-            "acne_like_texture": 10,
+            "acne_like_texture": 11,
             "clinician_review": 4,
-            "dermatitis_like_irritation": 74,
-            "folliculitis_like_bumps": 4,
+            "dermatitis_like_irritation": 77,
+            "folliculitis_like_bumps": 2,
             "hyperpigmentation_like_uneven_tone": 0,
-            "rosacea_like_redness": 6
+            "rosacea_like_redness": 4
           },
           "folliculitis_like_bumps": {
-            "acne_like_texture": 1,
-            "clinician_review": 2,
+            "acne_like_texture": 2,
+            "clinician_review": 1,
             "dermatitis_like_irritation": 2,
             "folliculitis_like_bumps": 8,
             "hyperpigmentation_like_uneven_tone": 0,
@@ -1348,50 +1479,113 @@
             "rosacea_like_redness": 4
           }
         },
-        "c": 0.03
+        "c": 0.3
       },
-      "head_sweep": [
+      "best_calibration_result": {
+        "accuracy": 0.7580645161290323,
+        "macro_recall": 0.807798353909465,
+        "per_class_recall": {
+          "acne_like_texture": 0.64,
+          "clinician_review": 1.0,
+          "dermatitis_like_irritation": 0.7901234567901234,
+          "folliculitis_like_bumps": 0.75,
+          "hyperpigmentation_like_uneven_tone": 1.0,
+          "rosacea_like_redness": 0.6666666666666666
+        },
+        "confusion": {
+          "acne_like_texture": {
+            "acne_like_texture": 16,
+            "clinician_review": 3,
+            "dermatitis_like_irritation": 1,
+            "folliculitis_like_bumps": 3,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 2
+          },
+          "clinician_review": {
+            "acne_like_texture": 0,
+            "clinician_review": 2,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 0
+          },
+          "dermatitis_like_irritation": {
+            "acne_like_texture": 3,
+            "clinician_review": 6,
+            "dermatitis_like_irritation": 64,
+            "folliculitis_like_bumps": 6,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 2
+          },
+          "folliculitis_like_bumps": {
+            "acne_like_texture": 0,
+            "clinician_review": 1,
+            "dermatitis_like_irritation": 1,
+            "folliculitis_like_bumps": 6,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 0
+          },
+          "hyperpigmentation_like_uneven_tone": {
+            "acne_like_texture": 0,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 2,
+            "rosacea_like_redness": 0
+          },
+          "rosacea_like_redness": {
+            "acne_like_texture": 1,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 1,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 4
+          }
+        },
+        "c": 0.3
+      },
+      "calibration_sweep": [
         {
-          "accuracy": 0.7261146496815286,
-          "macro_recall": 0.5580611400887898,
+          "accuracy": 0.6854838709677419,
+          "macro_recall": 0.7309567901234568,
           "per_class_recall": {
-            "acne_like_texture": 0.8064516129032258,
-            "clinician_review": 0.6,
-            "dermatitis_like_irritation": 0.7551020408163265,
-            "folliculitis_like_bumps": 0.6153846153846154,
-            "hyperpigmentation_like_uneven_tone": 0.0,
-            "rosacea_like_redness": 0.5714285714285714
+            "acne_like_texture": 0.52,
+            "clinician_review": 1.0,
+            "dermatitis_like_irritation": 0.7407407407407407,
+            "folliculitis_like_bumps": 0.625,
+            "hyperpigmentation_like_uneven_tone": 1.0,
+            "rosacea_like_redness": 0.5
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 25,
-              "clinician_review": 0,
+              "acne_like_texture": 13,
+              "clinician_review": 3,
               "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 3,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 1
+              "folliculitis_like_bumps": 4,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 4
             },
             "clinician_review": {
               "acne_like_texture": 0,
-              "clinician_review": 3,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 1,
+              "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 1
+              "rosacea_like_redness": 0
             },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 10,
-              "clinician_review": 4,
-              "dermatitis_like_irritation": 74,
+              "acne_like_texture": 4,
+              "clinician_review": 11,
+              "dermatitis_like_irritation": 60,
               "folliculitis_like_bumps": 4,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 6
+              "rosacea_like_redness": 2
             },
             "folliculitis_like_bumps": {
               "acne_like_texture": 1,
-              "clinician_review": 2,
-              "dermatitis_like_irritation": 2,
-              "folliculitis_like_bumps": 8,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 5,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
@@ -1400,61 +1594,61 @@
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 3
+              "hyperpigmentation_like_uneven_tone": 2,
+              "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 2,
-              "clinician_review": 0,
+              "acne_like_texture": 1,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 4
+              "rosacea_like_redness": 3
             }
           },
           "c": 0.03
         },
         {
-          "accuracy": 0.7388535031847133,
-          "macro_recall": 0.529829847571783,
+          "accuracy": 0.7016129032258065,
+          "macro_recall": 0.7396810699588477,
           "per_class_recall": {
-            "acne_like_texture": 0.8064516129032258,
-            "clinician_review": 0.4,
-            "dermatitis_like_irritation": 0.7857142857142857,
-            "folliculitis_like_bumps": 0.6153846153846154,
-            "hyperpigmentation_like_uneven_tone": 0.0,
-            "rosacea_like_redness": 0.5714285714285714
+            "acne_like_texture": 0.56,
+            "clinician_review": 1.0,
+            "dermatitis_like_irritation": 0.7530864197530864,
+            "folliculitis_like_bumps": 0.625,
+            "hyperpigmentation_like_uneven_tone": 1.0,
+            "rosacea_like_redness": 0.5
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 25,
-              "clinician_review": 0,
+              "acne_like_texture": 14,
+              "clinician_review": 3,
               "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 3,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 1
+              "folliculitis_like_bumps": 4,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 3
             },
             "clinician_review": {
               "acne_like_texture": 0,
               "clinician_review": 2,
               "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 2,
+              "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 1
+              "rosacea_like_redness": 0
             },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 11,
-              "clinician_review": 4,
-              "dermatitis_like_irritation": 77,
-              "folliculitis_like_bumps": 2,
+              "acne_like_texture": 3,
+              "clinician_review": 9,
+              "dermatitis_like_irritation": 61,
+              "folliculitis_like_bumps": 6,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 4
+              "rosacea_like_redness": 2
             },
             "folliculitis_like_bumps": {
               "acne_like_texture": 1,
-              "clinician_review": 2,
-              "dermatitis_like_irritation": 2,
-              "folliculitis_like_bumps": 8,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 5,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
@@ -1463,61 +1657,61 @@
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 3
+              "hyperpigmentation_like_uneven_tone": 2,
+              "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 2,
-              "clinician_review": 0,
+              "acne_like_texture": 1,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 4
+              "rosacea_like_redness": 3
             }
           },
           "c": 0.1
         },
         {
-          "accuracy": 0.732484076433121,
-          "macro_recall": 0.5244535034857615,
+          "accuracy": 0.7580645161290323,
+          "macro_recall": 0.807798353909465,
           "per_class_recall": {
-            "acne_like_texture": 0.7741935483870968,
-            "clinician_review": 0.4,
-            "dermatitis_like_irritation": 0.7857142857142857,
-            "folliculitis_like_bumps": 0.6153846153846154,
-            "hyperpigmentation_like_uneven_tone": 0.0,
-            "rosacea_like_redness": 0.5714285714285714
+            "acne_like_texture": 0.64,
+            "clinician_review": 1.0,
+            "dermatitis_like_irritation": 0.7901234567901234,
+            "folliculitis_like_bumps": 0.75,
+            "hyperpigmentation_like_uneven_tone": 1.0,
+            "rosacea_like_redness": 0.6666666666666666
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 24,
-              "clinician_review": 0,
+              "acne_like_texture": 16,
+              "clinician_review": 3,
               "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 3,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 1
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 2
             },
             "clinician_review": {
               "acne_like_texture": 0,
               "clinician_review": 2,
               "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 2,
+              "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 1
+              "rosacea_like_redness": 0
             },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 11,
-              "clinician_review": 4,
-              "dermatitis_like_irritation": 77,
-              "folliculitis_like_bumps": 2,
+              "acne_like_texture": 3,
+              "clinician_review": 6,
+              "dermatitis_like_irritation": 64,
+              "folliculitis_like_bumps": 6,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 4
+              "rosacea_like_redness": 2
             },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 2,
+              "acne_like_texture": 0,
               "clinician_review": 1,
-              "dermatitis_like_irritation": 2,
-              "folliculitis_like_bumps": 8,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 6,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
@@ -1526,11 +1720,11 @@
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 3
+              "hyperpigmentation_like_uneven_tone": 2,
+              "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 2,
+              "acne_like_texture": 1,
               "clinician_review": 0,
               "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 0,
@@ -1541,59 +1735,59 @@
           "c": 0.3
         },
         {
-          "accuracy": 0.7261146496815286,
-          "macro_recall": 0.5227528232136527,
+          "accuracy": 0.7661290322580645,
+          "macro_recall": 0.7565740740740741,
           "per_class_recall": {
-            "acne_like_texture": 0.7741935483870968,
-            "clinician_review": 0.4,
-            "dermatitis_like_irritation": 0.7755102040816326,
-            "folliculitis_like_bumps": 0.6153846153846154,
-            "hyperpigmentation_like_uneven_tone": 0.0,
-            "rosacea_like_redness": 0.5714285714285714
+            "acne_like_texture": 0.72,
+            "clinician_review": 1.0,
+            "dermatitis_like_irritation": 0.7777777777777778,
+            "folliculitis_like_bumps": 0.875,
+            "hyperpigmentation_like_uneven_tone": 0.5,
+            "rosacea_like_redness": 0.6666666666666666
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 24,
-              "clinician_review": 0,
+              "acne_like_texture": 18,
+              "clinician_review": 3,
               "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 3,
-              "hyperpigmentation_like_uneven_tone": 2,
+              "folliculitis_like_bumps": 2,
+              "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 1
             },
             "clinician_review": {
               "acne_like_texture": 0,
               "clinician_review": 2,
               "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 2,
+              "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 1
+              "rosacea_like_redness": 0
             },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 10,
-              "clinician_review": 4,
-              "dermatitis_like_irritation": 76,
-              "folliculitis_like_bumps": 3,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 4
+              "acne_like_texture": 3,
+              "clinician_review": 6,
+              "dermatitis_like_irritation": 63,
+              "folliculitis_like_bumps": 7,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 2
             },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 2,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 2,
-              "folliculitis_like_bumps": 8,
+              "acne_like_texture": 0,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 7,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
               "acne_like_texture": 0,
-              "clinician_review": 0,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 3
+              "hyperpigmentation_like_uneven_tone": 1,
+              "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 2,
+              "acne_like_texture": 1,
               "clinician_review": 0,
               "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 0,
@@ -1604,59 +1798,59 @@
           "c": 1.0
         },
         {
-          "accuracy": 0.732484076433121,
-          "macro_recall": 0.5244535034857615,
+          "accuracy": 0.7741935483870968,
+          "macro_recall": 0.7586316872427984,
           "per_class_recall": {
-            "acne_like_texture": 0.7741935483870968,
-            "clinician_review": 0.4,
-            "dermatitis_like_irritation": 0.7857142857142857,
-            "folliculitis_like_bumps": 0.6153846153846154,
-            "hyperpigmentation_like_uneven_tone": 0.0,
-            "rosacea_like_redness": 0.5714285714285714
+            "acne_like_texture": 0.72,
+            "clinician_review": 1.0,
+            "dermatitis_like_irritation": 0.7901234567901234,
+            "folliculitis_like_bumps": 0.875,
+            "hyperpigmentation_like_uneven_tone": 0.5,
+            "rosacea_like_redness": 0.6666666666666666
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 24,
-              "clinician_review": 0,
+              "acne_like_texture": 18,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 3,
-              "hyperpigmentation_like_uneven_tone": 2,
+              "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 1
             },
             "clinician_review": {
               "acne_like_texture": 0,
               "clinician_review": 2,
               "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 2,
+              "folliculitis_like_bumps": 0,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 0
+            },
+            "dermatitis_like_irritation": {
+              "acne_like_texture": 3,
+              "clinician_review": 6,
+              "dermatitis_like_irritation": 64,
+              "folliculitis_like_bumps": 7,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 1
             },
-            "dermatitis_like_irritation": {
-              "acne_like_texture": 9,
-              "clinician_review": 4,
-              "dermatitis_like_irritation": 77,
-              "folliculitis_like_bumps": 4,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 3
-            },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 2,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 2,
-              "folliculitis_like_bumps": 8,
+              "acne_like_texture": 0,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 7,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
               "acne_like_texture": 0,
-              "clinician_review": 0,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 3
+              "hyperpigmentation_like_uneven_tone": 1,
+              "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 2,
+              "acne_like_texture": 1,
               "clinician_review": 0,
               "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 0,
@@ -1667,59 +1861,59 @@
           "c": 3.0
         },
         {
-          "accuracy": 0.7197452229299363,
-          "macro_recall": 0.5173764791276312,
+          "accuracy": 0.7661290322580645,
+          "macro_recall": 0.7565740740740741,
           "per_class_recall": {
-            "acne_like_texture": 0.7419354838709677,
-            "clinician_review": 0.4,
-            "dermatitis_like_irritation": 0.7755102040816326,
-            "folliculitis_like_bumps": 0.6153846153846154,
-            "hyperpigmentation_like_uneven_tone": 0.0,
-            "rosacea_like_redness": 0.5714285714285714
+            "acne_like_texture": 0.72,
+            "clinician_review": 1.0,
+            "dermatitis_like_irritation": 0.7777777777777778,
+            "folliculitis_like_bumps": 0.875,
+            "hyperpigmentation_like_uneven_tone": 0.5,
+            "rosacea_like_redness": 0.6666666666666666
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 23,
-              "clinician_review": 0,
+              "acne_like_texture": 18,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 3,
-              "hyperpigmentation_like_uneven_tone": 3,
+              "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 1
             },
             "clinician_review": {
               "acne_like_texture": 0,
               "clinician_review": 2,
               "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 2,
+              "folliculitis_like_bumps": 0,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 0
+            },
+            "dermatitis_like_irritation": {
+              "acne_like_texture": 3,
+              "clinician_review": 6,
+              "dermatitis_like_irritation": 63,
+              "folliculitis_like_bumps": 8,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 1
             },
-            "dermatitis_like_irritation": {
-              "acne_like_texture": 9,
-              "clinician_review": 5,
-              "dermatitis_like_irritation": 76,
-              "folliculitis_like_bumps": 4,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 3
-            },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 2,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 2,
-              "folliculitis_like_bumps": 8,
+              "acne_like_texture": 0,
+              "clinician_review": 0,
+              "dermatitis_like_irritation": 1,
+              "folliculitis_like_bumps": 7,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
               "acne_like_texture": 0,
-              "clinician_review": 0,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 3
+              "hyperpigmentation_like_uneven_tone": 1,
+              "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 2,
+              "acne_like_texture": 1,
               "clinician_review": 0,
               "dermatitis_like_irritation": 1,
               "folliculitis_like_bumps": 0,
@@ -1734,6 +1928,8 @@
     {
       "seed": 21,
       "train_images": 633,
+      "head_train_images": 506,
+      "calibration_images": 127,
       "val_images": 145,
       "deployed_conservative_prior": {
         "accuracy": 0.8758620689655172,
@@ -1797,7 +1993,7 @@
           }
         }
       },
-      "best_decoupled_balanced_logit_head": {
+      "nested_decoupled_balanced_logit_head": {
         "accuracy": 0.7655172413793103,
         "macro_recall": 0.7892010163749293,
         "per_class_recall": {
@@ -1860,53 +2056,116 @@
         },
         "c": 0.03
       },
-      "head_sweep": [
+      "best_calibration_result": {
+        "accuracy": 0.7480314960629921,
+        "macro_recall": 0.6955536431440046,
+        "per_class_recall": {
+          "acne_like_texture": 0.7,
+          "clinician_review": 0.5,
+          "dermatitis_like_irritation": 0.7590361445783133,
+          "folliculitis_like_bumps": 0.8333333333333334,
+          "hyperpigmentation_like_uneven_tone": 0.6666666666666666,
+          "rosacea_like_redness": 0.7142857142857143
+        },
+        "confusion": {
+          "acne_like_texture": {
+            "acne_like_texture": 14,
+            "clinician_review": 2,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 1,
+            "hyperpigmentation_like_uneven_tone": 2,
+            "rosacea_like_redness": 1
+          },
+          "clinician_review": {
+            "acne_like_texture": 0,
+            "clinician_review": 1,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 1
+          },
+          "dermatitis_like_irritation": {
+            "acne_like_texture": 9,
+            "clinician_review": 1,
+            "dermatitis_like_irritation": 63,
+            "folliculitis_like_bumps": 9,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 1
+          },
+          "folliculitis_like_bumps": {
+            "acne_like_texture": 1,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 1,
+            "folliculitis_like_bumps": 10,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 0
+          },
+          "hyperpigmentation_like_uneven_tone": {
+            "acne_like_texture": 1,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 2,
+            "rosacea_like_redness": 0
+          },
+          "rosacea_like_redness": {
+            "acne_like_texture": 2,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 5
+          }
+        },
+        "c": 0.03
+      },
+      "calibration_sweep": [
         {
-          "accuracy": 0.7655172413793103,
-          "macro_recall": 0.7892010163749293,
+          "accuracy": 0.7480314960629921,
+          "macro_recall": 0.6955536431440046,
           "per_class_recall": {
-            "acne_like_texture": 0.75,
-            "clinician_review": 0.8,
-            "dermatitis_like_irritation": 0.782608695652174,
-            "folliculitis_like_bumps": 0.5454545454545454,
-            "hyperpigmentation_like_uneven_tone": 1.0,
-            "rosacea_like_redness": 0.8571428571428571
+            "acne_like_texture": 0.7,
+            "clinician_review": 0.5,
+            "dermatitis_like_irritation": 0.7590361445783133,
+            "folliculitis_like_bumps": 0.8333333333333334,
+            "hyperpigmentation_like_uneven_tone": 0.6666666666666666,
+            "rosacea_like_redness": 0.7142857142857143
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 21,
-              "clinician_review": 0,
+              "acne_like_texture": 14,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 3,
+              "folliculitis_like_bumps": 1,
               "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 2
+              "rosacea_like_redness": 1
             },
             "clinician_review": {
-              "acne_like_texture": 1,
-              "clinician_review": 4,
+              "acne_like_texture": 0,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 0
+              "rosacea_like_redness": 1
             },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 5,
-              "clinician_review": 4,
-              "dermatitis_like_irritation": 72,
-              "folliculitis_like_bumps": 6,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 4
+              "acne_like_texture": 9,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 63,
+              "folliculitis_like_bumps": 9,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 1
             },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 3,
-              "clinician_review": 1,
+              "acne_like_texture": 1,
+              "clinician_review": 0,
               "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 6,
+              "folliculitis_like_bumps": 10,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
-              "acne_like_texture": 0,
+              "acne_like_texture": 1,
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
@@ -1914,327 +2173,327 @@
               "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 0,
+              "acne_like_texture": 2,
               "clinician_review": 0,
-              "dermatitis_like_irritation": 1,
+              "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 6
+              "rosacea_like_redness": 5
             }
           },
           "c": 0.03
         },
         {
-          "accuracy": 0.7724137931034483,
-          "macro_recall": 0.773155467720685,
+          "accuracy": 0.7480314960629921,
+          "macro_recall": 0.6202046280359533,
           "per_class_recall": {
-            "acne_like_texture": 0.7857142857142857,
-            "clinician_review": 0.8,
-            "dermatitis_like_irritation": 0.7934782608695652,
-            "folliculitis_like_bumps": 0.5454545454545454,
-            "hyperpigmentation_like_uneven_tone": 1.0,
-            "rosacea_like_redness": 0.7142857142857143
+            "acne_like_texture": 0.7,
+            "clinician_review": 0.5,
+            "dermatitis_like_irritation": 0.7831325301204819,
+            "folliculitis_like_bumps": 0.8333333333333334,
+            "hyperpigmentation_like_uneven_tone": 0.3333333333333333,
+            "rosacea_like_redness": 0.5714285714285714
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 22,
-              "clinician_review": 0,
+              "acne_like_texture": 14,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 2,
+              "folliculitis_like_bumps": 1,
               "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 2
+              "rosacea_like_redness": 1
             },
             "clinician_review": {
-              "acne_like_texture": 1,
-              "clinician_review": 4,
+              "acne_like_texture": 0,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 0
+              "rosacea_like_redness": 1
             },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 5,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 73,
-              "folliculitis_like_bumps": 6,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 4
+              "acne_like_texture": 9,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 65,
+              "folliculitis_like_bumps": 7,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 1
             },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 3,
-              "clinician_review": 1,
+              "acne_like_texture": 1,
+              "clinician_review": 0,
               "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 6,
+              "folliculitis_like_bumps": 10,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
-              "acne_like_texture": 0,
+              "acne_like_texture": 2,
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
+              "hyperpigmentation_like_uneven_tone": 1,
               "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 0,
+              "acne_like_texture": 3,
               "clinician_review": 0,
-              "dermatitis_like_irritation": 1,
+              "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 5
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 4
             }
           },
           "c": 0.1
         },
         {
-          "accuracy": 0.7793103448275862,
-          "macro_recall": 0.7749670619235837,
+          "accuracy": 0.7401574803149606,
+          "macro_recall": 0.5646490724803978,
           "per_class_recall": {
-            "acne_like_texture": 0.7857142857142857,
-            "clinician_review": 0.8,
-            "dermatitis_like_irritation": 0.8043478260869565,
-            "folliculitis_like_bumps": 0.5454545454545454,
-            "hyperpigmentation_like_uneven_tone": 1.0,
-            "rosacea_like_redness": 0.7142857142857143
+            "acne_like_texture": 0.7,
+            "clinician_review": 0.5,
+            "dermatitis_like_irritation": 0.7831325301204819,
+            "folliculitis_like_bumps": 0.8333333333333334,
+            "hyperpigmentation_like_uneven_tone": 0.0,
+            "rosacea_like_redness": 0.5714285714285714
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 22,
-              "clinician_review": 0,
+              "acne_like_texture": 14,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 2,
+              "folliculitis_like_bumps": 1,
               "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 2
+              "rosacea_like_redness": 1
             },
             "clinician_review": {
-              "acne_like_texture": 1,
-              "clinician_review": 4,
+              "acne_like_texture": 0,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 0
+              "rosacea_like_redness": 1
             },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 5,
-              "clinician_review": 2,
-              "dermatitis_like_irritation": 74,
-              "folliculitis_like_bumps": 6,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 4
+              "acne_like_texture": 7,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 65,
+              "folliculitis_like_bumps": 9,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 1
             },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 3,
-              "clinician_review": 1,
+              "acne_like_texture": 1,
+              "clinician_review": 0,
               "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 6,
+              "folliculitis_like_bumps": 10,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
-              "acne_like_texture": 0,
+              "acne_like_texture": 3,
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
+              "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 0,
+              "acne_like_texture": 3,
               "clinician_review": 0,
-              "dermatitis_like_irritation": 1,
+              "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 5
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 4
             }
           },
           "c": 0.3
         },
         {
-          "accuracy": 0.7793103448275862,
-          "macro_recall": 0.7529691323169584,
+          "accuracy": 0.7480314960629921,
+          "macro_recall": 0.572982405813731,
           "per_class_recall": {
-            "acne_like_texture": 0.7857142857142857,
-            "clinician_review": 0.8,
-            "dermatitis_like_irritation": 0.8152173913043478,
-            "folliculitis_like_bumps": 0.5454545454545454,
-            "hyperpigmentation_like_uneven_tone": 1.0,
+            "acne_like_texture": 0.75,
+            "clinician_review": 0.5,
+            "dermatitis_like_irritation": 0.7831325301204819,
+            "folliculitis_like_bumps": 0.8333333333333334,
+            "hyperpigmentation_like_uneven_tone": 0.0,
             "rosacea_like_redness": 0.5714285714285714
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 22,
-              "clinician_review": 0,
+              "acne_like_texture": 15,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 2,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 2
+              "folliculitis_like_bumps": 1,
+              "hyperpigmentation_like_uneven_tone": 1,
+              "rosacea_like_redness": 1
             },
             "clinician_review": {
-              "acne_like_texture": 1,
-              "clinician_review": 4,
+              "acne_like_texture": 0,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 0
+              "rosacea_like_redness": 1
             },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 5,
-              "clinician_review": 2,
-              "dermatitis_like_irritation": 75,
-              "folliculitis_like_bumps": 7,
+              "acne_like_texture": 7,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 65,
+              "folliculitis_like_bumps": 9,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 3
+              "rosacea_like_redness": 1
             },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 3,
-              "clinician_review": 1,
+              "acne_like_texture": 1,
+              "clinician_review": 0,
               "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 6,
+              "folliculitis_like_bumps": 10,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
-              "acne_like_texture": 0,
+              "acne_like_texture": 3,
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
+              "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 0,
+              "acne_like_texture": 3,
               "clinician_review": 0,
-              "dermatitis_like_irritation": 1,
+              "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
+              "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 4
             }
           },
           "c": 1.0
         },
         {
-          "accuracy": 0.7724137931034483,
-          "macro_recall": 0.7291596085074347,
+          "accuracy": 0.7480314960629921,
+          "macro_recall": 0.572982405813731,
           "per_class_recall": {
-            "acne_like_texture": 0.7857142857142857,
-            "clinician_review": 0.8,
-            "dermatitis_like_irritation": 0.8152173913043478,
-            "folliculitis_like_bumps": 0.5454545454545454,
-            "hyperpigmentation_like_uneven_tone": 1.0,
-            "rosacea_like_redness": 0.42857142857142855
+            "acne_like_texture": 0.75,
+            "clinician_review": 0.5,
+            "dermatitis_like_irritation": 0.7831325301204819,
+            "folliculitis_like_bumps": 0.8333333333333334,
+            "hyperpigmentation_like_uneven_tone": 0.0,
+            "rosacea_like_redness": 0.5714285714285714
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 22,
-              "clinician_review": 0,
+              "acne_like_texture": 15,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 2,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 2
+              "folliculitis_like_bumps": 1,
+              "hyperpigmentation_like_uneven_tone": 1,
+              "rosacea_like_redness": 1
             },
             "clinician_review": {
-              "acne_like_texture": 1,
-              "clinician_review": 4,
+              "acne_like_texture": 0,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 0,
+              "hyperpigmentation_like_uneven_tone": 1,
               "rosacea_like_redness": 0
             },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 5,
-              "clinician_review": 2,
-              "dermatitis_like_irritation": 75,
-              "folliculitis_like_bumps": 7,
+              "acne_like_texture": 7,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 65,
+              "folliculitis_like_bumps": 9,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 3
+              "rosacea_like_redness": 1
             },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 3,
-              "clinician_review": 1,
+              "acne_like_texture": 1,
+              "clinician_review": 0,
               "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 6,
+              "folliculitis_like_bumps": 10,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
-              "acne_like_texture": 0,
+              "acne_like_texture": 3,
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
+              "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 0,
+              "acne_like_texture": 3,
               "clinician_review": 0,
-              "dermatitis_like_irritation": 1,
+              "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 3,
-              "rosacea_like_redness": 3
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 4
             }
           },
           "c": 3.0
         },
         {
-          "accuracy": 0.7655172413793103,
-          "macro_recall": 0.7232072275550537,
+          "accuracy": 0.7401574803149606,
+          "macro_recall": 0.5646490724803978,
           "per_class_recall": {
-            "acne_like_texture": 0.75,
-            "clinician_review": 0.8,
-            "dermatitis_like_irritation": 0.8152173913043478,
-            "folliculitis_like_bumps": 0.5454545454545454,
-            "hyperpigmentation_like_uneven_tone": 1.0,
-            "rosacea_like_redness": 0.42857142857142855
+            "acne_like_texture": 0.7,
+            "clinician_review": 0.5,
+            "dermatitis_like_irritation": 0.7831325301204819,
+            "folliculitis_like_bumps": 0.8333333333333334,
+            "hyperpigmentation_like_uneven_tone": 0.0,
+            "rosacea_like_redness": 0.5714285714285714
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 21,
-              "clinician_review": 0,
-              "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 2,
-              "hyperpigmentation_like_uneven_tone": 2,
+              "acne_like_texture": 14,
+              "clinician_review": 2,
+              "dermatitis_like_irritation": 0,
+              "folliculitis_like_bumps": 1,
+              "hyperpigmentation_like_uneven_tone": 1,
               "rosacea_like_redness": 2
             },
             "clinician_review": {
-              "acne_like_texture": 1,
-              "clinician_review": 4,
+              "acne_like_texture": 0,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 0,
+              "hyperpigmentation_like_uneven_tone": 1,
               "rosacea_like_redness": 0
             },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 5,
-              "clinician_review": 2,
-              "dermatitis_like_irritation": 75,
-              "folliculitis_like_bumps": 7,
+              "acne_like_texture": 7,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 65,
+              "folliculitis_like_bumps": 9,
               "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 3
+              "rosacea_like_redness": 1
             },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 3,
-              "clinician_review": 1,
+              "acne_like_texture": 1,
+              "clinician_review": 0,
               "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 6,
+              "folliculitis_like_bumps": 10,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "hyperpigmentation_like_uneven_tone": {
-              "acne_like_texture": 0,
+              "acne_like_texture": 3,
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
+              "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 0,
+              "acne_like_texture": 3,
               "clinician_review": 0,
-              "dermatitis_like_irritation": 1,
+              "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 3,
-              "rosacea_like_redness": 3
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 4
             }
           },
           "c": 10.0
@@ -2244,6 +2503,8 @@
     {
       "seed": 84,
       "train_images": 622,
+      "head_train_images": 507,
+      "calibration_images": 115,
       "val_images": 156,
       "deployed_conservative_prior": {
         "accuracy": 0.8717948717948718,
@@ -2307,47 +2568,47 @@
           }
         }
       },
-      "best_decoupled_balanced_logit_head": {
-        "accuracy": 0.7307692307692307,
-        "macro_recall": 0.7501803751803752,
+      "nested_decoupled_balanced_logit_head": {
+        "accuracy": 0.7371794871794872,
+        "macro_recall": 0.721185064935065,
         "per_class_recall": {
           "acne_like_texture": 0.6666666666666666,
           "clinician_review": 0.5,
-          "dermatitis_like_irritation": 0.75,
-          "folliculitis_like_bumps": 0.7272727272727273,
+          "dermatitis_like_irritation": 0.7708333333333334,
+          "folliculitis_like_bumps": 0.8181818181818182,
           "hyperpigmentation_like_uneven_tone": 1.0,
-          "rosacea_like_redness": 0.8571428571428571
+          "rosacea_like_redness": 0.5714285714285714
         },
         "confusion": {
           "acne_like_texture": {
             "acne_like_texture": 22,
             "clinician_review": 0,
-            "dermatitis_like_irritation": 2,
-            "folliculitis_like_bumps": 4,
-            "hyperpigmentation_like_uneven_tone": 0,
-            "rosacea_like_redness": 5
+            "dermatitis_like_irritation": 1,
+            "folliculitis_like_bumps": 6,
+            "hyperpigmentation_like_uneven_tone": 1,
+            "rosacea_like_redness": 3
           },
           "clinician_review": {
             "acne_like_texture": 0,
             "clinician_review": 3,
-            "dermatitis_like_irritation": 0,
+            "dermatitis_like_irritation": 1,
             "folliculitis_like_bumps": 0,
-            "hyperpigmentation_like_uneven_tone": 2,
+            "hyperpigmentation_like_uneven_tone": 1,
             "rosacea_like_redness": 1
           },
           "dermatitis_like_irritation": {
-            "acne_like_texture": 6,
-            "clinician_review": 1,
-            "dermatitis_like_irritation": 72,
-            "folliculitis_like_bumps": 13,
-            "hyperpigmentation_like_uneven_tone": 4,
+            "acne_like_texture": 4,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 74,
+            "folliculitis_like_bumps": 15,
+            "hyperpigmentation_like_uneven_tone": 3,
             "rosacea_like_redness": 0
           },
           "folliculitis_like_bumps": {
             "acne_like_texture": 0,
-            "clinician_review": 2,
+            "clinician_review": 1,
             "dermatitis_like_irritation": 1,
-            "folliculitis_like_bumps": 8,
+            "folliculitis_like_bumps": 9,
             "hyperpigmentation_like_uneven_tone": 0,
             "rosacea_like_redness": 0
           },
@@ -2360,57 +2621,120 @@
             "rosacea_like_redness": 0
           },
           "rosacea_like_redness": {
+            "acne_like_texture": 1,
+            "clinician_review": 0,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 2,
+            "rosacea_like_redness": 4
+          }
+        },
+        "c": 0.3
+      },
+      "best_calibration_result": {
+        "accuracy": 0.7478260869565218,
+        "macro_recall": 0.7545958607602442,
+        "per_class_recall": {
+          "acne_like_texture": 0.5714285714285714,
+          "clinician_review": 0.5,
+          "dermatitis_like_irritation": 0.7808219178082192,
+          "folliculitis_like_bumps": 0.8181818181818182,
+          "hyperpigmentation_like_uneven_tone": 1.0,
+          "rosacea_like_redness": 0.8571428571428571
+        },
+        "confusion": {
+          "acne_like_texture": {
+            "acne_like_texture": 12,
+            "clinician_review": 2,
+            "dermatitis_like_irritation": 1,
+            "folliculitis_like_bumps": 4,
+            "hyperpigmentation_like_uneven_tone": 2,
+            "rosacea_like_redness": 0
+          },
+          "clinician_review": {
+            "acne_like_texture": 0,
+            "clinician_review": 1,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 1
+          },
+          "dermatitis_like_irritation": {
+            "acne_like_texture": 1,
+            "clinician_review": 2,
+            "dermatitis_like_irritation": 57,
+            "folliculitis_like_bumps": 7,
+            "hyperpigmentation_like_uneven_tone": 2,
+            "rosacea_like_redness": 4
+          },
+          "folliculitis_like_bumps": {
+            "acne_like_texture": 1,
+            "clinician_review": 1,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 9,
+            "hyperpigmentation_like_uneven_tone": 0,
+            "rosacea_like_redness": 0
+          },
+          "hyperpigmentation_like_uneven_tone": {
             "acne_like_texture": 0,
             "clinician_review": 0,
             "dermatitis_like_irritation": 0,
             "folliculitis_like_bumps": 0,
             "hyperpigmentation_like_uneven_tone": 1,
+            "rosacea_like_redness": 0
+          },
+          "rosacea_like_redness": {
+            "acne_like_texture": 0,
+            "clinician_review": 1,
+            "dermatitis_like_irritation": 0,
+            "folliculitis_like_bumps": 0,
+            "hyperpigmentation_like_uneven_tone": 0,
             "rosacea_like_redness": 6
           }
         },
-        "c": 0.03
+        "c": 0.3
       },
-      "head_sweep": [
+      "calibration_sweep": [
         {
-          "accuracy": 0.7307692307692307,
-          "macro_recall": 0.7501803751803752,
+          "accuracy": 0.7043478260869566,
+          "macro_recall": 0.730311925517405,
           "per_class_recall": {
-            "acne_like_texture": 0.6666666666666666,
+            "acne_like_texture": 0.5714285714285714,
             "clinician_review": 0.5,
-            "dermatitis_like_irritation": 0.75,
+            "dermatitis_like_irritation": 0.726027397260274,
             "folliculitis_like_bumps": 0.7272727272727273,
             "hyperpigmentation_like_uneven_tone": 1.0,
             "rosacea_like_redness": 0.8571428571428571
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 22,
-              "clinician_review": 0,
-              "dermatitis_like_irritation": 2,
-              "folliculitis_like_bumps": 4,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 5
-            },
-            "clinician_review": {
-              "acne_like_texture": 0,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 1
-            },
-            "dermatitis_like_irritation": {
-              "acne_like_texture": 6,
+              "acne_like_texture": 12,
               "clinician_review": 1,
-              "dermatitis_like_irritation": 72,
-              "folliculitis_like_bumps": 13,
+              "dermatitis_like_irritation": 0,
+              "folliculitis_like_bumps": 4,
               "hyperpigmentation_like_uneven_tone": 4,
               "rosacea_like_redness": 0
             },
-            "folliculitis_like_bumps": {
+            "clinician_review": {
               "acne_like_texture": 0,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 0,
+              "folliculitis_like_bumps": 0,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 1
+            },
+            "dermatitis_like_irritation": {
+              "acne_like_texture": 1,
+              "clinician_review": 4,
+              "dermatitis_like_irritation": 53,
+              "folliculitis_like_bumps": 7,
+              "hyperpigmentation_like_uneven_tone": 4,
+              "rosacea_like_redness": 4
+            },
+            "folliculitis_like_bumps": {
+              "acne_like_texture": 1,
               "clinician_review": 2,
-              "dermatitis_like_irritation": 1,
+              "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 8,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
@@ -2420,61 +2744,61 @@
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 3,
+              "hyperpigmentation_like_uneven_tone": 1,
               "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
               "acne_like_texture": 0,
-              "clinician_review": 0,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 1,
+              "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 6
             }
           },
           "c": 0.03
         },
         {
-          "accuracy": 0.7371794871794872,
-          "macro_recall": 0.7244994588744588,
+          "accuracy": 0.7391304347826086,
+          "macro_recall": 0.7394443456087291,
           "per_class_recall": {
-            "acne_like_texture": 0.696969696969697,
+            "acne_like_texture": 0.5714285714285714,
             "clinician_review": 0.5,
-            "dermatitis_like_irritation": 0.7604166666666666,
-            "folliculitis_like_bumps": 0.8181818181818182,
+            "dermatitis_like_irritation": 0.7808219178082192,
+            "folliculitis_like_bumps": 0.7272727272727273,
             "hyperpigmentation_like_uneven_tone": 1.0,
-            "rosacea_like_redness": 0.5714285714285714
+            "rosacea_like_redness": 0.8571428571428571
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 23,
-              "clinician_review": 0,
-              "dermatitis_like_irritation": 2,
-              "folliculitis_like_bumps": 4,
-              "hyperpigmentation_like_uneven_tone": 0,
-              "rosacea_like_redness": 4
-            },
-            "clinician_review": {
-              "acne_like_texture": 0,
-              "clinician_review": 3,
+              "acne_like_texture": 12,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 0,
-              "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 1
-            },
-            "dermatitis_like_irritation": {
-              "acne_like_texture": 4,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 73,
-              "folliculitis_like_bumps": 15,
+              "folliculitis_like_bumps": 4,
               "hyperpigmentation_like_uneven_tone": 3,
               "rosacea_like_redness": 0
             },
-            "folliculitis_like_bumps": {
+            "clinician_review": {
               "acne_like_texture": 0,
               "clinician_review": 1,
-              "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 9,
+              "dermatitis_like_irritation": 0,
+              "folliculitis_like_bumps": 0,
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 1
+            },
+            "dermatitis_like_irritation": {
+              "acne_like_texture": 1,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 57,
+              "folliculitis_like_bumps": 6,
+              "hyperpigmentation_like_uneven_tone": 4,
+              "rosacea_like_redness": 4
+            },
+            "folliculitis_like_bumps": {
+              "acne_like_texture": 1,
+              "clinician_review": 2,
+              "dermatitis_like_irritation": 0,
+              "folliculitis_like_bumps": 8,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
             },
@@ -2483,60 +2807,60 @@
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 3,
+              "hyperpigmentation_like_uneven_tone": 1,
               "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 1,
-              "clinician_review": 0,
+              "acne_like_texture": 0,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 4
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 6
             }
           },
           "c": 0.1
         },
         {
-          "accuracy": 0.7371794871794872,
-          "macro_recall": 0.721185064935065,
+          "accuracy": 0.7478260869565218,
+          "macro_recall": 0.7545958607602442,
           "per_class_recall": {
-            "acne_like_texture": 0.6666666666666666,
+            "acne_like_texture": 0.5714285714285714,
             "clinician_review": 0.5,
-            "dermatitis_like_irritation": 0.7708333333333334,
+            "dermatitis_like_irritation": 0.7808219178082192,
             "folliculitis_like_bumps": 0.8181818181818182,
             "hyperpigmentation_like_uneven_tone": 1.0,
-            "rosacea_like_redness": 0.5714285714285714
+            "rosacea_like_redness": 0.8571428571428571
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 22,
-              "clinician_review": 0,
+              "acne_like_texture": 12,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 6,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 3
+              "folliculitis_like_bumps": 4,
+              "hyperpigmentation_like_uneven_tone": 2,
+              "rosacea_like_redness": 0
             },
             "clinician_review": {
               "acne_like_texture": 0,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 1,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 1,
+              "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 1
             },
             "dermatitis_like_irritation": {
-              "acne_like_texture": 4,
-              "clinician_review": 0,
-              "dermatitis_like_irritation": 74,
-              "folliculitis_like_bumps": 15,
-              "hyperpigmentation_like_uneven_tone": 3,
-              "rosacea_like_redness": 0
+              "acne_like_texture": 1,
+              "clinician_review": 2,
+              "dermatitis_like_irritation": 57,
+              "folliculitis_like_bumps": 7,
+              "hyperpigmentation_like_uneven_tone": 2,
+              "rosacea_like_redness": 4
             },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 0,
+              "acne_like_texture": 1,
               "clinician_review": 1,
-              "dermatitis_like_irritation": 1,
+              "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 9,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
@@ -2546,60 +2870,60 @@
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 3,
+              "hyperpigmentation_like_uneven_tone": 1,
               "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 1,
-              "clinician_review": 0,
+              "acne_like_texture": 0,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 4
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 6
             }
           },
           "c": 0.3
         },
         {
-          "accuracy": 0.7435897435897436,
-          "macro_recall": 0.7229211760461761,
+          "accuracy": 0.7304347826086957,
+          "macro_recall": 0.7500296507145823,
           "per_class_recall": {
-            "acne_like_texture": 0.6666666666666666,
+            "acne_like_texture": 0.5714285714285714,
             "clinician_review": 0.5,
-            "dermatitis_like_irritation": 0.78125,
+            "dermatitis_like_irritation": 0.7534246575342466,
             "folliculitis_like_bumps": 0.8181818181818182,
             "hyperpigmentation_like_uneven_tone": 1.0,
-            "rosacea_like_redness": 0.5714285714285714
+            "rosacea_like_redness": 0.8571428571428571
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 22,
-              "clinician_review": 0,
+              "acne_like_texture": 12,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 6,
+              "folliculitis_like_bumps": 4,
               "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 2
+              "rosacea_like_redness": 0
             },
             "clinician_review": {
               "acne_like_texture": 0,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 1,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 1
-            },
-            "dermatitis_like_irritation": {
-              "acne_like_texture": 4,
-              "clinician_review": 0,
-              "dermatitis_like_irritation": 75,
-              "folliculitis_like_bumps": 14,
-              "hyperpigmentation_like_uneven_tone": 3,
               "rosacea_like_redness": 0
             },
+            "dermatitis_like_irritation": {
+              "acne_like_texture": 1,
+              "clinician_review": 3,
+              "dermatitis_like_irritation": 55,
+              "folliculitis_like_bumps": 7,
+              "hyperpigmentation_like_uneven_tone": 2,
+              "rosacea_like_redness": 5
+            },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 0,
+              "acne_like_texture": 1,
               "clinician_review": 1,
-              "dermatitis_like_irritation": 1,
+              "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 9,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
@@ -2609,60 +2933,60 @@
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 3,
+              "hyperpigmentation_like_uneven_tone": 1,
               "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 1,
-              "clinician_review": 0,
+              "acne_like_texture": 0,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 4
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 6
             }
           },
           "c": 1.0
         },
         {
-          "accuracy": 0.7435897435897436,
-          "macro_recall": 0.7229211760461761,
+          "accuracy": 0.7304347826086957,
+          "macro_recall": 0.7500296507145823,
           "per_class_recall": {
-            "acne_like_texture": 0.6666666666666666,
+            "acne_like_texture": 0.5714285714285714,
             "clinician_review": 0.5,
-            "dermatitis_like_irritation": 0.78125,
+            "dermatitis_like_irritation": 0.7534246575342466,
             "folliculitis_like_bumps": 0.8181818181818182,
             "hyperpigmentation_like_uneven_tone": 1.0,
-            "rosacea_like_redness": 0.5714285714285714
+            "rosacea_like_redness": 0.8571428571428571
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 22,
-              "clinician_review": 0,
+              "acne_like_texture": 12,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 6,
+              "folliculitis_like_bumps": 4,
               "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 2
+              "rosacea_like_redness": 0
             },
             "clinician_review": {
               "acne_like_texture": 0,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 1,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 1
-            },
-            "dermatitis_like_irritation": {
-              "acne_like_texture": 4,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 75,
-              "folliculitis_like_bumps": 13,
-              "hyperpigmentation_like_uneven_tone": 3,
               "rosacea_like_redness": 0
             },
+            "dermatitis_like_irritation": {
+              "acne_like_texture": 1,
+              "clinician_review": 3,
+              "dermatitis_like_irritation": 55,
+              "folliculitis_like_bumps": 7,
+              "hyperpigmentation_like_uneven_tone": 2,
+              "rosacea_like_redness": 5
+            },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 0,
+              "acne_like_texture": 1,
               "clinician_review": 1,
-              "dermatitis_like_irritation": 1,
+              "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 9,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
@@ -2672,60 +2996,60 @@
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 3,
+              "hyperpigmentation_like_uneven_tone": 1,
               "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 1,
-              "clinician_review": 0,
+              "acne_like_texture": 0,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 4
+              "hyperpigmentation_like_uneven_tone": 0,
+              "rosacea_like_redness": 6
             }
           },
           "c": 3.0
         },
         {
-          "accuracy": 0.7435897435897436,
-          "macro_recall": 0.7229211760461761,
+          "accuracy": 0.7304347826086957,
+          "macro_recall": 0.7341566348415663,
           "per_class_recall": {
-            "acne_like_texture": 0.6666666666666666,
+            "acne_like_texture": 0.6190476190476191,
             "clinician_review": 0.5,
-            "dermatitis_like_irritation": 0.78125,
+            "dermatitis_like_irritation": 0.7534246575342466,
             "folliculitis_like_bumps": 0.8181818181818182,
             "hyperpigmentation_like_uneven_tone": 1.0,
-            "rosacea_like_redness": 0.5714285714285714
+            "rosacea_like_redness": 0.7142857142857143
           },
           "confusion": {
             "acne_like_texture": {
-              "acne_like_texture": 22,
-              "clinician_review": 0,
+              "acne_like_texture": 13,
+              "clinician_review": 2,
               "dermatitis_like_irritation": 1,
-              "folliculitis_like_bumps": 6,
-              "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 3
+              "folliculitis_like_bumps": 3,
+              "hyperpigmentation_like_uneven_tone": 2,
+              "rosacea_like_redness": 0
             },
             "clinician_review": {
               "acne_like_texture": 0,
-              "clinician_review": 3,
-              "dermatitis_like_irritation": 1,
+              "clinician_review": 1,
+              "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
               "hyperpigmentation_like_uneven_tone": 1,
-              "rosacea_like_redness": 1
-            },
-            "dermatitis_like_irritation": {
-              "acne_like_texture": 4,
-              "clinician_review": 1,
-              "dermatitis_like_irritation": 75,
-              "folliculitis_like_bumps": 13,
-              "hyperpigmentation_like_uneven_tone": 3,
               "rosacea_like_redness": 0
             },
+            "dermatitis_like_irritation": {
+              "acne_like_texture": 1,
+              "clinician_review": 3,
+              "dermatitis_like_irritation": 55,
+              "folliculitis_like_bumps": 7,
+              "hyperpigmentation_like_uneven_tone": 2,
+              "rosacea_like_redness": 5
+            },
             "folliculitis_like_bumps": {
-              "acne_like_texture": 0,
+              "acne_like_texture": 1,
               "clinician_review": 1,
-              "dermatitis_like_irritation": 1,
+              "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 9,
               "hyperpigmentation_like_uneven_tone": 0,
               "rosacea_like_redness": 0
@@ -2735,16 +3059,16 @@
               "clinician_review": 0,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 3,
+              "hyperpigmentation_like_uneven_tone": 1,
               "rosacea_like_redness": 0
             },
             "rosacea_like_redness": {
-              "acne_like_texture": 1,
-              "clinician_review": 0,
+              "acne_like_texture": 0,
+              "clinician_review": 1,
               "dermatitis_like_irritation": 0,
               "folliculitis_like_bumps": 0,
-              "hyperpigmentation_like_uneven_tone": 2,
-              "rosacea_like_redness": 4
+              "hyperpigmentation_like_uneven_tone": 1,
+              "rosacea_like_redness": 5
             }
           },
           "c": 10.0
@@ -2752,6 +3076,21 @@
       ]
     }
   ],
-  "post_review_note": "This artifact was generated before C-selection was moved to a nested grouped calibration split. Treat the reported lift as the pre-nested decoupled-head result; rerun scripts/evaluate_decoupled_logit_head.py with local SCIN data to refresh final metrics under the corrected selection protocol.",
-  "interpretation": "This is an experiment log for class-balanced retraining on frozen deployed logits. It should be rerun with nested C-selection and compared against a fold-retrained MobileNetV3 baseline before being described as an improvement."
+  "interpretation": "Nested C-selection confirms that a class-balanced decoupled logistic head can move the fixed deployed encoder toward a tail-sensitive operating point: accuracy falls versus the conservative deployed prior, while macro recall rises. Because the encoder itself may have seen SCIN-derived cases during original fine-tuning, this is an operating-point experiment, not a clean model benchmark.",
+  "validity_status": "refreshed_nested_head_experiment_fixed_encoder_not_clean_representation_baseline",
+  "validity_note": "C-selection is now nested inside each grouped training fold, so the evaluation fold is not used for head hyperparameter selection. However, the frozen logits come from the previously SCIN-trained deployed ONNX encoder, so this remains a fixed-encoder head experiment rather than a clean representation benchmark.",
+  "comparison_scope": {
+    "valid_within_artifact": "Compare nested_decoupled_balanced_logit_head against deployed_conservative_prior as operating points on the same fixed deployed encoder.",
+    "not_valid_as_clean_model_baseline": "Do not compare this directly against Derm Foundation or fair fold-retrained MobileNet as if the frozen encoder had not seen SCIN-derived training cases."
+  },
+  "refreshed_result": {
+    "accuracy_mean": 0.7533106708023053,
+    "accuracy_std": 0.01696463936512948,
+    "macro_recall_mean": 0.7072611699931335,
+    "macro_recall_std": 0.11440108225593938,
+    "delta_vs_deployed_conservative_prior": {
+      "accuracy_mean": -0.10833311899832998,
+      "macro_recall_mean": 0.07581324980139081
+    }
+  }
 }

@@ -27,7 +27,7 @@ For a more explicit walkthrough, see [GUIDE.md](GUIDE.md).
 - **Fair Derm Foundation comparison:** the Derm Foundation linear probe reached 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall, a fair Pareto lift over the fold-retrained MobileNet baseline. See `models/grouped_scin_fair_model_comparison_metrics.json`.
 - **Legacy deployable ONNX result:** 69.4% accuracy and 48.4% macro recall after conservative calibration on the earlier combined validation path. This is retained as experiment history because the original split path had leakage risk.
 - **Fixed-model SCIN diagnostic, not a clean held-out headline:** the deployed ONNX model reached 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall on grouped SCIN folds, but the model was previously fine-tuned on SCIN-derived head/neck data. Grouping prevents overlap inside the new folds; it does not prove the fixed model had never seen those validation cases. See `models/grouped_scin_clean_split_metrics.json`.
-- **Grouped modeling experiments:** the decoupled head and Derm Foundation probe are useful experiment artifacts, but they should be compared only against the fold-retrained MobileNet baseline, not against the contaminated fixed-model diagnostic.
+- **Grouped modeling experiments:** Derm Foundation is the clean representation comparison. The decoupled head is a refreshed fixed-encoder operating-point experiment because it uses frozen logits from the previously SCIN-trained deployed ONNX model.
 - **Derm Foundation result:** the dermatology-specific embedding probe completed at 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall across grouped split seeds. It improves over the fair MobileNet baseline, but it does not solve the tail-label problem.
 - **Subgroup workflow demo:** Fitzpatrick/Monk subgroup metrics are reported in `models/grouped_scin_subgroup_metrics.json`, but the buckets are too small and the tone labels too noisy for fairness claims.
 - **Best untuned experimental validation result:** 79.2% accuracy and 71.0% macro recall with a mixed ConvNeXt ensemble.
@@ -163,14 +163,14 @@ This is much lower than the contaminated fixed-model diagnostic, which confirms 
 
 The subgroup workflow now reports Fitzpatrick and Monk tone buckets across the same five grouped split seeds. It is useful as a fairness-aware reporting demonstration, but it is not strong enough for a fairness claim because some buckets have only a handful of validation images and SCIN's own documentation notes that Fitzpatrick and Monk scales were not intended for retrospective estimation from images.
 
-I also tested a decoupled cRT-style head under the same grouped protocol. The image model stayed frozen; I used its ONNX logits as a compact representation and retrained only a class-balanced logistic head on each grouped training split. This created a tail-sensitive operating point:
+I also tested a decoupled cRT-style head under the same grouped protocol. The image model stayed frozen; I used its ONNX logits as a compact representation and retrained only a class-balanced logistic head on each grouped training split. C is now selected on a nested grouped calibration split carved from training data only. This created a tail-sensitive operating point:
 
 ```text
 fixed ONNX diagnostic:     86.2% +/- 1.2 accuracy, 63.1% +/- 10.1 macro recall
-decoupled balanced head:   75.1% +/- 2.0 accuracy, 73.1% +/- 10.1 macro recall
+nested decoupled head:     75.3% +/- 1.7 accuracy, 70.7% +/- 11.4 macro recall
 ```
 
-This cannot be presented as a clean win over the fixed ONNX diagnostic because the fixed model may have seen evaluation cases during its original fine-tuning. A later review also found that C was selected on the evaluation fold in this artifact; the script has been corrected to select C on a nested grouped calibration split and should be rerun. Treat the artifact as an experiment log, not the final modeling headline.
+This is a valid operating-point result for the fixed deployed encoder, not a clean representation benchmark. The frozen encoder may have seen SCIN-derived training cases during original fine-tuning, so this result is excluded from the fair MobileNet versus Derm Foundation comparison.
 
 ## Foundation Embedding Experiment
 
