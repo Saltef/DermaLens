@@ -178,7 +178,7 @@ This project demonstrates the full applied ML loop:
 - decoupled balanced-head and Derm Foundation experiments separated by validity class: fixed-encoder operating point versus clean fair representation comparison
 - error analysis that turns model failure into a concrete data acquisition plan
 
-The most important outcome is not just a score. It is a defensible process: when a stronger critique found the headline was contaminated, the repo demoted the claim instead of defending it. The next result that matters is a fair grouped retrain/evaluate baseline.
+The most important outcome is not just a score. It is a defensible process: when a stronger critique found the headline was contaminated, the repo demoted the claim, rebuilt the fair baseline, and then showed a cleaner Derm Foundation representation lift. The next result that matters is data quality: enough face-specific tail examples to make macro recall scientifically stable.
 
 ## Local Demo
 

@@ -66,6 +66,7 @@ For a 10-minute review:
 2. [PORTFOLIO_WRITEUP.md](PORTFOLIO_WRITEUP.md): the employer-facing story.
 3. [MODEL_CARD.md](MODEL_CARD.md): model scope, intended use, and limitations.
 4. [DATA_CARD.md](DATA_CARD.md): data policy, split protocol, and data risks.
+5. [BENCHMARKS.md](BENCHMARKS.md): which benchmarks were run, which are diagnostics, and which are external-validity candidates.
 
 For a deeper technical review:
 
@@ -111,7 +112,7 @@ The research pipeline found stronger experimental results:
 - Neural heads and ensembles reached higher original-validation performance.
 - A validation-tuned class-bias ensemble reached 81.4%, but fresh holdout testing did not reproduce it.
 
-The project therefore does not claim a validated 80% model. The honest conclusion is that the next evidence-producing step is a fold-retrained grouped MobileNet baseline, followed by better data: cleaner labels, more face-specific examples, and enough tail support for meaningful macro recall.
+The project therefore does not claim a validated 80% model. The honest conclusion is that the fair baseline is now known, Derm Foundation gives the strongest clean representation lift, and the next evidence-producing step is better data: cleaner labels, more face-specific examples, and enough tail support for meaningful macro recall.
 
 ## 6. What To Look For In The Code
 

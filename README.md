@@ -12,7 +12,7 @@ If you are reviewing this project for a portfolio or interview, start here:
 2. **Try one image:** upload a clear face photo. The app runs locally, strips metadata, and does not retain the upload by default.
 3. **Check the engineering path:** read [What The App Does](#what-the-app-does), [Architecture](#architecture), and [Privacy Defaults](#privacy-defaults).
 4. **Understand the ML story:** read [Portfolio Snapshot](#portfolio-snapshot), [Modeling Conclusion](#modeling-conclusion), and then [PORTFOLIO_WRITEUP.md](PORTFOLIO_WRITEUP.md).
-5. **Review the critical methodology:** read [MODEL_CARD.md](MODEL_CARD.md), [DATA_CARD.md](DATA_CARD.md), and the opening section of [FINAL_TECHNICAL_EXPERIMENTS.md](FINAL_TECHNICAL_EXPERIMENTS.md).
+5. **Review the critical methodology:** read [MODEL_CARD.md](MODEL_CARD.md), [DATA_CARD.md](DATA_CARD.md), [BENCHMARKS.md](BENCHMARKS.md), and the opening section of [FINAL_TECHNICAL_EXPERIMENTS.md](FINAL_TECHNICAL_EXPERIMENTS.md).
 
 For a more explicit walkthrough, see [GUIDE.md](GUIDE.md).
 
