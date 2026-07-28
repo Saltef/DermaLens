@@ -2,7 +2,7 @@
   "status": "completed",
   "protocol": "Derm Foundation embedding experiment: extract 6144-dimensional google/derm-foundation embeddings, train a class-balanced linear probe, select C on nested grouped calibration data, and report the held-out grouped SCIN fold once.",
   "validity_status": "completed_probe_compared_to_fair_mobilenet_baseline",
-  "validity_note": "This is a completed Derm Foundation linear-probe result compared against a fold-retrained MobileNetV3 baseline. Derm Foundation improves mean accuracy and mean macro recall versus that fair MobileNet baseline, but tail-class support remains too small for stable per-class claims.",
+  "validity_note": "This is a completed Derm Foundation linear-probe result compared against a fold-retrained MobileNetV3 baseline and a majority-class baseline. Derm Foundation gives a robust paired accuracy lift, but the paired macro-recall lift is not statistically distinguishable from zero and several per-class recalls decrease.",
   "foundation_model": "google/derm-foundation",
   "group_key": "case_id",
   "selection_protocol": "Nested C selection; evaluation fold is not used for hyperparameter selection.",
@@ -3315,7 +3315,6 @@
       "accuracy_mean": 0.6676,
       "macro_recall_mean": 0.3385
     },
-    "fair_pareto_claim_supported": true,
     "fair_grouped_mobilenet_retrained": {
       "accuracy_mean": 0.4796329392153219,
       "macro_recall_mean": 0.301776195222339,
@@ -3324,14 +3323,66 @@
     "delta_derm_minus_fair_mobilenet": {
       "accuracy_mean": 0.18800420321873534,
       "macro_recall_mean": 0.03670735755484572
-    }
+    },
+    "paired_derm_foundation_minus_fair_mobilenet": {
+      "accuracy": {
+        "mean_delta": 0.18800420321873532,
+        "std_delta": 0.07811120180116565,
+        "values": [
+          0.29999999999999993,
+          0.20588235294117652,
+          0.1847133757961783,
+          0.08275862068965512,
+          0.16666666666666674
+        ],
+        "paired_t": 5.38194482684945,
+        "df": 4,
+        "p_value_two_sided": 0.0057611473379135195,
+        "ci95": [
+          0.09101633608579873,
+          0.2849920703516719
+        ]
+      },
+      "macro_recall": {
+        "mean_delta": 0.036707357554845735,
+        "std_delta": 0.03832390355699663,
+        "values": [
+          0.010007849293563575,
+          0.09679284557859846,
+          0.03981701861886189,
+          -0.0024703557312253377,
+          0.03938943001443007
+        ],
+        "paired_t": 2.1417480775399906,
+        "df": 4,
+        "p_value_two_sided": 0.09889344503807726,
+        "ci95": [
+          -0.010878053762510241,
+          0.08429276887220172
+        ]
+      },
+      "per_class_recall_mean_delta": {
+        "acne_like_texture": 0.4554315387332465,
+        "clinician_review": -0.006666666666666654,
+        "dermatitis_like_irritation": 0.19071004249326384,
+        "folliculitis_like_bumps": -0.04780219780219783,
+        "hyperpigmentation_like_uneven_tone": 0.0,
+        "rosacea_like_redness": -0.37142857142857144
+      },
+      "interpretation": "Accuracy improves robustly under paired seeds. Macro-recall improvement is not statistically distinguishable from zero at the 0.05 level, and Derm Foundation loses mean recall on clinician_review, folliculitis_like_bumps, and rosacea_like_redness while tying hyperpigmentation at 0.0."
+    },
+    "aggregate_no_loss_claim_supported": false
   },
   "sanity_check": "A compact logistic-probe sweep with and without class weighting, selecting C by either macro recall or accuracy-first calibration, also failed to recover the fixed ONNX diagnostic. Best sanity-check setting reached about 69.4% accuracy and 29.7% macro recall.",
-  "interpretation": "Derm Foundation embeddings provide a fair Pareto lift over a fold-retrained MobileNetV3 baseline on grouped SCIN in this experiment. The lift is mainly an accuracy gain with a modest macro-recall gain; it does not solve the mapped tail-label problem because hyperpigmentation remains at 0.0 mean recall and several tail labels have very small validation support.",
+  "interpretation": "Derm Foundation embeddings produce a large, robust accuracy gain over the fair fold-retrained MobileNetV3 baseline. They do not demonstrate a reliable macro-recall gain in the paired five-seed comparison; per-class recall decreases for rosacea, folliculitis, and clinician_review, and hyperpigmentation remains 0.0.",
   "reporting_note": "accuracy=0.6676+/-0.0694, macro_recall=0.3385+/-0.0593",
   "fair_grouped_mobilenet_baseline": {
     "accuracy_mean": 0.4796329392153219,
     "macro_recall_mean": 0.301776195222339,
-    "artifact": "models/grouped_scin_mobilenet_retrained_baseline_metrics.json"
+    "artifact": "models/grouped_scin_mobilenet_retrained_baseline_metrics.json",
+    "majority_class_dermatitis_baseline": {
+      "accuracy_mean": 0.6337161999165849,
+      "macro_recall_mean": 0.16666666666666666
+    }
   }
 }

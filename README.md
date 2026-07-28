@@ -24,7 +24,8 @@ For a more explicit walkthrough, see [GUIDE.md](GUIDE.md).
 - **Research models:** ConvNeXt frozen embeddings, neural classifier heads, long-tail supervised contrastive tests, targeted augmentation, probability ensembles, and calibration sweeps.
 - **Runtime polish:** ONNX inference runs off the async event loop, uploads have a decompression-bomb guard, and facial region summaries now use an OpenCV face detector with a geometry fallback.
 - **Fair grouped MobileNet baseline:** retraining MobileNetV3-Small separately on five grouped SCIN folds reached 48.0% +/- 3.2 accuracy and 30.2% +/- 5.3 macro recall. See `models/grouped_scin_mobilenet_retrained_baseline_metrics.json`.
-- **Fair Derm Foundation comparison:** the Derm Foundation linear probe reached 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall, a fair Pareto lift over the fold-retrained MobileNet baseline. See `models/grouped_scin_fair_model_comparison_metrics.json`.
+- **Majority-class floor:** always predicting `dermatitis_like_irritation` reaches 63.4% +/- 1.5 accuracy and 16.7% macro recall on the fair grouped validation folds.
+- **Fair Derm Foundation comparison:** the Derm Foundation linear probe reached 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall. Paired seeds show a robust accuracy lift over fair MobileNet (+18.8 points, 95% CI +9.1 to +28.5, p=0.006), but the macro-recall lift is not significant (+3.7 points, 95% CI -1.1 to +8.4, p=0.099). See `models/grouped_scin_fair_model_comparison_metrics.json`.
 - **Legacy deployable ONNX result:** 69.4% accuracy and 48.4% macro recall after conservative calibration on the earlier combined validation path. This is retained as experiment history because the original split path had leakage risk.
 - **Fixed-model SCIN diagnostic, not a clean held-out headline:** the deployed ONNX model reached 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall on grouped SCIN folds, but the model was previously fine-tuned on SCIN-derived head/neck data. Grouping prevents overlap inside the new folds; it does not prove the fixed model had never seen those validation cases. See `models/grouped_scin_clean_split_metrics.json`.
 - **Grouped modeling experiments:** Derm Foundation is the clean representation comparison. The decoupled head is a refreshed fixed-encoder operating-point experiment because it uses frozen logits from the previously SCIN-trained deployed ONNX model.
@@ -156,6 +157,7 @@ python scripts/run_grouped_mobilenet_baseline.py `
 The completed five-seed fair baseline reached:
 
 ```text
+majority-class baseline: 63.4% +/- 1.5 accuracy, 16.7% macro recall
 fair MobileNetV3 retrain: 48.0% +/- 3.2 accuracy, 30.2% +/- 5.3 macro recall
 ```
 
@@ -189,11 +191,12 @@ The completed Derm Foundation probe result was:
 
 ```text
 fixed ONNX diagnostic: 86.2% +/- 1.2 accuracy, 63.1% +/- 10.1 macro recall
+majority baseline:     63.4% +/- 1.5 accuracy, 16.7% macro recall
 Derm Foundation probe: 66.8% +/- 6.9 accuracy, 33.8% +/- 5.9 macro recall
 fair MobileNet retrain: 48.0% +/- 3.2 accuracy, 30.2% +/- 5.3 macro recall
 ```
 
-This is now a fair comparison: Derm Foundation improved mean accuracy by 18.8 points and mean macro recall by 3.7 points versus the fold-retrained MobileNet baseline. The useful conclusion is still restrained: the simple Derm Foundation linear probe provides a defensible representation gain, but it does not solve the mapped tail-label problem. Hyperpigmentation recall stayed at 0.0 and several tail estimates are numerically tiny.
+The honest comparison is mixed. Derm Foundation gives a large, paired-seed-supported accuracy lift over fair MobileNet, and it slightly clears the majority-class baseline on accuracy. The macro-recall delta over MobileNet is within noise, though both learned models beat the majority-class floor on macro recall. Per-class recall drops for rosacea, folliculitis, and clinician-review, ties at 0.0 for hyperpigmentation, and improves mainly on acne and dermatitis.
 
 ## Current Validity Status
 

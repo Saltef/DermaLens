@@ -63,7 +63,7 @@ I tested a decoupled balanced head under the same grouped SCIN protocol. The dep
 
 Artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`.
 
-I also ran a Derm Foundation embedding evaluation using `google/derm-foundation` as the frozen representation with the same grouped/nested protocol. The class-balanced linear probe reached 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall. Compared with the fair fold-retrained MobileNet baseline, this is a Pareto lift: +18.8 accuracy points and +3.7 macro-recall points. The narrower caution is that a simple linear probe over Derm Foundation embeddings still did not solve the current mapped tail-label problem.
+I also ran a Derm Foundation embedding evaluation using `google/derm-foundation` as the frozen representation with the same grouped/nested protocol. The class-balanced linear probe reached 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall. Compared with the fair fold-retrained MobileNet baseline, paired seeds support a large accuracy gain: +18.8 points, 95% CI +9.1 to +28.5, p=0.006. The macro-recall gain is not statistically distinguishable from zero: +3.7 points, 95% CI -1.1 to +8.4, p=0.099. Derm Foundation loses mean recall on rosacea, folliculitis, and clinician-review, ties hyperpigmentation at 0.0, and gains on acne and dermatitis.
 
 Artifact: `models/grouped_scin_derm_foundation_embedding_metrics.json`.
 

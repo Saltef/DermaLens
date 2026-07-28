@@ -133,12 +133,13 @@ The completed result was:
 | Model / probe | Accuracy | Macro recall |
 | --- | ---: | ---: |
 | Fixed grouped ONNX diagnostic | 86.2% +/- 1.2 | 63.1% +/- 10.1 |
+| Majority-class dermatitis baseline | 63.4% +/- 1.5 | 16.7% |
 | Fair grouped MobileNetV3 retrain | 48.0% +/- 3.2 | 30.2% +/- 5.3 |
 | Derm Foundation linear probe | 66.8% +/- 6.9 | 33.8% +/- 5.9 |
 
 The failure mode was concentrated in the tail classes. Hyperpigmentation stayed at 0.0 mean recall, folliculitis reached only 20.9%, and rosacea reached 20.0%. I also ran a compact sanity sweep over logistic probes with and without class weighting and with macro-first versus accuracy-first C selection; none recovered the fixed ONNX diagnostic.
 
-Interpretation: the dermatology foundation linear probe produces a fair Pareto lift over the fold-retrained MobileNetV3 baseline: +18.8 accuracy points and +3.7 macro-recall points. The result is scientifically useful because it shows that dermatology-specific representation learning helps under the corrected protocol. It is not a solved classifier: absolute macro recall remains low and hyperpigmentation is still unsolved.
+Paired interpretation: the dermatology foundation linear probe produces a large, robust accuracy lift over the fold-retrained MobileNetV3 baseline: +18.8 points, 95% CI +9.1 to +28.5, paired t(4)=5.38, p=0.006. The macro-recall delta is positive but not statistically distinguishable from zero: +3.7 points, 95% CI -1.1 to +8.4, paired t(4)=2.14, p=0.099. Per-class recall gets worse for rosacea, folliculitis, and clinician-review, ties hyperpigmentation at 0.0, and improves on acne and dermatitis. The result is scientifically useful because it shows dermatology-specific embeddings improve accuracy under the corrected protocol, but it is not a solved classifier and not a proven macro-recall improvement.
 
 Artifact: `models/grouped_scin_derm_foundation_embedding_metrics.json`.
 Fair comparison artifact: `models/grouped_scin_fair_model_comparison_metrics.json`.
