@@ -28,7 +28,9 @@ The current deployable ONNX model reached 69.4% accuracy and 48.4% macro recall 
 
 A later methodological review identified a split-leakage risk: SCIN can contribute multiple photos per case, and older preparation code split at the image level. The corrected protocol now requires grouped train/validation splits by `case_id` and writes a `split_audit.json` artifact.
 
-Under the corrected grouped SCIN-only protocol, the fixed deployed ONNX model with conservative prior calibration reached 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall across five split seeds. This is now classified as a fixed-model diagnostic, not a clean held-out baseline. The grouped split prevents overlap between the newly constructed folds, but the fixed ONNX model was previously fine-tuned on SCIN-derived head/neck data. Without the original model-training case list, this run cannot prove that validation cases were unseen by the deployed model.
+Under the corrected grouped SCIN-only protocol, the fixed deployed ONNX model with conservative prior calibration reached 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall across five split seeds. This is now classified as a contaminated fixed-model diagnostic, not a clean held-out baseline. The grouped split prevents overlap between the newly constructed folds, but the fixed ONNX model was previously fine-tuned on SCIN-derived head/neck data. Without the original model-training case list, this run cannot prove that validation cases were unseen by the deployed model.
+
+The missing fair comparison is now implemented in `scripts/run_grouped_mobilenet_baseline.py`: each seed prepares a grouped split, trains MobileNet only on that seed's training cases, exports ONNX, evaluates once on untouched validation cases, and aggregates support-aware metrics. A one-seed, one-epoch CPU smoke run completed at 44.7% accuracy and 30.7% macro recall. This is a harness-validation artifact, not a deployable performance claim.
 
 ### Skin-Tone Subgroup Audit
 
@@ -61,7 +63,7 @@ I tested a decoupled balanced head under the same grouped SCIN protocol. The dep
 
 Artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`.
 
-I also ran a Derm Foundation embedding evaluation using `google/derm-foundation` as the frozen representation with the same grouped/nested protocol. The class-balanced linear probe reached 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall. This is a completed experiment, but it does not support the stronger claim that Derm Foundation is worse than a fair MobileNet baseline, because that fair fold-retrained MobileNet baseline has not yet been run. The narrower conclusion is that a simple linear probe over Derm Foundation embeddings did not solve the current mapped tail-label problem.
+I also ran a Derm Foundation embedding evaluation using `google/derm-foundation` as the frozen representation with the same grouped/nested protocol. The class-balanced linear probe reached 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall. This is a completed experiment, but it does not support the stronger claim that Derm Foundation is worse than a fair MobileNet baseline, because the fair fold-retrained MobileNet baseline has only been smoke-tested so far. The narrower conclusion is that a simple linear probe over Derm Foundation embeddings did not solve the current mapped tail-label problem.
 
 Artifact: `models/grouped_scin_derm_foundation_embedding_metrics.json`.
 
@@ -71,7 +73,7 @@ Artifact: `models/grouped_scin_derm_foundation_embedding_metrics.json`.
 - Public datasets are noisy and not fully face-specific.
 - Performance has not been clinically validated.
 - The reported 86.2% grouped SCIN fixed-model check is contaminated as a model-holdout estimate unless the original ONNX training cases can be excluded or the model is retrained per grouped fold.
-- Several tail labels have validation support too small for meaningful mean +/- std recall. Metrics for labels with only a few images should be treated as undefined/underpowered diagnostics.
+- Several tail labels have validation support too small for meaningful mean +/- std recall. Metrics for labels with fewer than about 10 validation images should be treated as undefined/underpowered diagnostics.
 - Performance may vary by lighting, camera processing, makeup, filters, and skin tone. The current subgroup workflow is underpowered for the darkest Monk bucket.
 - Region summaries use an OpenCV frontal-face detector with a geometry fallback; this is better than the original fixed crop but still not a landmark-grade facial analysis pipeline.
 
@@ -83,6 +85,6 @@ The UI and API present outputs as non-diagnostic screening observations. The app
 
 1. Rebuild manifests with strict label confidence settings.
 2. Prepare ImageFolder data with grouped `case_id` splitting.
-3. Retrain MobileNetV3 from scratch on each grouped training fold instead of evaluating one fixed SCIN-trained ONNX model.
+3. Run `scripts/run_grouped_mobilenet_baseline.py` for the full 5-seed MobileNetV3 retrain.
 4. Compare Derm Foundation and decoupled-head probes against that fold-retrained baseline.
 5. Report accuracy, macro recall, per-class recall, seed variance, confidence intervals, and per-class support.

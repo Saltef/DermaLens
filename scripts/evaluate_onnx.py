@@ -11,6 +11,7 @@ from torchvision import datasets
 
 IMAGENET_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
 IMAGENET_STD = np.array([0.229, 0.224, 0.225], dtype=np.float32)
+LOW_SUPPORT_THRESHOLD = 10
 
 
 def parse_args() -> argparse.Namespace:
@@ -29,13 +30,7 @@ def main() -> None:
     session = ort.InferenceSession(args.model, providers=["CPUExecutionProvider"])
     input_name = session.get_inputs()[0].name
 
-    correct = 0
-    total = 0
-    per_class = {class_name: {"correct": 0, "total": 0} for class_name in dataset.classes}
-    confusion = {
-        actual: {predicted: 0 for predicted in dataset.classes}
-        for actual in dataset.classes
-    }
+    rows = []
 
     for image_path, class_idx in dataset.samples:
         actual = dataset.classes[class_idx]
@@ -43,6 +38,32 @@ def main() -> None:
         logits = np.asarray(session.run(None, {input_name: tensor})[0]).reshape(-1)
         pred_idx = int(np.argmax(logits))
         predicted = labels[pred_idx] if pred_idx < len(labels) else f"unknown_{pred_idx}"
+        rows.append({"actual": actual, "predicted": predicted})
+
+    metrics = _build_metrics(rows, dataset.classes)
+    metrics.update(
+        {
+            "model": str(args.model),
+            "data_dir": str(args.data_dir),
+            "labels": dataset.classes,
+        }
+    )
+
+    output = Path(args.output)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+    print(f"accuracy={metrics['accuracy']:.4f} macro_recall={metrics['macro_recall']:.4f} total={metrics['total']}")
+    print(f"wrote {output}")
+
+
+def _build_metrics(rows: list[dict], labels: list[str]) -> dict:
+    correct = 0
+    per_class = {class_name: {"correct": 0, "total": 0} for class_name in labels}
+    confusion = {actual: {predicted: 0 for predicted in labels} for actual in labels}
+
+    for row in rows:
+        actual = row["actual"]
+        predicted = row["predicted"]
         if predicted not in per_class:
             per_class[predicted] = {"correct": 0, "total": 0}
         if actual not in confusion:
@@ -51,30 +72,29 @@ def main() -> None:
 
         is_correct = actual == predicted
         correct += int(is_correct)
-        total += 1
         per_class[actual]["total"] += 1
         per_class[actual]["correct"] += int(is_correct)
 
+    total = len(rows)
     per_class_recall = {
         class_name: values["correct"] / max(1, values["total"])
         for class_name, values in per_class.items()
         if values["total"] > 0
     }
-    metrics = {
-        "model": str(args.model),
-        "data_dir": str(args.data_dir),
+    per_class_support = {class_name: values["total"] for class_name, values in per_class.items() if values["total"] > 0}
+    return {
         "total": total,
         "accuracy": correct / max(1, total),
         "macro_recall": sum(per_class_recall.values()) / max(1, len(per_class_recall)),
         "per_class_recall": per_class_recall,
+        "per_class_support": per_class_support,
+        "low_support_labels": [
+            label
+            for label, support in per_class_support.items()
+            if support < LOW_SUPPORT_THRESHOLD
+        ],
         "confusion": confusion,
     }
-
-    output = Path(args.output)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
-    print(f"accuracy={metrics['accuracy']:.4f} macro_recall={metrics['macro_recall']:.4f} total={total}")
-    print(f"wrote {output}")
 
 
 def _read_labels(path: Path) -> list[str]:
@@ -92,4 +112,3 @@ def _preprocess(image: Image.Image) -> np.ndarray:
 
 if __name__ == "__main__":
     main()
-

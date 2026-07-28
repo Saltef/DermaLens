@@ -32,6 +32,21 @@ Use for fairness and robustness evaluation, not as the main training set.
 - Strengths: diverse skin tones, biopsy-proven labels, expert curation.
 - Restriction: personal, non-commercial research use only; do not redistribute.
 
+## Benchmark Positioning
+
+DermaLens should not silently merge every popular dermatology dataset into one classifier. The project target is consumer-style facial inflammatory or pigmentary concerns, while many widely used dermatology benchmarks are lesion or dermoscopy tasks. The right use is a benchmark relevance matrix:
+
+| Benchmark / Dataset | Common Research Role | Fit For DermaLens | How To Use Here |
+| --- | --- | --- | --- |
+| SCIN | Common dermatology concerns from consented real-world contributors; dermatologist weighted differential labels; Fitzpatrick/Monk metadata | High | Primary face/common-condition dataset and subgroup workflow source |
+| Derm Foundation | Dermatology-specific frozen representation with 6144-dimensional embeddings | High as representation, not a dataset | Compare linear probes against a fold-retrained MobileNet baseline |
+| ISIC / HAM10000 | Standard pigmented-lesion and dermoscopy classification benchmarks | Low for facial inflammatory labels | External lesion/clinician-review branch only |
+| Fitzpatrick17k | Broad clinical image dataset with skin-type annotations | Medium | Supplemental robustness and label-mapping experiments after license review |
+| PAD-UFES-20 | Smartphone lesion images with clinical metadata | Medium for lesion branch, low for acne/rosacea/dermatitis | Separate lesion-risk or clinician-review branch |
+| DDI | Diverse skin-tone evaluation with biopsy-proven labels | Medium for audit, low for training | Non-commercial fairness/robustness evaluation only |
+
+This framing matters scientifically: a result that improves ISIC lesion accuracy may not improve acne-like texture, rosacea-like redness, dermatitis-like irritation, or hyperpigmentation on consumer face photos. The repo should therefore report benchmark transfer as external validity, not as direct proof that the facial screening target improved.
+
 ## Optional Training Datasets
 
 ## Deep Search Findings

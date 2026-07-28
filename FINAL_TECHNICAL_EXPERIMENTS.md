@@ -42,6 +42,29 @@ For seed `42`, the bootstrap 95% CI was `80.0%` to `91.3%` for accuracy and `41.
 
 Artifact: `models/grouped_scin_clean_split_metrics.json`.
 
+### Fair Fold-Retrained MobileNet Baseline
+
+The key missing comparison from the audit is now implemented:
+
+- Script: `scripts/run_grouped_mobilenet_baseline.py`
+- Split: grouped by SCIN `case_id`
+- Training: MobileNetV3 is retrained separately on each seed's grouped training cases
+- Evaluation: each seed's validation cases are used once after training
+- Reporting: accuracy, macro recall, per-class recall, per-class support, and low-support labels
+
+One smoke run has been executed to validate the machinery:
+
+| Run | Seed | Epochs | Accuracy | Macro Recall | Low-Support Labels |
+| --- | ---: | ---: | ---: | ---: | --- |
+| MobileNetV3 fair grouped smoke | 42 | 1 | 44.7% | 30.7% | clinician_review, hyperpigmentation_like_uneven_tone, rosacea_like_redness |
+
+This is not a model-quality result. One CPU epoch is intentionally undertrained. The value of this artifact is methodological: it proves the corrected baseline can be generated without comparing honest probes against a fixed model that may have seen evaluation cases.
+
+Artifacts:
+
+- `scripts/run_grouped_mobilenet_baseline.py`
+- `models/grouped_scin_mobilenet_retrained_smoke_metrics.json`
+
 ### Skin-Tone Subgroup Audit
 
 Using the same fixed deployed model and grouped SCIN split seeds, I evaluated available Fitzpatrick and Monk tone metadata. This is an audit workflow, not a fairness claim, because several subgroup counts are small.
@@ -114,7 +137,7 @@ The completed result was:
 
 The failure mode was concentrated in the tail classes. Hyperpigmentation stayed at 0.0 mean recall, folliculitis reached only 20.9%, and rosacea reached 20.0%. I also ran a compact sanity sweep over logistic probes with and without class weighting and with macro-first versus accuracy-first C selection; none recovered the fixed ONNX diagnostic.
 
-Interpretation: the dermatology foundation linear probe did not rescue this mapped SCIN task, but this experiment does not prove Derm Foundation is inferior to a fair MobileNet baseline. The fair comparison requires retraining MobileNetV3 on each grouped training fold and evaluating each fold's untouched cases.
+Interpretation: the dermatology foundation linear probe did not rescue this mapped SCIN task, but this experiment does not prove Derm Foundation is inferior to a fair MobileNet baseline. The fair comparison requires running the full MobileNetV3 grouped retrain, not comparing against the contaminated fixed-model diagnostic or the deliberately undertrained smoke run.
 
 Artifact: `models/grouped_scin_derm_foundation_embedding_metrics.json`.
 
@@ -137,6 +160,15 @@ Fixed grouped SCIN-only diagnostic:
 - Accuracy: `86.2% +/- 1.2`
 - Macro recall: `63.1% +/- 10.1`
 - Caveat: fixed-model evaluation may include original training cases and has fragile tail-class counts
+
+Fair grouped MobileNet smoke:
+
+- Model: MobileNetV3-Small retrained on seed 42 grouped training cases
+- Split: grouped by `case_id`, no train/validation group overlap
+- Epochs: `1`
+- Accuracy: `44.7%`
+- Macro recall: `30.7%`
+- Caveat: smoke test only; use the full runner for a real baseline
 
 Raw flat model on the same combined validation split:
 
