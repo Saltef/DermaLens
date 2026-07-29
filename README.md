@@ -24,6 +24,7 @@ For a more explicit walkthrough, see [GUIDE.md](GUIDE.md).
 - **Research models:** ConvNeXt frozen embeddings, neural classifier heads, long-tail supervised contrastive tests, targeted augmentation, probability ensembles, and calibration sweeps.
 - **Runtime polish:** ONNX inference runs off the async event loop, uploads have a decompression-bomb guard, and facial region summaries now use an OpenCV face detector with a geometry fallback.
 - **Fair grouped MobileNet baseline:** retraining MobileNetV3-Small separately on 12 grouped SCIN folds reached 44.8% +/- 9.9 accuracy and 29.1% +/- 3.9 macro recall. See `models/grouped_scin_mobilenet_retrained_baseline_12seed_metrics.json`.
+- **MobileNet checkpoint-selection diagnostic:** if the same MobileNet training histories are reselected post hoc by validation accuracy instead of macro recall, MobileNet reaches 52.4% +/- 5.2 accuracy and 25.1% +/- 3.3 macro recall. This is optimistic because it chooses from the evaluation-fold history, but Derm Foundation still leads it by +17.3 accuracy points. See `models/grouped_scin_mobilenet_checkpoint_selection_diagnostic.json`.
 - **Majority-class floor:** always predicting `dermatitis_like_irritation` reaches 63.7% +/- 1.6 accuracy and 16.7% macro recall on the 12 fair grouped validation folds.
 - **Fair Derm Foundation comparison:** the Derm Foundation linear probe reached 69.8% +/- 5.2 accuracy and 34.7% +/- 5.0 macro recall over the same 12 grouped folds. Paired seeds show an accuracy lift over fair MobileNet (+25.0 points, 95% CI +17.8 to +32.2, exact sign p=0.00049) and a smaller macro-recall lift (+5.6 points, 95% CI +2.6 to +8.6, exact sign p=0.00635). These p-values are repeated-split stability diagnostics, not independent external-test-set inference, because the 12 folds resample the same SCIN case universe. See `models/grouped_scin_fair_model_comparison_metrics.json` and `models/grouped_scin_seed_count_sensitivity_metrics.json`.
 - **Legacy deployable ONNX result:** 69.4% accuracy and 48.4% macro recall after conservative calibration on the earlier combined validation path. This is retained as experiment history because the original split path had leakage risk.
@@ -194,9 +195,12 @@ fixed ONNX diagnostic: 86.2% +/- 1.2 accuracy, 63.1% +/- 10.1 macro recall
 majority baseline:     63.7% +/- 1.6 accuracy, 16.7% macro recall
 Derm Foundation probe: 69.8% +/- 5.2 accuracy, 34.7% +/- 5.0 macro recall
 fair MobileNet retrain: 44.8% +/- 9.9 accuracy, 29.1% +/- 3.9 macro recall
+accuracy-selected MobileNet diagnostic: 52.4% +/- 5.2 accuracy, 25.1% +/- 3.3 macro recall
 ```
 
 The honest comparison is still mixed, but stronger than the five-seed result. At five seeds, exact paired tests could not cross p<0.05 even with all accuracy deltas positive, so the original t-test was too fragile to carry alone. After expanding to 10 and 12 matched completed seeds, Derm Foundation gives a large accuracy lift over fair MobileNet and a smaller positive macro-recall lift. At 12 seeds, the paired deltas are +25.0 points accuracy and +5.6 points macro recall. Because these seeds are repeated grouped resamples of the same dataset, the paired tests should be read as robustness checks rather than independent clinical evidence. Class-level recall still drops for rosacea and hyperpigmentation and improves mainly on acne, dermatitis, and clinician-review, so this is not a solved tail-label model.
+
+I also checked whether the accuracy lift was mainly caused by MobileNet's macro-recall checkpoint selection. The diagnostic answer is no, though the gap shrinks: reselecting MobileNet epochs post hoc for validation accuracy raises MobileNet to 52.4% accuracy, and Derm Foundation remains ahead by +17.3 points. This diagnostic is not a clean estimate because it uses the evaluation history for epoch choice; it is included only to make the comparison harder to overstate.
 
 ## Current Validity Status
 

@@ -1,0 +1,442 @@
+{
+  "status": "completed_checkpoint_selection_diagnostic",
+  "validity_note": "The accuracy-selected MobileNet row is an optimistic diagnostic, not a clean model estimate, because it chooses the best epoch from the evaluation-fold history. It tests whether the Derm Foundation lift depends entirely on macro-recall checkpoint selection weakening MobileNet accuracy.",
+  "artifacts": {
+    "mobile": "models/grouped_scin_mobilenet_retrained_baseline_12seed_metrics.json",
+    "derm_foundation": "models/grouped_scin_derm_foundation_embedding_12seed_metrics.json",
+    "run_root": "models/experiments/grouped_mobilenet_retrained"
+  },
+  "seeds": [
+    42,
+    7,
+    13,
+    21,
+    84,
+    101,
+    202,
+    404,
+    707,
+    808,
+    909,
+    1001
+  ],
+  "mobile_exported_macro_selected": {
+    "accuracy": {
+      "mean": 0.44821187897850995,
+      "std": 0.09938928716980254,
+      "values": [
+        0.4866666666666667,
+        0.43529411764705883,
+        0.47770700636942676,
+        0.5241379310344828,
+        0.47435897435897434,
+        0.4430379746835443,
+        0.2537313432835821,
+        0.32515337423312884,
+        0.41830065359477125,
+        0.5337423312883436,
+        0.6305732484076433,
+        0.37583892617449666
+      ]
+    },
+    "macro_recall": {
+      "mean": 0.2906864221794943,
+      "std": 0.039478323124742525,
+      "values": [
+        0.3919631955346241,
+        0.2925018631305733,
+        0.2696730305025236,
+        0.2597167325428195,
+        0.2950261544011544,
+        0.23951868919610855,
+        0.2929015429015429,
+        0.3063968394065481,
+        0.29437229437229434,
+        0.2435209834011901,
+        0.2932659932659933,
+        0.3093797474985594
+      ]
+    }
+  },
+  "mobile_history_accuracy_selected_diagnostic": {
+    "accuracy": {
+      "mean": 0.5244922648064099,
+      "std": 0.05151516451947603,
+      "values": [
+        0.52,
+        0.5470588235294118,
+        0.5605095541401274,
+        0.5379310344827586,
+        0.4935897435897436,
+        0.46835443037974683,
+        0.4925373134328358,
+        0.5766871165644172,
+        0.477124183006536,
+        0.5398773006134969,
+        0.6305732484076433,
+        0.44966442953020136
+      ]
+    },
+    "macro_recall": {
+      "mean": 0.251028701398813,
+      "std": 0.032547553335935495,
+      "values": [
+        0.318724925867783,
+        0.28727546064297277,
+        0.2306341891595348,
+        0.2533879164313947,
+        0.21994498556998557,
+        0.22665898617511518,
+        0.2448246198246198,
+        0.20983482536880593,
+        0.24663299663299662,
+        0.23762266416118594,
+        0.2932659932659933,
+        0.2435368536853685
+      ]
+    }
+  },
+  "derm_foundation": {
+    "accuracy": {
+      "mean": 0.6978026402811485,
+      "std": 0.05203552916240875,
+      "values": [
+        0.7866666666666666,
+        0.6411764705882353,
+        0.6624203821656051,
+        0.6068965517241379,
+        0.6410256410256411,
+        0.6835443037974683,
+        0.7164179104477612,
+        0.7239263803680982,
+        0.7058823529411765,
+        0.7423312883435583,
+        0.7452229299363057,
+        0.7181208053691275
+      ]
+    },
+    "macro_recall": {
+      "mean": 0.3470564453985441,
+      "std": 0.05041167766069117,
+      "values": [
+        0.4019710448281877,
+        0.38929470870917177,
+        0.3094900491213855,
+        0.2572463768115942,
+        0.33441558441558444,
+        0.2760215053763441,
+        0.31850094350094355,
+        0.3284075148152818,
+        0.38021885521885523,
+        0.4119340919372238,
+        0.37617845117845117,
+        0.380998218869506
+      ]
+    }
+  },
+  "paired_derm_minus_accuracy_selected_mobile_diagnostic": {
+    "accuracy": {
+      "mean_delta": 0.17331037547473857,
+      "std_delta": 0.06944632180336935,
+      "values": [
+        0.2666666666666666,
+        0.09411764705882353,
+        0.10191082802547768,
+        0.06896551724137934,
+        0.14743589743589747,
+        0.2151898734177215,
+        0.22388059701492535,
+        0.14723926380368102,
+        0.22875816993464054,
+        0.2024539877300614,
+        0.1146496815286624,
+        0.2684563758389261
+      ],
+      "paired_t": 8.645018713907533,
+      "df": 11,
+      "p_value_two_sided": 3.10206622492704e-06,
+      "ci95": [
+        0.12918628770444301,
+        0.21743446324503413
+      ],
+      "exact_sign_test": {
+        "positive": 12,
+        "negative": 0,
+        "ties": 0,
+        "p_value_two_sided": 0.00048828125
+      },
+      "exact_sign_flip_permutation": {
+        "p_value_two_sided": 0.00048828125,
+        "extreme_or_equal": 2,
+        "total_sign_flips": 4096
+      }
+    },
+    "macro_recall": {
+      "mean_delta": 0.0960277439997311,
+      "std_delta": 0.04466304550384184,
+      "values": [
+        0.08324611896040468,
+        0.102019248066199,
+        0.07885585996185071,
+        0.003858460380199491,
+        0.11447059884559888,
+        0.049362519201228944,
+        0.07367632367632374,
+        0.11857268944647587,
+        0.1335858585858586,
+        0.17431142777603786,
+        0.08291245791245788,
+        0.1374613651841375
+      ],
+      "paired_t": 7.447988808978313,
+      "df": 11,
+      "p_value_two_sided": 1.2804804489198e-05,
+      "ci95": [
+        0.06765019874283301,
+        0.12440528925662919
+      ],
+      "exact_sign_test": {
+        "positive": 12,
+        "negative": 0,
+        "ties": 0,
+        "p_value_two_sided": 0.00048828125
+      },
+      "exact_sign_flip_permutation": {
+        "p_value_two_sided": 0.00048828125,
+        "extreme_or_equal": 2,
+        "total_sign_flips": 4096
+      }
+    }
+  },
+  "seed_results": [
+    {
+      "seed": 42,
+      "exported_macro_selected": {
+        "accuracy": 0.4866666666666667,
+        "macro_recall": 0.3919631955346241,
+        "source": "exported ONNX checkpoint selected by validation macro recall"
+      },
+      "history_macro_selected": {
+        "epoch": 2,
+        "accuracy": 0.4866666666666667,
+        "macro_recall": 0.3919631955346241
+      },
+      "history_accuracy_selected": {
+        "epoch": 3,
+        "accuracy": 0.52,
+        "macro_recall": 0.318724925867783,
+        "source": "diagnostic only; selected post hoc on the evaluation fold history"
+      }
+    },
+    {
+      "seed": 7,
+      "exported_macro_selected": {
+        "accuracy": 0.43529411764705883,
+        "macro_recall": 0.2925018631305733,
+        "source": "exported ONNX checkpoint selected by validation macro recall"
+      },
+      "history_macro_selected": {
+        "epoch": 2,
+        "accuracy": 0.43529411764705883,
+        "macro_recall": 0.2925018631305733
+      },
+      "history_accuracy_selected": {
+        "epoch": 7,
+        "accuracy": 0.5470588235294118,
+        "macro_recall": 0.28727546064297277,
+        "source": "diagnostic only; selected post hoc on the evaluation fold history"
+      }
+    },
+    {
+      "seed": 13,
+      "exported_macro_selected": {
+        "accuracy": 0.47770700636942676,
+        "macro_recall": 0.2696730305025236,
+        "source": "exported ONNX checkpoint selected by validation macro recall"
+      },
+      "history_macro_selected": {
+        "epoch": 2,
+        "accuracy": 0.47770700636942676,
+        "macro_recall": 0.2696730305025236
+      },
+      "history_accuracy_selected": {
+        "epoch": 6,
+        "accuracy": 0.5605095541401274,
+        "macro_recall": 0.2306341891595348,
+        "source": "diagnostic only; selected post hoc on the evaluation fold history"
+      }
+    },
+    {
+      "seed": 21,
+      "exported_macro_selected": {
+        "accuracy": 0.5241379310344828,
+        "macro_recall": 0.2597167325428195,
+        "source": "exported ONNX checkpoint selected by validation macro recall"
+      },
+      "history_macro_selected": {
+        "epoch": 4,
+        "accuracy": 0.5241379310344828,
+        "macro_recall": 0.2597167325428195
+      },
+      "history_accuracy_selected": {
+        "epoch": 7,
+        "accuracy": 0.5379310344827586,
+        "macro_recall": 0.2533879164313947,
+        "source": "diagnostic only; selected post hoc on the evaluation fold history"
+      }
+    },
+    {
+      "seed": 84,
+      "exported_macro_selected": {
+        "accuracy": 0.47435897435897434,
+        "macro_recall": 0.2950261544011544,
+        "source": "exported ONNX checkpoint selected by validation macro recall"
+      },
+      "history_macro_selected": {
+        "epoch": 3,
+        "accuracy": 0.47435897435897434,
+        "macro_recall": 0.2950261544011544
+      },
+      "history_accuracy_selected": {
+        "epoch": 5,
+        "accuracy": 0.4935897435897436,
+        "macro_recall": 0.21994498556998557,
+        "source": "diagnostic only; selected post hoc on the evaluation fold history"
+      }
+    },
+    {
+      "seed": 101,
+      "exported_macro_selected": {
+        "accuracy": 0.4430379746835443,
+        "macro_recall": 0.23951868919610855,
+        "source": "exported ONNX checkpoint selected by validation macro recall"
+      },
+      "history_macro_selected": {
+        "epoch": 5,
+        "accuracy": 0.4430379746835443,
+        "macro_recall": 0.23951868919610855
+      },
+      "history_accuracy_selected": {
+        "epoch": 8,
+        "accuracy": 0.46835443037974683,
+        "macro_recall": 0.22665898617511518,
+        "source": "diagnostic only; selected post hoc on the evaluation fold history"
+      }
+    },
+    {
+      "seed": 202,
+      "exported_macro_selected": {
+        "accuracy": 0.2537313432835821,
+        "macro_recall": 0.2929015429015429,
+        "source": "exported ONNX checkpoint selected by validation macro recall"
+      },
+      "history_macro_selected": {
+        "epoch": 1,
+        "accuracy": 0.2537313432835821,
+        "macro_recall": 0.2929015429015429
+      },
+      "history_accuracy_selected": {
+        "epoch": 8,
+        "accuracy": 0.4925373134328358,
+        "macro_recall": 0.2448246198246198,
+        "source": "diagnostic only; selected post hoc on the evaluation fold history"
+      }
+    },
+    {
+      "seed": 404,
+      "exported_macro_selected": {
+        "accuracy": 0.32515337423312884,
+        "macro_recall": 0.3063968394065481,
+        "source": "exported ONNX checkpoint selected by validation macro recall"
+      },
+      "history_macro_selected": {
+        "epoch": 1,
+        "accuracy": 0.32515337423312884,
+        "macro_recall": 0.3063968394065481
+      },
+      "history_accuracy_selected": {
+        "epoch": 6,
+        "accuracy": 0.5766871165644172,
+        "macro_recall": 0.20983482536880593,
+        "source": "diagnostic only; selected post hoc on the evaluation fold history"
+      }
+    },
+    {
+      "seed": 707,
+      "exported_macro_selected": {
+        "accuracy": 0.41830065359477125,
+        "macro_recall": 0.29437229437229434,
+        "source": "exported ONNX checkpoint selected by validation macro recall"
+      },
+      "history_macro_selected": {
+        "epoch": 1,
+        "accuracy": 0.41830065359477125,
+        "macro_recall": 0.29437229437229434
+      },
+      "history_accuracy_selected": {
+        "epoch": 6,
+        "accuracy": 0.477124183006536,
+        "macro_recall": 0.24663299663299662,
+        "source": "diagnostic only; selected post hoc on the evaluation fold history"
+      }
+    },
+    {
+      "seed": 808,
+      "exported_macro_selected": {
+        "accuracy": 0.5337423312883436,
+        "macro_recall": 0.2435209834011901,
+        "source": "exported ONNX checkpoint selected by validation macro recall"
+      },
+      "history_macro_selected": {
+        "epoch": 8,
+        "accuracy": 0.5337423312883436,
+        "macro_recall": 0.2435209834011901
+      },
+      "history_accuracy_selected": {
+        "epoch": 6,
+        "accuracy": 0.5398773006134969,
+        "macro_recall": 0.23762266416118594,
+        "source": "diagnostic only; selected post hoc on the evaluation fold history"
+      }
+    },
+    {
+      "seed": 909,
+      "exported_macro_selected": {
+        "accuracy": 0.6305732484076433,
+        "macro_recall": 0.2932659932659933,
+        "source": "exported ONNX checkpoint selected by validation macro recall"
+      },
+      "history_macro_selected": {
+        "epoch": 8,
+        "accuracy": 0.6305732484076433,
+        "macro_recall": 0.2932659932659933
+      },
+      "history_accuracy_selected": {
+        "epoch": 8,
+        "accuracy": 0.6305732484076433,
+        "macro_recall": 0.2932659932659933,
+        "source": "diagnostic only; selected post hoc on the evaluation fold history"
+      }
+    },
+    {
+      "seed": 1001,
+      "exported_macro_selected": {
+        "accuracy": 0.37583892617449666,
+        "macro_recall": 0.3093797474985594,
+        "source": "exported ONNX checkpoint selected by validation macro recall"
+      },
+      "history_macro_selected": {
+        "epoch": 4,
+        "accuracy": 0.37583892617449666,
+        "macro_recall": 0.3093797474985594
+      },
+      "history_accuracy_selected": {
+        "epoch": 6,
+        "accuracy": 0.44966442953020136,
+        "macro_recall": 0.2435368536853685,
+        "source": "diagnostic only; selected post hoc on the evaluation fold history"
+      }
+    }
+  ],
+  "interpretation": "Derm Foundation remains ahead of a post-hoc accuracy-selected MobileNet diagnostic on accuracy, but the gap is smaller than against the macro-selected exported baseline. This suggests part of the reported accuracy lift comes from MobileNet checkpoint-selection tradeoffs, while the representation advantage does not disappear under this stronger diagnostic comparator."
+}

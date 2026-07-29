@@ -30,6 +30,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--val-ratio", type=float, default=0.2)
     parser.add_argument("--calibration-ratio", type=float, default=0.2)
     parser.add_argument("--cache", default="models/experiments/derm_foundation_embeddings.npz")
+    parser.add_argument(
+        "--embedding-source",
+        choices=["auto", "precomputed", "local-model"],
+        default="auto",
+        help=(
+            "auto uses a local cache, then Google/HF SCIN precomputed embeddings when available, then local model "
+            "inference. local-model bypasses SCIN precomputed embeddings and builds embeddings from model weights."
+        ),
+    )
     parser.add_argument("--output", default="models/grouped_scin_derm_foundation_embedding_metrics.json")
     return parser.parse_args()
 
@@ -153,6 +162,7 @@ def main() -> None:
             "held-out grouped SCIN fold once."
         ),
         "foundation_model": args.foundation_model,
+        "embedding_source": args.embedding_source,
         "group_key": "case_id",
         "selection_protocol": "Nested C selection; evaluation fold is not used for hyperparameter selection.",
         "seeds": seeds,
@@ -166,19 +176,24 @@ def main() -> None:
 
 def _load_or_build_embeddings(args: argparse.Namespace, rows: list[dict], image_root: Path) -> dict[str, np.ndarray]:
     cache_path = Path(args.cache)
-    if cache_path.exists():
+    if cache_path.exists() and args.embedding_source != "local-model":
         payload = np.load(cache_path, allow_pickle=True)
         image_paths = payload["image_paths"].tolist()
         values = payload["embeddings"]
         return {image_path: values[idx] for idx, image_path in enumerate(image_paths)}
 
-    precomputed = _load_precomputed_scin_embeddings(args.foundation_model, rows)
+    if args.embedding_source in {"auto", "precomputed"}:
+        precomputed = _load_precomputed_scin_embeddings(args.foundation_model, rows)
+    else:
+        precomputed = {}
     if precomputed:
         image_paths = [row["image_path"] for row in rows if row["image_path"] in precomputed]
         embeddings = np.vstack([precomputed[image_path] for image_path in image_paths]).astype(np.float32)
         cache_path.parent.mkdir(parents=True, exist_ok=True)
         np.savez_compressed(cache_path, image_paths=np.array(image_paths), embeddings=embeddings)
         return {image_path: embeddings[idx] for idx, image_path in enumerate(image_paths)}
+    if args.embedding_source == "precomputed":
+        raise FileNotFoundError("SCIN precomputed Derm Foundation embeddings were requested but not found.")
 
     import tensorflow as tf
     from huggingface_hub import from_pretrained_keras

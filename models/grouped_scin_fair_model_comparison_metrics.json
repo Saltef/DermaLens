@@ -25,7 +25,8 @@
     "fair_mobilenet_5seed": "models/grouped_scin_mobilenet_retrained_baseline_metrics.json",
     "derm_foundation_5seed": "models/grouped_scin_derm_foundation_embedding_metrics.json",
     "fixed_deployed_onnx_diagnostic": "models/grouped_scin_clean_split_metrics.json",
-    "nested_decoupled_head_fixed_encoder": "models/grouped_scin_decoupled_logit_head_metrics.json"
+    "nested_decoupled_head_fixed_encoder": "models/grouped_scin_decoupled_logit_head_metrics.json",
+    "mobilenet_checkpoint_selection_diagnostic": "models/grouped_scin_mobilenet_checkpoint_selection_diagnostic.json"
   },
   "primary_comparison": {
     "majority_class_dermatitis_baseline": {
@@ -464,8 +465,124 @@
       }
     }
   },
-  "interpretation": "The five-seed paired t-test was too fragile by itself because exact paired non-parametric tests cannot cross p<0.05 with only five same-signed differences. Expanding to 10 and 12 matched completed seeds preserves the large Derm Foundation accuracy lift over fair fold-retrained MobileNetV3 and also supports a smaller positive macro-recall lift. The result is still not a clinically useful model: class-level gains are uneven, rosacea and hyperpigmentation get worse at the 12-seed mean, and low-support tail labels remain underpowered. The paired p-values are repeated-split stability diagnostics because the folds resample the same case universe.",
+  "interpretation": "The five-seed paired t-test was too fragile by itself because exact paired non-parametric tests cannot cross p<0.05 with only five same-signed differences. Expanding to 10 and 12 matched completed seeds preserves the large Derm Foundation accuracy lift over fair fold-retrained MobileNetV3 and also supports a smaller positive macro-recall lift. The result is still not a clinically useful model: class-level gains are uneven, rosacea and hyperpigmentation get worse at the 12-seed mean, and low-support tail labels remain underpowered. The paired p-values are repeated-split stability diagnostics because the folds resample the same case universe. A post-hoc accuracy-selected MobileNet checkpoint diagnostic raises MobileNet accuracy to 52.4%, but Derm Foundation remains ahead by 17.3 accuracy points; this diagnostic is optimistic and not a clean held-out baseline.",
   "tail_support_note": "Across the 12 fair MobileNet folds, clinician_review averaged 4.8 validation images, hyperpigmentation 2.6, and rosacea 7.1. Treat per-class tail recall as underpowered diagnostic evidence.",
   "failed_seed_note": "The expanded comparison uses matched completed seeds only. Several additional native Windows MobileNet runs failed with a PyTorch process exit before evaluation and were not selected by metric.",
-  "statistical_caveat": "The paired tests compare repeated grouped resamples of the same SCIN case universe. Treat p-values as stability diagnostics over matched seeds, not as independent external-test-set inference."
+  "statistical_caveat": "The paired tests compare repeated grouped resamples of the same SCIN case universe. Treat p-values as stability diagnostics over matched seeds, not as independent external-test-set inference.",
+  "mobile_checkpoint_selection_diagnostic": {
+    "validity_note": "The accuracy-selected MobileNet row is an optimistic diagnostic, not a clean model estimate, because it chooses the best epoch from the evaluation-fold history. It tests whether the Derm Foundation lift depends entirely on macro-recall checkpoint selection weakening MobileNet accuracy.",
+    "mobile_history_accuracy_selected_diagnostic": {
+      "accuracy": {
+        "mean": 0.5244922648064099,
+        "std": 0.05151516451947603,
+        "values": [
+          0.52,
+          0.5470588235294118,
+          0.5605095541401274,
+          0.5379310344827586,
+          0.4935897435897436,
+          0.46835443037974683,
+          0.4925373134328358,
+          0.5766871165644172,
+          0.477124183006536,
+          0.5398773006134969,
+          0.6305732484076433,
+          0.44966442953020136
+        ]
+      },
+      "macro_recall": {
+        "mean": 0.251028701398813,
+        "std": 0.032547553335935495,
+        "values": [
+          0.318724925867783,
+          0.28727546064297277,
+          0.2306341891595348,
+          0.2533879164313947,
+          0.21994498556998557,
+          0.22665898617511518,
+          0.2448246198246198,
+          0.20983482536880593,
+          0.24663299663299662,
+          0.23762266416118594,
+          0.2932659932659933,
+          0.2435368536853685
+        ]
+      }
+    },
+    "paired_derm_minus_accuracy_selected_mobile_diagnostic": {
+      "accuracy": {
+        "mean_delta": 0.17331037547473857,
+        "std_delta": 0.06944632180336935,
+        "values": [
+          0.2666666666666666,
+          0.09411764705882353,
+          0.10191082802547768,
+          0.06896551724137934,
+          0.14743589743589747,
+          0.2151898734177215,
+          0.22388059701492535,
+          0.14723926380368102,
+          0.22875816993464054,
+          0.2024539877300614,
+          0.1146496815286624,
+          0.2684563758389261
+        ],
+        "paired_t": 8.645018713907533,
+        "df": 11,
+        "p_value_two_sided": 3.10206622492704e-06,
+        "ci95": [
+          0.12918628770444301,
+          0.21743446324503413
+        ],
+        "exact_sign_test": {
+          "positive": 12,
+          "negative": 0,
+          "ties": 0,
+          "p_value_two_sided": 0.00048828125
+        },
+        "exact_sign_flip_permutation": {
+          "p_value_two_sided": 0.00048828125,
+          "extreme_or_equal": 2,
+          "total_sign_flips": 4096
+        }
+      },
+      "macro_recall": {
+        "mean_delta": 0.0960277439997311,
+        "std_delta": 0.04466304550384184,
+        "values": [
+          0.08324611896040468,
+          0.102019248066199,
+          0.07885585996185071,
+          0.003858460380199491,
+          0.11447059884559888,
+          0.049362519201228944,
+          0.07367632367632374,
+          0.11857268944647587,
+          0.1335858585858586,
+          0.17431142777603786,
+          0.08291245791245788,
+          0.1374613651841375
+        ],
+        "paired_t": 7.447988808978313,
+        "df": 11,
+        "p_value_two_sided": 1.2804804489198e-05,
+        "ci95": [
+          0.06765019874283301,
+          0.12440528925662919
+        ],
+        "exact_sign_test": {
+          "positive": 12,
+          "negative": 0,
+          "ties": 0,
+          "p_value_two_sided": 0.00048828125
+        },
+        "exact_sign_flip_permutation": {
+          "p_value_two_sided": 0.00048828125,
+          "extreme_or_equal": 2,
+          "total_sign_flips": 4096
+        }
+      }
+    },
+    "interpretation": "Derm Foundation remains ahead of a post-hoc accuracy-selected MobileNet diagnostic on accuracy, but the gap is smaller than against the macro-selected exported baseline. This suggests part of the reported accuracy lift comes from MobileNet checkpoint-selection tradeoffs, while the representation advantage does not disappear under this stronger diagnostic comparator."
+  }
 }

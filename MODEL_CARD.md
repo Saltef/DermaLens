@@ -32,6 +32,8 @@ Under the corrected grouped SCIN-only protocol, the fixed deployed ONNX model wi
 
 The fair comparison has now been run with `scripts/run_grouped_mobilenet_baseline.py`: each seed prepares a grouped split, trains MobileNet only on that seed's training cases, exports ONNX, evaluates once on untouched validation cases, and aggregates support-aware metrics. The 12-seed fair MobileNet baseline reached 44.8% +/- 9.9 accuracy and 29.1% +/- 3.9 macro recall. A majority-class dermatitis baseline reached 63.7% +/- 1.6 accuracy and 16.7% macro recall.
 
+I also added an optimistic checkpoint-selection diagnostic for MobileNet. Reselecting the best MobileNet epoch by validation accuracy from the existing training histories raises MobileNet to 52.4% +/- 5.2 accuracy and 25.1% +/- 3.3 macro recall. This is not a clean held-out estimate because it chooses from evaluation-fold history, but it checks whether the Derm Foundation lift disappears under a harder-to-beat MobileNet comparator. It does not.
+
 ### Skin-Tone Subgroup Audit
 
 I also evaluated the same grouped SCIN splits by available Fitzpatrick and Monk tone metadata. These are workflow-demo metrics, not fairness validation: several buckets are small, SCIN tone labels are retrospective image metadata rather than controlled clinical subgroup labels, and the fixed-model evaluation itself is not a clean model holdout.
@@ -67,6 +69,8 @@ I also ran a Derm Foundation embedding evaluation using `google/derm-foundation`
 
 Artifacts: `models/grouped_scin_derm_foundation_embedding_12seed_metrics.json` and `models/grouped_scin_seed_count_sensitivity_metrics.json`.
 
+Additional diagnostic artifact: `models/grouped_scin_mobilenet_checkpoint_selection_diagnostic.json`.
+
 ## Known Limitations
 
 - Broad labels overlap visually, especially acne, folliculitis, and dermatitis-like irritation.
@@ -87,4 +91,5 @@ The UI and API present outputs as non-diagnostic screening observations. The app
 2. Prepare ImageFolder data with grouped `case_id` splitting.
 3. Treat the 12-seed fair fold-retrained MobileNetV3 result, not the fixed-model diagnostic, as the baseline for future modeling comparisons.
 4. Rerun decoupled-head probes against fair representations or mark them as fixed-encoder experiment logs.
-5. Add enough validated face-specific tail examples before treating macro recall as stable evidence.
+5. Rerun Derm Foundation with `--embedding-source local-model` when compute allows, so the SCIN downstream evaluation does not depend on Google's shipped SCIN precomputed embedding file.
+6. Add enough validated face-specific tail examples before treating macro recall as stable evidence.

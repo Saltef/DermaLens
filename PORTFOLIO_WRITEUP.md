@@ -18,6 +18,8 @@ Finally, I ran one fixed-encoder operating-point experiment under the corrected 
 
 That decision changed the project story: the strongest remaining gap was a fair fold-retrained MobileNetV3 baseline. I ran that baseline first across five grouped SCIN seeds, then expanded the matched comparison to 10 and 12 completed seeds after recognizing that five seeds cannot support a p<0.05 exact paired non-parametric test. The final 12-seed fair MobileNet baseline reached **44.8% +/- 9.9 accuracy** and **29.1% +/- 3.9 macro recall**, far below the contaminated fixed-model diagnostic and below a majority-class dermatitis baseline on accuracy. Against that fair baseline, the Derm Foundation probe became a clean modeling result: **69.8% +/- 5.2 accuracy** and **34.7% +/- 5.0 macro recall**. The paired 12-seed comparison supports a large accuracy gain (**+25.0 points**, exact sign p=0.00049) and a smaller macro-recall gain (**+5.6 points**, exact sign p=0.00635). The model is still not clinically strong, but the experiment now demonstrates both scientific correction and a measurable representation improvement.
 
+I then stress-tested the size of that win. One concern was that MobileNet had been checkpoint-selected for macro recall, which could depress its accuracy. I reanalyzed the same MobileNet training histories with an optimistic post-hoc accuracy-selected checkpoint. That raises MobileNet to **52.4% accuracy**, but Derm Foundation still leads by **+17.3 points**. I report this as a diagnostic, not the main benchmark, because it chooses from evaluation-fold history.
+
 This is not a medical device and does not provide diagnosis.
 
 ## What I Built
@@ -50,6 +52,7 @@ The first deployable model was a MobileNetV3-Small classifier exported to ONNX. 
 | Conservative MobileNetV3 ONNX on grouped SCIN-only splits, 5 split seeds | 86.2% +/- 1.2 | 63.1% +/- 10.1 | Fixed-model diagnostic; not clean model holdout |
 | Majority-class dermatitis baseline, 12 grouped validation folds | 63.7% +/- 1.6 | 16.7% | Imbalanced-class floor |
 | Fair grouped MobileNetV3 retrain, 12 split seeds | 44.8% +/- 9.9 | 29.1% +/- 3.9 | Clean baseline |
+| Accuracy-selected MobileNet checkpoint diagnostic | 52.4% +/- 5.2 | 25.1% +/- 3.3 | Optimistic post-hoc diagnostic |
 | Derm Foundation linear probe, 12 grouped split seeds | 69.8% +/- 5.2 | 34.7% +/- 5.0 | Robust accuracy lift; smaller macro-recall lift |
 | Nested decoupled balanced logit head on grouped SCIN-only splits, 5 split seeds | 75.3% +/- 1.7 | 70.7% +/- 11.4 | Fixed-encoder operating point; not clean representation benchmark |
 

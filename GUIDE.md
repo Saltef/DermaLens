@@ -106,6 +106,8 @@ There is also one grouped-split decoupled-head artifact: `models/grouped_scin_de
 
 The high-leverage foundation-model path is implemented in `scripts/evaluate_derm_foundation_embeddings.py`. It extracts `google/derm-foundation` embeddings, trains a class-balanced linear probe, selects C on nested calibration data, and evaluates on the held-out grouped fold. The completed 12-seed result is 69.8% +/- 5.2 accuracy and 34.7% +/- 5.0 macro recall. Compared with the fair MobileNet baseline, Derm Foundation has a robust paired accuracy lift and a smaller positive macro-recall lift after expanding beyond the fragile five-seed test. Both learned models beat the majority-class floor on macro recall; neither solves the low-support tail classes.
 
+There is also a checkpoint-selection diagnostic in `models/grouped_scin_mobilenet_checkpoint_selection_diagnostic.json`. It reselects MobileNet epochs post hoc by validation accuracy, raising MobileNet to 52.4% accuracy, but Derm Foundation still leads. Read this only as a robustness check because it uses evaluation-fold history for epoch choice.
+
 The research pipeline found stronger experimental results:
 
 - ConvNeXt frozen embeddings improved macro recall.

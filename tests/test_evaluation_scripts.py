@@ -1,7 +1,12 @@
 from __future__ import annotations
 
+import json
+from argparse import Namespace
+from pathlib import Path
+
 import pytest
 
+from scripts.analyze_mobilenet_checkpoint_selection import build_report as build_checkpoint_report
 from scripts.compare_grouped_seed_counts import _exact_sign_test
 from scripts.evaluate_onnx import _build_metrics as _build_onnx_metrics
 from scripts.evaluate_subgroups import _exclude_trained_cases, _grouped_split, _metrics
@@ -127,3 +132,60 @@ def test_five_seed_exact_sign_test_cannot_clear_point_05() -> None:
     assert result["positive"] == 5
     assert result["negative"] == 0
     assert result["p_value_two_sided"] == 0.0625
+
+
+def test_checkpoint_selection_diagnostic_uses_accuracy_history(tmp_path: Path) -> None:
+    mobile_path = tmp_path / "mobile.json"
+    derm_path = tmp_path / "derm.json"
+    run_root = tmp_path / "runs"
+    for seed in [1, 2]:
+        seed_dir = run_root / f"seed{seed}"
+        seed_dir.mkdir(parents=True)
+        (seed_dir / "training_metrics.json").write_text(
+            json.dumps(
+                {
+                    "history": [
+                        {"epoch": 1, "val_accuracy": 0.4, "macro_recall": 0.7},
+                        {"epoch": 2, "val_accuracy": 0.8, "macro_recall": 0.2},
+                    ]
+                }
+            ),
+            encoding="utf-8",
+        )
+    mobile_path.write_text(
+        json.dumps(
+            {
+                "config": {"seeds": [1, 2]},
+                "splits": [
+                    {"metrics": {"accuracy": 0.4, "macro_recall": 0.7}},
+                    {"metrics": {"accuracy": 0.5, "macro_recall": 0.6}},
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    derm_path.write_text(
+        json.dumps(
+            {
+                "summary": {
+                    "derm_foundation_linear_probe": {
+                        "accuracy": {"values": [0.9, 0.7], "mean": 0.8, "std": 0.1},
+                        "macro_recall": {"values": [0.4, 0.3], "mean": 0.35, "std": 0.05},
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    args = Namespace(
+        mobile=str(mobile_path),
+        derm=str(derm_path),
+        run_root=str(run_root),
+        output=str(tmp_path / "out.json"),
+    )
+
+    report = build_checkpoint_report(args)
+
+    assert report["mobile_history_accuracy_selected_diagnostic"]["accuracy"]["mean"] == 0.8
+    assert report["mobile_history_accuracy_selected_diagnostic"]["macro_recall"]["mean"] == 0.2
