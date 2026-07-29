@@ -34,6 +34,8 @@ The fair comparison has now been run with `scripts/run_grouped_mobilenet_baselin
 
 I also added an optimistic checkpoint-selection diagnostic for MobileNet. Reselecting the best MobileNet epoch by validation accuracy from the existing training histories raises MobileNet to 52.4% +/- 5.2 accuracy and 25.1% +/- 3.3 macro recall. This is not a clean held-out estimate because it chooses from evaluation-fold history, but it checks whether the Derm Foundation lift disappears under a harder-to-beat MobileNet comparator. It does not.
 
+The checkpoint policies do not dominate each other: the accuracy-selected diagnostic is better on accuracy and worse on macro recall than the exported macro-selected MobileNet. The conservative envelope is therefore >= +17.3 accuracy points and >= +5.6 macro-recall points for Derm Foundation against the best MobileNet policy for each metric separately.
+
 ### Skin-Tone Subgroup Audit
 
 I also evaluated the same grouped SCIN splits by available Fitzpatrick and Monk tone metadata. These are workflow-demo metrics, not fairness validation: several buckets are small, SCIN tone labels are retrospective image metadata rather than controlled clinical subgroup labels, and the fixed-model evaluation itself is not a clean model holdout.
@@ -71,12 +73,21 @@ Artifacts: `models/grouped_scin_derm_foundation_embedding_12seed_metrics.json` a
 
 Additional diagnostic artifact: `models/grouped_scin_mobilenet_checkpoint_selection_diagnostic.json`.
 
+I then added a generic frozen-encoder control: ConvNeXt-Tiny ImageNet embeddings with the same grouped/nested linear-probe protocol. It reached 53.1% +/- 4.1 accuracy and 23.1% +/- 3.3 macro recall. Derm Foundation remains ahead by +16.7 accuracy points and +11.6 macro-recall points, but this still does not isolate dermatology-specific pretraining from model size and input resolution. Derm Foundation is a BiT-101x3-style 6144-dimensional, 448px representation; MobileNetV3-Small is a compact 224px deployed model; ConvNeXt-Tiny is a stronger generic control but still much smaller than Derm Foundation.
+
+Additional control artifact: `models/grouped_scin_convnext_tiny_embedding_12seed_metrics.json`.
+
+Vendor-benchmark caveat: Google's Derm Foundation materials explicitly include SCIN as a public downstream linear-classifier use case. This result is therefore a SCIN downstream benchmark on the vendor home dataset, not external validation.
+
 ## Known Limitations
 
 - Broad labels overlap visually, especially acne, folliculitis, and dermatitis-like irritation.
 - Public datasets are noisy and not fully face-specific.
 - Performance has not been clinically validated.
 - The reported 86.2% grouped SCIN fixed-model check is contaminated as a model-holdout estimate unless the original ONNX training cases can be excluded or the model is retrained per grouped fold.
+- The Derm Foundation 12-seed artifact was generated before embedding provenance was recorded and is marked `legacy_cache_source_unrecorded`. Future reruns should use `--embedding-source local-model` if the goal is to avoid Google's shipped SCIN precomputed embedding artifact.
+- The Derm Foundation comparison bundles dermatology pretraining, much larger model capacity, and 448px input resolution. The ConvNeXt-Tiny control narrows but does not eliminate this attribution confound.
+- SCIN is used in Derm Foundation example/evaluation materials, so the result should not be treated as external validation.
 - Several tail labels have validation support too small for meaningful mean +/- std recall. Metrics for labels with fewer than about 10 validation images should be treated as undefined/underpowered diagnostics.
 - Performance may vary by lighting, camera processing, makeup, filters, and skin tone. The current subgroup workflow is underpowered for the darkest Monk bucket.
 - Region summaries use an OpenCV frontal-face detector with a geometry fallback; this is better than the original fixed crop but still not a landmark-grade facial analysis pipeline.

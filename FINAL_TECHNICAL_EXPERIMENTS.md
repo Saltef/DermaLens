@@ -60,6 +60,7 @@ The fair baseline has now been executed across five, 10, and 12 matched complete
 | MobileNetV3 fair grouped retrain | 10 | 8 | 43.7% +/- 8.8 | 28.9% +/- 4.3 | clinician_review, hyperpigmentation_like_uneven_tone, rosacea_like_redness |
 | MobileNetV3 fair grouped retrain | 12 | 8 | 44.8% +/- 9.9 | 29.1% +/- 3.9 | clinician_review, hyperpigmentation_like_uneven_tone, rosacea_like_redness |
 | MobileNetV3 accuracy-selected checkpoint diagnostic | 12 | 8 | 52.4% +/- 5.2 | 25.1% +/- 3.3 | Diagnostic only; epoch selected post hoc from evaluation history |
+| ConvNeXt-Tiny frozen ImageNet probe | 12 | nested C | 53.1% +/- 4.1 | 23.1% +/- 3.3 | Generic frozen-encoder control |
 
 This is the clean MobileNet baseline for this repo. It is far below the fixed-model diagnostic, which confirms that the old 86.2% number should not travel as a held-out claim.
 
@@ -70,6 +71,7 @@ Artifacts:
 - `models/grouped_scin_mobilenet_retrained_baseline_10seed_metrics.json`
 - `models/grouped_scin_mobilenet_retrained_baseline_12seed_metrics.json`
 - `models/grouped_scin_mobilenet_checkpoint_selection_diagnostic.json`
+- `models/grouped_scin_convnext_tiny_embedding_12seed_metrics.json`
 
 ### Skin-Tone Subgroup Audit
 
@@ -142,17 +144,23 @@ The completed result was:
 | Majority-class dermatitis baseline, 12 seeds | 63.7% +/- 1.6 | 16.7% |
 | Fair grouped MobileNetV3 retrain, 12 seeds | 44.8% +/- 9.9 | 29.1% +/- 3.9 |
 | Accuracy-selected MobileNet checkpoint diagnostic | 52.4% +/- 5.2 | 25.1% +/- 3.3 |
+| ConvNeXt-Tiny frozen ImageNet probe, 12 seeds | 53.1% +/- 4.1 | 23.1% +/- 3.3 |
 | Derm Foundation linear probe, 12 seeds | 69.8% +/- 5.2 | 34.7% +/- 5.0 |
 
 The first five-seed run had an important statistical caveat: no exact paired non-parametric test can reach p<0.05 with only five same-signed differences. I therefore expanded the matched comparison to 10 and 12 completed seeds and regenerated the sensitivity artifact.
 
 Paired interpretation: the dermatology foundation linear probe produces a large accuracy lift over the fold-retrained MobileNetV3 baseline at 12 seeds: +25.0 points, 95% CI +17.8 to +32.2, paired t(11)=7.64, p=1.0e-5, exact sign p=0.00049. The macro-recall delta is smaller but positive in the expanded run: +5.6 points, 95% CI +2.6 to +8.6, paired t(11)=4.12, p=0.0017, exact sign p=0.00635. Per-class recall still gets worse for rosacea and hyperpigmentation and improves mostly on acne, dermatitis, and clinician-review. The result is scientifically useful because it shows dermatology-specific embeddings improve the clean benchmark, but it is not a solved classifier.
 
-Checkpoint-selection sensitivity: MobileNet's exported checkpoints were selected by validation macro recall. If the same histories are reselected post hoc by validation accuracy, MobileNet accuracy rises to 52.4% but macro recall falls to 25.1%. Derm Foundation remains ahead by +17.3 accuracy points and +9.6 macro-recall points against this optimistic diagnostic. This is not promoted to the main baseline because it selects from the evaluation-fold history.
+Checkpoint-selection sensitivity: MobileNet's exported checkpoints were selected by validation macro recall. If the same histories are reselected post hoc by validation accuracy, MobileNet accuracy rises to 52.4% but macro recall falls to 25.1%. Because neither MobileNet policy dominates the other, the conservative envelope is >= +17.3 accuracy points and >= +5.6 macro-recall points for Derm Foundation against the best MobileNet policy for each metric separately. The accuracy-selected diagnostic is not promoted to the main baseline because it selects from the evaluation-fold history.
+
+Generic frozen-encoder control: I ran ConvNeXt-Tiny ImageNet embeddings with the same grouped/nested linear-probe protocol. Derm Foundation remains ahead of ConvNeXt-Tiny by +16.7 accuracy points and +11.6 macro-recall points. This narrows the attribution gap, but does not eliminate it: Derm Foundation is a BiT-101x3-style 6144-dimensional, 448px representation, while ConvNeXt-Tiny is a smaller generic ImageNet encoder and MobileNetV3-Small is the compact deployed 224px model. The fair claim is therefore a SCIN downstream representation win, not proof that dermatology pretraining alone caused the full lift.
+
+Vendor-benchmark caveat: Google's Derm Foundation materials include SCIN as a public downstream linear-classifier use case. This result should be read as performance on the vendor home benchmark, not independent external validation.
 
 Artifacts: `models/grouped_scin_derm_foundation_embedding_metrics.json`, `models/grouped_scin_derm_foundation_embedding_10seed_metrics.json`, and `models/grouped_scin_derm_foundation_embedding_12seed_metrics.json`.
 Fair comparison artifact: `models/grouped_scin_fair_model_comparison_metrics.json`.
 Seed-count sensitivity artifact: `models/grouped_scin_seed_count_sensitivity_metrics.json`.
+Generic control artifact: `models/grouped_scin_convnext_tiny_embedding_12seed_metrics.json`.
 
 ## Baseline To Beat
 

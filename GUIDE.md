@@ -108,6 +108,10 @@ The high-leverage foundation-model path is implemented in `scripts/evaluate_derm
 
 There is also a checkpoint-selection diagnostic in `models/grouped_scin_mobilenet_checkpoint_selection_diagnostic.json`. It reselects MobileNet epochs post hoc by validation accuracy, raising MobileNet to 52.4% accuracy, but Derm Foundation still leads. Read this only as a robustness check because it uses evaluation-fold history for epoch choice.
 
+The cleaner way to read that diagnostic is as an envelope, not a paired claim against one MobileNet. Accuracy-selected MobileNet is better on accuracy and worse on macro recall than macro-selected MobileNet, so Derm Foundation is at least +17.3 accuracy points and at least +5.6 macro-recall points ahead of the best MobileNet policy for each metric separately.
+
+The repo now includes the missing generic frozen-encoder control in `models/grouped_scin_convnext_tiny_embedding_12seed_metrics.json`. ConvNeXt-Tiny ImageNet embeddings reached 53.1% accuracy and 23.1% macro recall under the same grouped/nested probe protocol. Derm Foundation remains ahead, but the claim is still SCIN downstream performance, not external validation or a pure attribution to dermatology pretraining alone.
+
 The research pipeline found stronger experimental results:
 
 - ConvNeXt frozen embeddings improved macro recall.

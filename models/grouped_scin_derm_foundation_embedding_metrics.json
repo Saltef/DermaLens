@@ -3384,5 +3384,7 @@
       "accuracy_mean": 0.6337161999165849,
       "macro_recall_mean": 0.16666666666666666
     }
-  }
+  },
+  "embedding_source": "legacy_cache_source_unrecorded",
+  "embedding_source_note": "This artifact was generated before embedding_source was recorded. The evaluator now supports --embedding-source local-model to bypass Google/HF SCIN precomputed embeddings on future reruns."
 }

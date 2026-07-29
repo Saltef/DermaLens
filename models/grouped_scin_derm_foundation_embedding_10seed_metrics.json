@@ -6542,5 +6542,7 @@
       ]
     }
   ],
-  "reporting_note": "accuracy=0.6910+/-0.0544, macro_recall=0.3408+/-0.0533"
+  "reporting_note": "accuracy=0.6910+/-0.0544, macro_recall=0.3408+/-0.0533",
+  "embedding_source": "legacy_cache_source_unrecorded",
+  "embedding_source_note": "This artifact was generated before embedding_source was recorded. The evaluator now supports --embedding-source local-model to bypass Google/HF SCIN precomputed embeddings on future reruns."
 }

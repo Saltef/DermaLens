@@ -18,7 +18,9 @@ Finally, I ran one fixed-encoder operating-point experiment under the corrected 
 
 That decision changed the project story: the strongest remaining gap was a fair fold-retrained MobileNetV3 baseline. I ran that baseline first across five grouped SCIN seeds, then expanded the matched comparison to 10 and 12 completed seeds after recognizing that five seeds cannot support a p<0.05 exact paired non-parametric test. The final 12-seed fair MobileNet baseline reached **44.8% +/- 9.9 accuracy** and **29.1% +/- 3.9 macro recall**, far below the contaminated fixed-model diagnostic and below a majority-class dermatitis baseline on accuracy. Against that fair baseline, the Derm Foundation probe became a clean modeling result: **69.8% +/- 5.2 accuracy** and **34.7% +/- 5.0 macro recall**. The paired 12-seed comparison supports a large accuracy gain (**+25.0 points**, exact sign p=0.00049) and a smaller macro-recall gain (**+5.6 points**, exact sign p=0.00635). The model is still not clinically strong, but the experiment now demonstrates both scientific correction and a measurable representation improvement.
 
-I then stress-tested the size of that win. One concern was that MobileNet had been checkpoint-selected for macro recall, which could depress its accuracy. I reanalyzed the same MobileNet training histories with an optimistic post-hoc accuracy-selected checkpoint. That raises MobileNet to **52.4% accuracy**, but Derm Foundation still leads by **+17.3 points**. I report this as a diagnostic, not the main benchmark, because it chooses from evaluation-fold history.
+I then stress-tested the size of that win. One concern was that MobileNet had been checkpoint-selected for macro recall, which could depress its accuracy. I reanalyzed the same MobileNet training histories with an optimistic post-hoc accuracy-selected checkpoint. That raises MobileNet to **52.4% accuracy**, but the checkpoint policies cross: it improves accuracy while reducing macro recall. The conservative statement is therefore **at least +17.3 accuracy points** and **at least +5.6 macro-recall points** for Derm Foundation against the best MobileNet policy for each metric separately. I report this as a diagnostic, not the main benchmark, because it chooses from evaluation-fold history.
+
+I also ran the missing generic frozen-encoder control: ConvNeXt-Tiny ImageNet embeddings with the same grouped/nested linear-probe protocol. ConvNeXt reached **53.1% accuracy** and **23.1% macro recall**, while Derm Foundation reached **69.8% accuracy** and **34.7% macro recall**. That strengthens the result, but narrows the claim: Derm Foundation is better than the generic ConvNeXt control on this SCIN downstream task, but the experiment still bundles dermatology pretraining with larger model capacity and 448px input resolution.
 
 This is not a medical device and does not provide diagnosis.
 
@@ -53,6 +55,7 @@ The first deployable model was a MobileNetV3-Small classifier exported to ONNX. 
 | Majority-class dermatitis baseline, 12 grouped validation folds | 63.7% +/- 1.6 | 16.7% | Imbalanced-class floor |
 | Fair grouped MobileNetV3 retrain, 12 split seeds | 44.8% +/- 9.9 | 29.1% +/- 3.9 | Clean baseline |
 | Accuracy-selected MobileNet checkpoint diagnostic | 52.4% +/- 5.2 | 25.1% +/- 3.3 | Optimistic post-hoc diagnostic |
+| ConvNeXt-Tiny frozen ImageNet probe, 12 split seeds | 53.1% +/- 4.1 | 23.1% +/- 3.3 | Generic frozen-encoder control |
 | Derm Foundation linear probe, 12 grouped split seeds | 69.8% +/- 5.2 | 34.7% +/- 5.0 | Robust accuracy lift; smaller macro-recall lift |
 | Nested decoupled balanced logit head on grouped SCIN-only splits, 5 split seeds | 75.3% +/- 1.7 | 70.7% +/- 11.4 | Fixed-encoder operating point; not clean representation benchmark |
 
@@ -62,7 +65,7 @@ The decoupled head moves the fixed encoder toward a more tail-sensitive operatin
 
 I also ran the most important next experiment: a direct Derm Foundation embedding probe. It used `google/derm-foundation` as the frozen representation, trained a class-balanced linear classifier, selected C on nested grouped calibration data, and evaluated once on the held-out grouped fold. The 12-seed probe reached **69.8% +/- 5.2 accuracy** and **34.7% +/- 5.0 macro recall**. Compared against the fair MobileNet baseline, Derm Foundation gives a robust paired accuracy gain and a smaller positive macro-recall gain after expanding beyond the fragile five-seed run.
 
-The narrower result is still important: a simple linear probe over Derm Foundation embeddings improved the clean benchmark, but it did not solve the current mapped tail-label problem. In the 12-seed mean, it lost recall on rosacea and hyperpigmentation and gained mostly on acne, dermatitis, and clinician-review. The validation support for several tail classes is too small for stable per-class claims.
+The narrower result is still important: a simple linear probe over Derm Foundation embeddings improved the clean benchmark, but it did not solve the current mapped tail-label problem. In the 12-seed mean, it lost recall on rosacea and hyperpigmentation and gained mostly on acne, dermatitis, and clinician-review. The validation support for several tail classes is too small for stable per-class claims. I also do not present this as external validation: Google's Derm Foundation materials use SCIN as a public downstream linear-classifier example, so this is closer to a vendor-home downstream benchmark than a new external test.
 
 ### 2. Frozen Foundation-Style Embeddings
 
@@ -181,6 +184,7 @@ This project demonstrates the full applied ML loop:
 - subgroup evaluation workflow by available skin-tone metadata, with underpowered buckets explicitly demoted
 - decoupled balanced-head and Derm Foundation experiments separated by validity class: fixed-encoder operating point versus clean fair representation comparison
 - paired inference with seed-count sensitivity, including exact tests that expose the five-seed limitation
+- a generic frozen-encoder control to separate some representation effect from the small MobileNet baseline
 - error analysis that turns model failure into a concrete data acquisition plan
 
 The most important outcome is not just a score. It is a defensible process: when a stronger critique found the headline was contaminated, the repo demoted the claim, rebuilt the fair baseline, expanded the seed count when the first paired test was too fragile, and then showed a cleaner Derm Foundation representation lift. The next result that matters is data quality: enough face-specific tail examples to make per-class recall scientifically stable.
