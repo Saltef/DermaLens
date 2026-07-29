@@ -464,7 +464,8 @@
       }
     }
   },
-  "interpretation": "The five-seed paired t-test was too fragile by itself because exact paired non-parametric tests cannot cross p<0.05 with only five same-signed differences. Expanding to 10 and 12 matched completed seeds preserves the large Derm Foundation accuracy lift over fair fold-retrained MobileNetV3 and also supports a smaller positive macro-recall lift. The result is still not a clinically useful model: class-level gains are uneven, rosacea and hyperpigmentation get worse at the 12-seed mean, and low-support tail labels remain underpowered.",
+  "interpretation": "The five-seed paired t-test was too fragile by itself because exact paired non-parametric tests cannot cross p<0.05 with only five same-signed differences. Expanding to 10 and 12 matched completed seeds preserves the large Derm Foundation accuracy lift over fair fold-retrained MobileNetV3 and also supports a smaller positive macro-recall lift. The result is still not a clinically useful model: class-level gains are uneven, rosacea and hyperpigmentation get worse at the 12-seed mean, and low-support tail labels remain underpowered. The paired p-values are repeated-split stability diagnostics because the folds resample the same case universe.",
   "tail_support_note": "Across the 12 fair MobileNet folds, clinician_review averaged 4.8 validation images, hyperpigmentation 2.6, and rosacea 7.1. Treat per-class tail recall as underpowered diagnostic evidence.",
-  "failed_seed_note": "The expanded comparison uses matched completed seeds only. Several additional native Windows MobileNet runs failed with a PyTorch process exit before evaluation and were not selected by metric."
+  "failed_seed_note": "The expanded comparison uses matched completed seeds only. Several additional native Windows MobileNet runs failed with a PyTorch process exit before evaluation and were not selected by metric.",
+  "statistical_caveat": "The paired tests compare repeated grouped resamples of the same SCIN case universe. Treat p-values as stability diagnostics over matched seeds, not as independent external-test-set inference."
 }

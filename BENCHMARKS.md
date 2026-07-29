@@ -50,7 +50,7 @@ Fair grouped MobileNetV3 retrain: 44.8% accuracy, 29.1% macro recall
 Derm Foundation linear probe: 69.8% accuracy, 34.7% macro recall
 ```
 
-The defensible statistical claim changed after expanding the matched seeds. With only five seeds, no exact paired non-parametric test can reach p<0.05; the five-seed accuracy p-value rested on an untestable t-test normality assumption. At 12 matched completed seeds, Derm Foundation gives a large paired accuracy gain over fair MobileNet (+25.0 points, 95% CI +17.8 to +32.2, exact sign p=0.00049) and a smaller macro-recall gain (+5.6 points, 95% CI +2.6 to +8.6, exact sign p=0.00635). At the class level, Derm Foundation still loses mean recall on rosacea and hyperpigmentation and gains mainly on acne, dermatitis, and clinician-review.
+The defensible statistical claim changed after expanding the matched seeds. With only five seeds, no exact paired non-parametric test can reach p<0.05; the five-seed accuracy p-value rested on an untestable t-test normality assumption. At 12 matched completed seeds, Derm Foundation gives a large paired accuracy gain over fair MobileNet (+25.0 points, 95% CI +17.8 to +32.2, exact sign p=0.00049) and a smaller macro-recall gain (+5.6 points, 95% CI +2.6 to +8.6, exact sign p=0.00635). These p-values are repeated-split stability diagnostics, not independent external-test-set inference, because all seeds resample the same SCIN case universe. At the class level, Derm Foundation still loses mean recall on rosacea and hyperpigmentation and gains mainly on acne, dermatitis, and clinician-review.
 
 Honest headline:
 
