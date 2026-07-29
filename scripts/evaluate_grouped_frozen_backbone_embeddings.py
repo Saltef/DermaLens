@@ -28,7 +28,14 @@ from scripts.evaluate_decoupled_logit_head import (  # noqa: E402
     _summarize,
 )
 
-BACKBONES = ["convnext_tiny", "mobilenet_v3_small", "efficientnet_b0", "swin_t", "vit_b_16"]
+BACKBONES = [
+    "convnext_tiny",
+    "mobilenet_v3_small",
+    "efficientnet_b0",
+    "swin_t",
+    "vit_b_16",
+    "bit_m_r101x3",
+]
 
 
 def parse_args() -> argparse.Namespace:
@@ -58,7 +65,11 @@ def main() -> None:
 
     labels = _read_labels(Path(args.label_map))
     rows = _read_manifest(Path(args.manifest))
-    embeddings = _load_or_build_embeddings(args, rows, Path(args.image_root))
+    try:
+        embeddings = _load_or_build_embeddings(args, rows, Path(args.image_root))
+    except Exception as exc:
+        _write_blocked(output, args, reason=f"{exc.__class__.__name__}: {exc}")
+        return
     seeds = [int(seed.strip()) for seed in args.seeds.split(",") if seed.strip()]
 
     split_results = []
@@ -132,7 +143,7 @@ def main() -> None:
             "linear probe, select C on nested grouped calibration data, and report the held-out grouped SCIN fold once."
         ),
         "backbone": args.backbone,
-        "embedding_source": "torchvision_imagenet1k_weights",
+        "embedding_source": _embedding_source(args.backbone),
         "group_key": "case_id",
         "selection_protocol": "Nested C selection; evaluation fold is not used for hyperparameter selection.",
         "seeds": seeds,
@@ -219,6 +230,20 @@ def _append_batch(
 
 
 def _build_feature_model(name: str) -> tuple[nn.Module, object]:
+    if name == "bit_m_r101x3":
+        try:
+            import timm
+            from timm.data import resolve_data_config
+            from timm.data.transforms_factory import create_transform
+        except ImportError as exc:
+            raise ImportError(
+                "The BiT-M R101x3 control requires timm. Install with `python -m pip install timm`."
+            ) from exc
+
+        model = timm.create_model("resnetv2_101x3_bit.goog_in21k_ft_in1k", pretrained=True, num_classes=0)
+        config = resolve_data_config({"input_size": (3, 448, 448)}, model=model)
+        transform = create_transform(**config)
+        return model, transform
     if name == "convnext_tiny":
         weights = models.ConvNeXt_Tiny_Weights.IMAGENET1K_V1
         model = models.convnext_tiny(weights=weights)
@@ -247,6 +272,12 @@ def _build_feature_model(name: str) -> tuple[nn.Module, object]:
     raise ValueError(name)
 
 
+def _embedding_source(backbone: str) -> str:
+    if backbone == "bit_m_r101x3":
+        return "timm_resnetv2_101x3_bit_goog_in21k_ft_in1k"
+    return "torchvision_imagenet1k_weights"
+
+
 def _reporting_note(split_results: list[dict], key: str) -> str:
     accuracy = [result[key]["accuracy"] for result in split_results]
     macro = [result[key]["macro_recall"] for result in split_results]
@@ -254,6 +285,22 @@ def _reporting_note(split_results: list[dict], key: str) -> str:
         f"accuracy={statistics.mean(accuracy):.4f}+/-{statistics.stdev(accuracy):.4f}, "
         f"macro_recall={statistics.mean(macro):.4f}+/-{statistics.stdev(macro):.4f}"
     )
+
+
+def _write_blocked(output: Path, args: argparse.Namespace, *, reason: str) -> None:
+    payload = {
+        "status": "blocked",
+        "protocol": "Generic frozen-backbone grouped SCIN embedding control.",
+        "backbone": args.backbone,
+        "embedding_source": _embedding_source(args.backbone),
+        "reason": reason,
+        "next_step": (
+            "Install any missing model dependency and ensure the pretrained weights are available locally, "
+            "then rerun this script with the same grouped seeds."
+        ),
+    }
+    output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    print(f"wrote blocked run artifact to {output}")
 
 
 if __name__ == "__main__":

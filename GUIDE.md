@@ -104,13 +104,13 @@ The repo also includes a subgroup workflow by Fitzpatrick and Monk tone metadata
 
 There is also one grouped-split decoupled-head artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`. It freezes the deployed ONNX image model and retrains only a class-balanced head over its logits, with C selected on a nested grouped calibration split. The refreshed head reached 75.3% +/- 1.7 accuracy and 70.7% +/- 11.4 macro recall. Read it as a fixed-encoder operating-point experiment, not as a clean model benchmark, because the frozen encoder may have seen SCIN-derived cases during original fine-tuning.
 
-The high-leverage foundation-model path is implemented in `scripts/evaluate_derm_foundation_embeddings.py`. It extracts `google/derm-foundation` embeddings, trains a class-balanced linear probe, selects C on nested calibration data, and evaluates on the held-out grouped fold. The completed 12-seed result is 69.8% +/- 5.2 accuracy and 34.7% +/- 5.0 macro recall. Compared with the fair MobileNet baseline, Derm Foundation has a robust paired accuracy lift and a smaller positive macro-recall lift after expanding beyond the fragile five-seed test. Both learned models beat the majority-class floor on macro recall; neither solves the low-support tail classes.
+The high-leverage foundation-model path is implemented in `scripts/evaluate_derm_foundation_embeddings.py`. It extracts `google/derm-foundation` embeddings from a local SavedModel, trains a class-balanced linear probe, selects C on nested calibration data, and evaluates on the held-out grouped fold. The completed 12-seed local-model result is 68.6% +/- 5.0 accuracy and 33.9% +/- 3.7 macro recall. Compared with the fair MobileNet baseline, Derm Foundation has a robust paired accuracy lift and a smaller positive macro-recall lift after expanding beyond the fragile five-seed test. Both learned models beat the majority-class floor on macro recall; neither solves the low-support tail classes.
 
 There is also a checkpoint-selection diagnostic in `models/grouped_scin_mobilenet_checkpoint_selection_diagnostic.json`. It reselects MobileNet epochs post hoc by validation accuracy, raising MobileNet to 52.4% accuracy, but Derm Foundation still leads. Read this only as a robustness check because it uses evaluation-fold history for epoch choice.
 
-The cleaner way to read that diagnostic is as an envelope, not a paired claim against one MobileNet. Accuracy-selected MobileNet is better on accuracy and worse on macro recall than macro-selected MobileNet, so Derm Foundation is at least +17.3 accuracy points and at least +5.6 macro-recall points ahead of the best MobileNet policy for each metric separately.
+The cleaner way to read that diagnostic is as an envelope, not a paired claim against one MobileNet. Accuracy-selected MobileNet is better on accuracy and worse on macro recall than macro-selected MobileNet, so Derm Foundation is at least +16.1 accuracy points and at least +4.8 macro-recall points ahead of the best MobileNet policy for each metric separately.
 
-The repo now includes the missing generic frozen-encoder control in `models/grouped_scin_convnext_tiny_embedding_12seed_metrics.json`. ConvNeXt-Tiny ImageNet embeddings reached 53.1% accuracy and 23.1% macro recall under the same grouped/nested probe protocol. Derm Foundation remains ahead, but the claim is still SCIN downstream performance, not external validation or a pure attribution to dermatology pretraining alone.
+The repo now includes two frozen-encoder controls. ConvNeXt-Tiny ImageNet embeddings reached 53.1% accuracy and 23.1% macro recall under the same grouped/nested probe protocol. The stronger BiT-M R101x3 ImageNet control reached 62.7% accuracy and 29.4% macro recall, using a closer architecture and 448px input resolution. Derm Foundation remains ahead of BiT-M by +5.9 accuracy points and +4.6 macro-recall points, so the claim is now narrower: a SCIN downstream benefit for dermatology-specific pretraining, not external validation.
 
 The research pipeline found stronger experimental results:
 
@@ -118,7 +118,7 @@ The research pipeline found stronger experimental results:
 - Neural heads and ensembles reached higher original-validation performance.
 - A validation-tuned class-bias ensemble reached 81.4%, but fresh holdout testing did not reproduce it.
 
-The project therefore does not claim a validated 80% model. The honest conclusion is that the fair baseline is now known, Derm Foundation gives the strongest clean representation lift, and the next evidence-producing step is better data: cleaner labels, more face-specific examples, and enough tail support for meaningful per-class recall.
+The project therefore does not claim a validated 80% model. The honest conclusion is that the fair baseline is now known, Derm Foundation gives the strongest clean representation lift, the architecture-matched ImageNet control narrows the attribution gap, and the next evidence-producing step is better data: cleaner labels, more face-specific examples, and enough tail support for meaningful per-class recall.
 
 ## 6. What To Look For In The Code
 

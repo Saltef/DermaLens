@@ -181,6 +181,17 @@ def _load_or_build_embeddings(args: argparse.Namespace, rows: list[dict], image_
         image_paths = payload["image_paths"].tolist()
         values = payload["embeddings"]
         return {image_path: values[idx] for idx, image_path in enumerate(image_paths)}
+    cached_paths: list[str] = []
+    cached_values: list[np.ndarray] = []
+    if cache_path.exists() and args.embedding_source == "local-model":
+        payload = np.load(cache_path, allow_pickle=True)
+        cached_paths = payload["image_paths"].tolist()
+        cached_values = [value.astype(np.float32) for value in payload["embeddings"]]
+        cached = {image_path: cached_values[idx] for idx, image_path in enumerate(cached_paths)}
+        row_paths = {row["image_path"] for row in rows}
+        if row_paths.issubset(cached):
+            return cached
+        print(f"resuming from {len(cached_paths)} cached embeddings")
 
     if args.embedding_source in {"auto", "precomputed"}:
         precomputed = _load_precomputed_scin_embeddings(args.foundation_model, rows)
@@ -196,13 +207,14 @@ def _load_or_build_embeddings(args: argparse.Namespace, rows: list[dict], image_
         raise FileNotFoundError("SCIN precomputed Derm Foundation embeddings were requested but not found.")
 
     import tensorflow as tf
-    from huggingface_hub import from_pretrained_keras
+    from huggingface_hub import snapshot_download
 
-    model = from_pretrained_keras(args.foundation_model)
+    model_path = snapshot_download(args.foundation_model)
+    model = tf.saved_model.load(model_path)
     infer = model.signatures["serving_default"]
-    image_paths = []
-    values = []
-    seen = set()
+    image_paths = list(cached_paths)
+    values = list(cached_values)
+    seen = set(cached_paths)
     for row in rows:
         image_path = row["image_path"]
         if image_path in seen:
@@ -215,13 +227,23 @@ def _load_or_build_embeddings(args: argparse.Namespace, rows: list[dict], image_
         output = infer(inputs=tf.constant([example]))
         image_paths.append(image_path)
         values.append(output["embedding"].numpy().reshape(-1).astype(np.float32))
+        if len(values) % 10 == 0:
+            _write_embedding_cache(cache_path, image_paths, values)
         if len(values) % 50 == 0:
             print(f"embedded {len(values)} images")
 
     embeddings = np.vstack(values)
-    cache_path.parent.mkdir(parents=True, exist_ok=True)
-    np.savez_compressed(cache_path, image_paths=np.array(image_paths), embeddings=embeddings)
+    _write_embedding_cache(cache_path, image_paths, values)
     return {image_path: embeddings[idx] for idx, image_path in enumerate(image_paths)}
+
+
+def _write_embedding_cache(cache_path: Path, image_paths: list[str], values: list[np.ndarray]) -> None:
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(
+        cache_path,
+        image_paths=np.array(image_paths),
+        embeddings=np.vstack(values).astype(np.float32),
+    )
 
 
 def _load_precomputed_scin_embeddings(model_name: str, rows: list[dict]) -> dict[str, np.ndarray]:

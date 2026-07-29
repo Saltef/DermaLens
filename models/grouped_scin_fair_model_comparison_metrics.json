@@ -1,5 +1,5 @@
 {
-  "status": "completed_fair_comparison_expanded_seed_sensitivity",
+  "status": "completed_fair_comparison_with_local_derm_and_bit_control",
   "protocol": "Compare Derm Foundation linear probe against MobileNetV3 retrained independently on each grouped SCIN training fold. Fixed deployed ONNX metrics are retained only as contaminated diagnostics.",
   "primary_seed_count": 12,
   "primary_seeds": [
@@ -27,7 +27,9 @@
     "fixed_deployed_onnx_diagnostic": "models/grouped_scin_clean_split_metrics.json",
     "nested_decoupled_head_fixed_encoder": "models/grouped_scin_decoupled_logit_head_metrics.json",
     "mobilenet_checkpoint_selection_diagnostic": "models/grouped_scin_mobilenet_checkpoint_selection_diagnostic.json",
-    "convnext_tiny_grouped_embedding_control": "models/grouped_scin_convnext_tiny_embedding_12seed_metrics.json"
+    "convnext_tiny_grouped_embedding_control": "models/grouped_scin_convnext_tiny_embedding_12seed_metrics.json",
+    "derm_foundation_12seed_local_model": "models/grouped_scin_derm_foundation_embedding_12seed_local_model_metrics.json",
+    "bit_m_r101x3_grouped_embedding_control": "models/grouped_scin_bit_m_r101x3_embedding_12seed_metrics.json"
   },
   "primary_comparison": {
     "majority_class_dermatitis_baseline": {
@@ -108,66 +110,176 @@
     },
     "derm_foundation_linear_probe": {
       "accuracy": {
-        "mean": 0.6978026402811485,
-        "std": 0.05203552916240875,
+        "mean": 0.6859025722964989,
+        "std": 0.04989373000986023,
         "values": [
           0.7866666666666666,
-          0.6411764705882353,
-          0.6624203821656051,
+          0.6235294117647059,
+          0.6942675159235668,
           0.6068965517241379,
-          0.6410256410256411,
-          0.6835443037974683,
+          0.6602564102564102,
+          0.6645569620253164,
           0.7164179104477612,
-          0.7239263803680982,
-          0.7058823529411765,
-          0.7423312883435583,
-          0.7452229299363057,
-          0.7181208053691275
+          0.7300613496932515,
+          0.6862745098039216,
+          0.6441717791411042,
+          0.7197452229299363,
+          0.697986577181208
         ]
       },
       "macro_recall": {
-        "mean": 0.3470564453985441,
-        "std": 0.05041167766069117,
+        "mean": 0.3391648834184372,
+        "std": 0.037338135532327406,
         "values": [
-          0.4019710448281877,
-          0.38929470870917177,
-          0.3094900491213855,
-          0.2572463768115942,
-          0.33441558441558444,
-          0.2760215053763441,
-          0.31850094350094355,
-          0.3284075148152818,
-          0.38021885521885523,
-          0.4119340919372238,
-          0.37617845117845117,
-          0.380998218869506
+          0.35825484039769756,
+          0.3675860252357824,
+          0.3680592832666565,
+          0.2664455110107284,
+          0.3462527056277056,
+          0.26250896057347667,
+          0.3492618492618493,
+          0.3426932291009961,
+          0.35743145743145743,
+          0.322500173991718,
+          0.3572390572390572,
+          0.3717455078841217
         ]
+      },
+      "per_class_recall": {
+        "acne_like_texture": {
+          "mean": 0.5949314758612672,
+          "std": 0.12629677370861647,
+          "values": [
+            0.8076923076923077,
+            0.47058823529411764,
+            0.5483870967741935,
+            0.42857142857142855,
+            0.48484848484848486,
+            0.5483870967741935,
+            0.8076923076923077,
+            0.6285714285714286,
+            0.5714285714285714,
+            0.7096774193548387,
+            0.6333333333333333,
+            0.5
+          ]
+        },
+        "clinician_review": {
+          "mean": 0.21944444444444444,
+          "std": 0.22097503553561504,
+          "values": [
+            0.0,
+            0.75,
+            0.2,
+            0.0,
+            0.3333333333333333,
+            0.0,
+            0.0,
+            0.2,
+            0.4,
+            0.16666666666666666,
+            0.25,
+            0.3333333333333333
+          ]
+        },
+        "dermatitis_like_irritation": {
+          "mean": 0.8488913522328839,
+          "std": 0.05445095044628219,
+          "values": [
+            0.9489795918367347,
+            0.7706422018348624,
+            0.8775510204081632,
+            0.7934782608695652,
+            0.84375,
+            0.86,
+            0.8333333333333334,
+            0.9029126213592233,
+            0.8484848484848485,
+            0.7669902912621359,
+            0.898989898989899,
+            0.8415841584158416
+          ]
+        },
+        "folliculitis_like_bumps": {
+          "mean": 0.21712546712546713,
+          "std": 0.09003815208421882,
+          "values": [
+            0.25,
+            0.21428571428571427,
+            0.15384615384615385,
+            0.09090909090909091,
+            0.2727272727272727,
+            0.16666666666666666,
+            0.45454545454545453,
+            0.18181818181818182,
+            0.18181818181818182,
+            0.16666666666666666,
+            0.25,
+            0.2222222222222222
+          ]
+        },
+        "hyperpigmentation_like_uneven_tone": {
+          "mean": 0.0,
+          "std": 0.0,
+          "values": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "rosacea_like_redness": {
+          "mean": 0.15459656084656084,
+          "std": 0.13457657709431667,
+          "values": [
+            0.14285714285714285,
+            0.0,
+            0.42857142857142855,
+            0.2857142857142857,
+            0.14285714285714285,
+            0.0,
+            0.0,
+            0.14285714285714285,
+            0.14285714285714285,
+            0.125,
+            0.1111111111111111,
+            0.3333333333333333
+          ]
+        }
       }
     },
     "paired_derm_minus_mobile": {
       "accuracy": {
-        "mean_delta": 0.24959076130263852,
-        "std_delta": 0.11323461135632877,
+        "mean_delta": 0.23769069331798895,
+        "std_delta": 0.12007983267737582,
         "values": [
           0.29999999999999993,
-          0.20588235294117652,
-          0.1847133757961783,
+          0.18823529411764706,
+          0.21656050955414008,
           0.08275862068965512,
-          0.16666666666666674,
-          0.24050632911392406,
+          0.1858974358974359,
+          0.22151898734177217,
           0.46268656716417905,
-          0.39877300613496935,
-          0.28758169934640526,
-          0.20858895705521474,
-          0.1146496815286624,
-          0.3422818791946308
+          0.4049079754601227,
+          0.2679738562091503,
+          0.11042944785276065,
+          0.08917197452229297,
+          0.3221476510067114
         ],
-        "paired_t": 7.63554313469729,
+        "paired_t": 6.856977531258599,
         "df": 11,
-        "p_value_two_sided": 1.0147811598924633e-05,
+        "p_value_two_sided": 2.73877663316103e-05,
         "ci95": [
-          0.1776449216904455,
-          0.32153660091483155
+          0.16139560757535037,
+          0.3139857790606275
         ],
         "exact_sign_test": {
           "positive": 12,
@@ -182,28 +294,28 @@
         }
       },
       "macro_recall": {
-        "mean_delta": 0.056370023219049804,
-        "std_delta": 0.047376274847533546,
+        "mean_delta": 0.04847846123894293,
+        "std_delta": 0.035853131078745396,
         "values": [
-          0.010007849293563575,
-          0.09679284557859846,
-          0.03981701861886189,
-          -0.0024703557312253377,
-          0.03938943001443007,
-          0.03650281618023557,
-          0.025599400599400635,
-          0.022010675408733693,
-          0.0858465608465609,
-          0.1684131085360337,
-          0.08291245791245788,
-          0.07161847137094662
+          -0.03370835513692655,
+          0.07508416210520907,
+          0.09838625276413288,
+          0.006728778467908869,
+          0.05122655122655123,
+          0.022990271377368116,
+          0.05636030636030637,
+          0.036296389694447984,
+          0.06305916305916309,
+          0.07897919059052788,
+          0.0639730639730639,
+          0.0623657603855623
         ],
-        "paired_t": 4.121714700171897,
+        "paired_t": 4.683951187090903,
         "df": 11,
-        "p_value_two_sided": 0.0016957610451535504,
+        "p_value_two_sided": 0.0006672684477256328,
         "ci95": [
-          0.026268574282400814,
-          0.0864714721556988
+          0.025698468555705966,
+          0.07125845392217989
         ],
         "exact_sign_test": {
           "positive": 11,
@@ -212,8 +324,8 @@
           "p_value_two_sided": 0.00634765625
         },
         "exact_sign_flip_permutation": {
-          "p_value_two_sided": 0.0009765625,
-          "extreme_or_equal": 4,
+          "p_value_two_sided": 0.00244140625,
+          "extreme_or_equal": 10,
           "total_sign_flips": 4096
         }
       }
@@ -466,9 +578,9 @@
       }
     }
   },
-  "interpretation": "The five-seed paired t-test was too fragile by itself because exact paired non-parametric tests cannot cross p<0.05 with only five same-signed differences. Expanding to 10 and 12 matched completed seeds preserves the large Derm Foundation accuracy lift over fair fold-retrained MobileNetV3 and also supports a smaller positive macro-recall lift. The result is still not a clinically useful model: class-level gains are uneven, rosacea and hyperpigmentation get worse at the 12-seed mean, and low-support tail labels remain underpowered. The paired p-values are repeated-split stability diagnostics because the folds resample the same case universe. A post-hoc accuracy-selected MobileNet checkpoint diagnostic raises MobileNet accuracy to 52.4%, but Derm Foundation remains ahead by 17.3 accuracy points; this diagnostic is optimistic and not a clean held-out baseline.",
+  "interpretation": "Using locally generated Derm Foundation SavedModel embeddings, the 12-seed probe reaches 0.6859 accuracy and 0.3392 macro recall. The conservative MobileNet checkpoint-policy envelope is positive but smaller than the earlier legacy-cache framing. Against the architecture/resolution-matched BiT-M R101x3 ImageNet control, Derm Foundation remains ahead, but by a narrower margin. The result supports dermatology-specific pretraining helping on SCIN downstream evaluation; it is still not external validation and not a solved tail-label classifier.",
   "tail_support_note": "Across the 12 fair MobileNet folds, clinician_review averaged 4.8 validation images, hyperpigmentation 2.6, and rosacea 7.1. Treat per-class tail recall as underpowered diagnostic evidence.",
-  "failed_seed_note": "The expanded comparison uses matched completed seeds only. Several additional native Windows MobileNet runs failed with a PyTorch process exit before evaluation and were not selected by metric.",
+  "failed_seed_note": "Expanded MobileNet comparison uses matched completed seeds only. Excluded native-Windows MobileNet attempts failed before evaluation for seeds 303, 505, and 606 (3 seeds). Seed 707 also failed natively but was recovered with Docker CPU and is included.",
   "statistical_caveat": "The paired tests compare repeated grouped resamples of the same SCIN case universe. Treat p-values as stability diagnostics over matched seeds, not as independent external-test-set inference.",
   "mobile_checkpoint_selection_diagnostic": {
     "validity_note": "The accuracy-selected MobileNet row is an optimistic diagnostic, not a clean model estimate, because it chooses the best epoch from the evaluation-fold history. It tests whether the Derm Foundation lift depends entirely on macro-recall checkpoint selection weakening MobileNet accuracy.",
@@ -512,28 +624,28 @@
     },
     "paired_derm_minus_accuracy_selected_mobile_diagnostic": {
       "accuracy": {
-        "mean_delta": 0.17331037547473857,
-        "std_delta": 0.06944632180336935,
+        "mean_delta": 0.161410307490089,
+        "std_delta": 0.06817288472632087,
         "values": [
           0.2666666666666666,
-          0.09411764705882353,
-          0.10191082802547768,
+          0.07647058823529407,
+          0.13375796178343946,
           0.06896551724137934,
-          0.14743589743589747,
-          0.2151898734177215,
+          0.16666666666666663,
+          0.1962025316455696,
           0.22388059701492535,
-          0.14723926380368102,
-          0.22875816993464054,
-          0.2024539877300614,
-          0.1146496815286624,
-          0.2684563758389261
+          0.15337423312883436,
+          0.2091503267973856,
+          0.10429447852760731,
+          0.08917197452229297,
+          0.24832214765100669
         ],
-        "paired_t": 8.645018713907533,
+        "paired_t": 8.201819669520601,
         "df": 11,
-        "p_value_two_sided": 3.10206622492704e-06,
+        "p_value_two_sided": 5.1503800340041725e-06,
         "ci95": [
-          0.12918628770444301,
-          0.21743446324503413
+          0.11809532303726979,
+          0.20472529194290823
         ],
         "exact_sign_test": {
           "positive": 12,
@@ -548,28 +660,28 @@
         }
       },
       "macro_recall": {
-        "mean_delta": 0.0960277439997311,
-        "std_delta": 0.04466304550384184,
+        "mean_delta": 0.08813618201962423,
+        "std_delta": 0.042276764393890415,
         "values": [
-          0.08324611896040468,
-          0.102019248066199,
-          0.07885585996185071,
-          0.003858460380199491,
-          0.11447059884559888,
-          0.049362519201228944,
-          0.07367632367632374,
-          0.11857268944647587,
-          0.1335858585858586,
-          0.17431142777603786,
-          0.08291245791245788,
-          0.1374613651841375
+          0.039529914529914556,
+          0.08031056459280961,
+          0.1374250941071217,
+          0.013057594579333698,
+          0.12630772005772004,
+          0.03584997439836149,
+          0.10443722943722947,
+          0.13285840373219016,
+          0.11079846079846081,
+          0.08487750983053205,
+          0.0639730639730639,
+          0.12820865419875319
         ],
-        "paired_t": 7.447988808978313,
+        "paired_t": 7.221761051571328,
         "df": 11,
-        "p_value_two_sided": 1.2804804489198e-05,
+        "p_value_two_sided": 1.704455674954439e-05,
         "ci95": [
-          0.06765019874283301,
-          0.12440528925662919
+          0.06127480744543301,
+          0.11499755659381544
         ],
         "exact_sign_test": {
           "positive": 12,
@@ -587,8 +699,8 @@
     "interpretation": "Derm Foundation remains ahead of a post-hoc accuracy-selected MobileNet diagnostic on accuracy, but the gap is smaller than against the macro-selected exported baseline. This suggests part of the reported accuracy lift comes from MobileNet checkpoint-selection tradeoffs, while the representation advantage does not disappear under this stronger diagnostic comparator."
   },
   "conservative_mobile_checkpoint_policy_envelope": {
-    "accuracy_min_delta_over_best_mobile_policy_for_metric": 0.1733103754747386,
-    "macro_recall_min_delta_over_best_mobile_policy_for_metric": 0.05637002321904977,
+    "accuracy_min_delta_over_best_mobile_policy_for_metric": 0.161410307490089,
+    "macro_recall_min_delta_over_best_mobile_policy_for_metric": 0.048478461238942894,
     "accuracy_mobile_policy": "post_hoc_accuracy_selected_checkpoint_diagnostic",
     "macro_recall_mobile_policy": "exported_macro_selected_checkpoint",
     "validity_note": "Envelope avoids mixing MobileNet checkpoint policies by using the most favorable MobileNet policy separately for each metric."
@@ -635,28 +747,28 @@
     },
     "paired_derm_minus_convnext_tiny": {
       "accuracy": {
-        "mean_delta": 0.16661353980720311,
-        "std_delta": 0.07268756698367781,
+        "mean_delta": 0.15471347182255354,
+        "std_delta": 0.06215615868609379,
         "values": [
           0.2799999999999999,
-          0.12941176470588245,
-          0.08280254777070062,
+          0.11176470588235299,
+          0.1146496815286624,
           0.06206896551724139,
-          0.10256410256410264,
-          0.15189873417721522,
+          0.1217948717948718,
+          0.13291139240506333,
           0.25373134328358204,
-          0.18404907975460127,
-          0.1633986928104576,
-          0.28220858895705525,
-          0.15286624203821653,
-          0.15436241610738255
+          0.1901840490797546,
+          0.14379084967320266,
+          0.18404907975460116,
+          0.1273885350318471,
+          0.13422818791946312
         ],
-        "paired_t": 7.940370771793135,
+        "paired_t": 8.622527500947124,
         "df": 11,
-        "p_value_two_sided": 7.013322179378814e-06,
+        "p_value_two_sided": 3.181387375820181e-06,
         "ci95": [
-          0.12043006310014115,
-          0.21279701651426508
+          0.11522133271265243,
+          0.19420561093245464
         ],
         "exact_sign_test": {
           "positive": 12,
@@ -671,28 +783,28 @@
         }
       },
       "macro_recall": {
-        "mean_delta": 0.11569913304283003,
-        "std_delta": 0.057442104228305174,
+        "mean_delta": 0.10780757106272315,
+        "std_delta": 0.04580155965244095,
         "values": [
-          0.18661695447409732,
-          0.13988255852799839,
-          0.06268884725105922,
-          0.03738471673254279,
-          0.0407422438672439,
-          0.04862775217613932,
-          0.1203518703518704,
-          0.1325684024713151,
-          0.20206830206830206,
-          0.1718015972439712,
-          0.14023569023569024,
-          0.10542066111373044
+          0.1429007500436072,
+          0.118173875054609,
+          0.12125808139633021,
+          0.046583850931676996,
+          0.05257936507936506,
+          0.03511520737327187,
+          0.15111277611277613,
+          0.1468541167570294,
+          0.17928090428090426,
+          0.08236767929846539,
+          0.12129629629629626,
+          0.09616795012834611
         ],
-        "paired_t": 6.977348045098433,
+        "paired_t": 8.153791789545634,
         "df": 11,
-        "p_value_two_sided": 2.3377601247651326e-05,
+        "p_value_two_sided": 5.44793338760859e-06,
         "ci95": [
-          0.07920216123982185,
-          0.1521961048458382
+          0.078706648427211,
+          0.1369084936982353
         ],
         "exact_sign_test": {
           "positive": 12,
@@ -710,5 +822,138 @@
     "interpretation": "ConvNeXt-Tiny controls for a stronger generic ImageNet frozen encoder under the same grouped/nested probe protocol. Derm Foundation remains ahead, but this comparison still bundles dermatology pretraining with much larger BiT-101x3 capacity and 448px input resolution."
   },
   "vendor_benchmark_caveat": "Derm Foundation documentation and examples explicitly position SCIN as a downstream linear-classifier use case. This result is therefore a SCIN downstream benchmark on the vendor home dataset, not external validation.",
-  "capacity_confound_note": "Derm Foundation uses a BiT-101x3-style 6144-dimensional 448px representation, while the deployed MobileNetV3-Small baseline is a much smaller 224px model. ConvNeXt-Tiny reduces but does not eliminate this capacity/input-resolution confound."
+  "capacity_confound_note": "Derm Foundation uses a BiT-101x3-style 6144-dimensional 448px representation, while the deployed MobileNetV3-Small baseline is a much smaller 224px model. ConvNeXt-Tiny reduces but does not eliminate this capacity/input-resolution confound.",
+  "architecture_matched_bit_control": {
+    "artifact": "models/grouped_scin_bit_m_r101x3_embedding_12seed_metrics.json",
+    "bit_m_r101x3_linear_probe": {
+      "accuracy": {
+        "mean": 0.6267488205883813,
+        "std": 0.04854851044296468,
+        "values": [
+          0.6666666666666666,
+          0.6,
+          0.6815286624203821,
+          0.5793103448275863,
+          0.5833333333333334,
+          0.6075949367088608,
+          0.5522388059701493,
+          0.6441717791411042,
+          0.6274509803921569,
+          0.6012269938650306,
+          0.7197452229299363,
+          0.6577181208053692
+        ]
+      },
+      "macro_recall": {
+        "mean": 0.29364797411272986,
+        "std": 0.0621330066518053,
+        "values": [
+          0.3242630385487528,
+          0.3640492894405469,
+          0.3549484309852973,
+          0.22891963109354416,
+          0.33518217893217894,
+          0.22044802867383514,
+          0.21742146742146742,
+          0.3233682175429748,
+          0.21284271284271283,
+          0.3046529735184605,
+          0.3776936026936027,
+          0.259986117659385
+        ]
+      }
+    },
+    "paired_derm_minus_bit_m_r101x3": {
+      "accuracy": {
+        "mean_delta": 0.0591537517081176,
+        "std_delta": 0.04700730491170998,
+        "values": [
+          0.12,
+          0.02352941176470591,
+          0.01273885350318471,
+          0.027586206896551668,
+          0.07692307692307687,
+          0.05696202531645567,
+          0.16417910447761186,
+          0.0858895705521473,
+          0.05882352941176472,
+          0.042944785276073594,
+          0.0,
+          0.04026845637583887
+        ],
+        "paired_t": 4.3592077277866155,
+        "df": 11,
+        "p_value_two_sided": 0.0011377947907719092,
+        "ci95": [
+          0.029286735084226308,
+          0.08902076833200889
+        ],
+        "exact_sign_test": {
+          "positive": 11,
+          "negative": 0,
+          "ties": 1,
+          "p_value_two_sided": 0.0009765625
+        },
+        "exact_sign_flip_permutation": {
+          "p_value_two_sided": 0.0009765625,
+          "extreme_or_equal": 4,
+          "total_sign_flips": 4096
+        }
+      },
+      "macro_recall": {
+        "mean_delta": 0.045516909305707356,
+        "std_delta": 0.0536542526315523,
+        "values": [
+          0.033991801848944736,
+          0.0035367357952355016,
+          0.013110852281359164,
+          0.03752587991718423,
+          0.011070526695526661,
+          0.042060931899641524,
+          0.13184038184038185,
+          0.0193250115580213,
+          0.1445887445887446,
+          0.017847200473257496,
+          -0.020454545454545503,
+          0.11175939022473669
+        ],
+        "paired_t": 2.938726965870659,
+        "df": 11,
+        "p_value_two_sided": 0.013478397878382639,
+        "ci95": [
+          0.011426623587373418,
+          0.07960719502404129
+        ],
+        "exact_sign_test": {
+          "positive": 11,
+          "negative": 1,
+          "ties": 0,
+          "p_value_two_sided": 0.00634765625
+        },
+        "exact_sign_flip_permutation": {
+          "p_value_two_sided": 0.00439453125,
+          "extreme_or_equal": 18,
+          "total_sign_flips": 4096
+        }
+      }
+    },
+    "interpretation": "BiT-M R101x3 ImageNet provides an architecture/resolution-matched public-weight control for Derm Foundation. Derm Foundation remains ahead, but the margin narrows substantially versus MobileNet and ConvNeXt, so the supported claim is dermatology-specific pretraining helps on SCIN downstream evaluation rather than generic capacity alone causing the result."
+  },
+  "derm_foundation_local_model_provenance": {
+    "embedding_source": "local-model",
+    "artifact": "models/grouped_scin_derm_foundation_embedding_12seed_local_model_metrics.json",
+    "note": "Flagship Derm Foundation metrics now come from local SavedModel inference, not the legacy unrecorded embedding cache."
+  },
+  "failed_seed_audit": {
+    "excluded_failed_seed_ids": [
+      303,
+      505,
+      606
+    ],
+    "excluded_failed_seed_count": 3,
+    "recovered_seed_ids": [
+      707
+    ],
+    "failure_mode": "Native Windows PyTorch process exit before evaluation; no failed seed was selected or excluded by metric."
+  }
 }

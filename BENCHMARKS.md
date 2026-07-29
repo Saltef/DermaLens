@@ -13,7 +13,8 @@ DermaLens uses benchmarks in two different ways:
 | Fair grouped MobileNetV3 retrain on SCIN | Completed | 44.8% +/- 9.9 accuracy, 29.1% +/- 3.9 macro recall | Clean internal baseline across 12 matched seeds. Each seed trains on grouped training cases and evaluates untouched validation cases. |
 | Accuracy-selected MobileNet checkpoint diagnostic | Diagnostic only | 52.4% +/- 5.2 accuracy, 25.1% +/- 3.3 macro recall | Optimistic sensitivity check. It reselects the best MobileNet epoch from the evaluation-fold history, so it is not a clean held-out estimate. |
 | ConvNeXt-Tiny frozen ImageNet embedding control | Completed | 53.1% +/- 4.1 accuracy, 23.1% +/- 3.3 macro recall | Generic frozen-encoder control under the same grouped/nested linear-probe protocol. It reduces but does not remove the capacity/input-resolution confound. |
-| Derm Foundation linear probe on grouped SCIN | Completed | 69.8% +/- 5.2 accuracy, 34.7% +/- 5.0 macro recall | Clean representation comparison across the same 12 matched seeds. Large paired accuracy lift over fair MobileNet and a smaller positive macro-recall lift; tail classes remain weak. |
+| BiT-M R101x3 ImageNet embedding control | Completed | 62.7% +/- 4.9 accuracy, 29.4% +/- 6.2 macro recall | Architecture- and input-resolution-matched public-weight control. It narrows the attribution question for Derm Foundation. |
+| Derm Foundation linear probe on grouped SCIN | Completed | 68.6% +/- 5.0 accuracy, 33.9% +/- 3.7 macro recall | Local SavedModel representation comparison across the same 12 matched seeds. Large paired accuracy lift over fair MobileNet and a smaller positive macro-recall lift; tail classes remain weak. |
 | Nested decoupled logit head on grouped SCIN | Completed | 75.3% +/- 1.7 accuracy, 70.7% +/- 11.4 macro recall | Fixed-encoder operating point. Not a clean representation benchmark because the frozen deployed encoder was previously trained on SCIN-derived data. |
 | Fixed deployed ONNX on grouped SCIN | Diagnostic only | 86.2% +/- 1.2 accuracy, 63.1% +/- 10.1 macro recall | Contaminated as model-holdout evidence; grouped folds do not exclude original model-training cases. |
 
@@ -24,9 +25,11 @@ Primary artifacts:
 - `models/grouped_scin_mobilenet_retrained_baseline_12seed_metrics.json`
 - `models/grouped_scin_mobilenet_checkpoint_selection_diagnostic.json`
 - `models/grouped_scin_convnext_tiny_embedding_12seed_metrics.json`
+- `models/grouped_scin_bit_m_r101x3_embedding_12seed_metrics.json`
 - `models/grouped_scin_derm_foundation_embedding_metrics.json`
 - `models/grouped_scin_derm_foundation_embedding_10seed_metrics.json`
 - `models/grouped_scin_derm_foundation_embedding_12seed_metrics.json`
+- `models/grouped_scin_derm_foundation_embedding_12seed_local_model_metrics.json`
 - `models/grouped_scin_fair_model_comparison_metrics.json`
 - `models/grouped_scin_seed_count_sensitivity_metrics.json`
 - `models/grouped_scin_decoupled_logit_head_metrics.json`
@@ -53,10 +56,11 @@ Majority-class dermatitis floor: 63.7% accuracy, 16.7% macro recall
 Fair grouped MobileNetV3 retrain: 44.8% accuracy, 29.1% macro recall
 Accuracy-selected MobileNet diagnostic: 52.4% accuracy, 25.1% macro recall
 ConvNeXt-Tiny frozen embedding control: 53.1% accuracy, 23.1% macro recall
-Derm Foundation linear probe: 69.8% accuracy, 34.7% macro recall
+BiT-M R101x3 ImageNet control: 62.7% accuracy, 29.4% macro recall
+Derm Foundation linear probe, local model: 68.6% accuracy, 33.9% macro recall
 ```
 
-The defensible statistical claim changed after expanding the matched seeds. With only five seeds, no exact paired non-parametric test can reach p<0.05; the five-seed accuracy p-value rested on an untestable t-test normality assumption. At 12 matched completed seeds, Derm Foundation gives a large paired accuracy gain over fair MobileNet (+25.0 points, 95% CI +17.8 to +32.2, exact sign p=0.00049) and a smaller macro-recall gain (+5.6 points, 95% CI +2.6 to +8.6, exact sign p=0.00635). These p-values are repeated-split stability diagnostics, not independent external-test-set inference, because all seeds resample the same SCIN case universe. At the class level, Derm Foundation still loses mean recall on rosacea and hyperpigmentation and gains mainly on acne, dermatitis, and clinician-review.
+The defensible statistical claim changed after expanding the matched seeds. With only five seeds, no exact paired non-parametric test can reach p<0.05; the five-seed accuracy p-value rested on an untestable t-test normality assumption. At 12 matched completed seeds, the local Derm Foundation run gives a large paired accuracy gain over fair MobileNet (+23.8 points, 95% CI +16.1 to +31.4, exact sign p=0.00049) and a smaller macro-recall gain (+4.8 points, 95% CI +2.6 to +7.1, exact sign p=0.00635). These p-values are repeated-split stability diagnostics, not independent external-test-set inference, because all seeds resample the same SCIN case universe. At the class level, Derm Foundation still loses mean recall on rosacea and hyperpigmentation and gains mainly on acne, dermatitis, and clinician-review.
 
 Honest headline:
 
@@ -66,6 +70,8 @@ They also show a smaller positive macro-recall lift over that fair baseline, whi
 Absolute performance remains far from usable, and tail classes are underpowered.
 ```
 
-Robustness check: if MobileNet is given an optimistic post-hoc accuracy-selected checkpoint from the same training histories, Derm Foundation still leads on accuracy, but the checkpoint policies cross: accuracy-selected MobileNet is better on accuracy and worse on macro recall than the exported macro-selected checkpoint. The conservative envelope is therefore >= +17.3 accuracy points and >= +5.6 macro-recall points against the most favorable MobileNet policy for each metric separately. This is not promoted to the main baseline because it selects from evaluation-fold history.
+Robustness check: if MobileNet is given an optimistic post-hoc accuracy-selected checkpoint from the same training histories, Derm Foundation still leads on accuracy, but the checkpoint policies cross: accuracy-selected MobileNet is better on accuracy and worse on macro recall than the exported macro-selected checkpoint. The conservative envelope is therefore >= +16.1 accuracy points and >= +4.8 macro-recall points against the most favorable MobileNet policy for each metric separately. This is not promoted to the main baseline because it selects from evaluation-fold history.
 
-Attribution check: ConvNeXt-Tiny ImageNet embeddings under the same grouped/nested probe protocol reached 53.1% accuracy and 23.1% macro recall. Derm Foundation remains ahead by +16.7 accuracy points and +11.6 macro-recall points, but the attribution is still not pure "dermatology pretraining." Derm Foundation is a much larger BiT-101x3-style 448px representation, while the deployed MobileNet is compact and 224px. Google's [Derm Foundation documentation](https://developers.google.com/health-ai-developer-foundations/derm-foundation) points to SCIN as a public linear-classifier example, and the [model card](https://developers.google.com/health-ai-developer-foundations/derm-foundation/model-card) identifies the model architecture and 6144-dimensional embeddings. This result is therefore a SCIN downstream benchmark on the vendor home dataset, not external validation.
+Attribution check: ConvNeXt-Tiny ImageNet embeddings under the same grouped/nested probe protocol reached 53.1% accuracy and 23.1% macro recall. BiT-M R101x3 ImageNet embeddings, the closer architecture- and 448px-resolution-matched public-weight control, reached 62.7% accuracy and 29.4% macro recall. Derm Foundation remains ahead of BiT-M by +5.9 accuracy points and +4.6 macro-recall points. This supports a narrower claim that dermatology-specific pretraining helps on SCIN downstream evaluation beyond architecture and input resolution. Google's [Derm Foundation documentation](https://developers.google.com/health-ai-developer-foundations/derm-foundation) points to SCIN as a public linear-classifier example, and the [model card](https://developers.google.com/health-ai-developer-foundations/derm-foundation/model-card) identifies the model architecture and 6144-dimensional embeddings. This result is therefore a vendor-home SCIN downstream benchmark, not external validation.
+
+Seed audit: the 12 completed seeds are `42`, `7`, `13`, `21`, `84`, `101`, `202`, `404`, `707`, `808`, `909`, and `1001`. Three native Windows runs (`303`, `505`, `606`) failed before evaluation and were excluded by failure status, not by metric. Seed `707` was recovered in the final run.

@@ -34,7 +34,7 @@ The fair comparison has now been run with `scripts/run_grouped_mobilenet_baselin
 
 I also added an optimistic checkpoint-selection diagnostic for MobileNet. Reselecting the best MobileNet epoch by validation accuracy from the existing training histories raises MobileNet to 52.4% +/- 5.2 accuracy and 25.1% +/- 3.3 macro recall. This is not a clean held-out estimate because it chooses from evaluation-fold history, but it checks whether the Derm Foundation lift disappears under a harder-to-beat MobileNet comparator. It does not.
 
-The checkpoint policies do not dominate each other: the accuracy-selected diagnostic is better on accuracy and worse on macro recall than the exported macro-selected MobileNet. The conservative envelope is therefore >= +17.3 accuracy points and >= +5.6 macro-recall points for Derm Foundation against the best MobileNet policy for each metric separately.
+The checkpoint policies do not dominate each other: the accuracy-selected diagnostic is better on accuracy and worse on macro recall than the exported macro-selected MobileNet. The conservative envelope is therefore >= +16.1 accuracy points and >= +4.8 macro-recall points for Derm Foundation against the best MobileNet policy for each metric separately.
 
 ### Skin-Tone Subgroup Audit
 
@@ -67,15 +67,15 @@ I tested a decoupled balanced head under the same grouped SCIN protocol. The dep
 
 Artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`.
 
-I also ran a Derm Foundation embedding evaluation using `google/derm-foundation` as the frozen representation with the same grouped/nested protocol. After the reviewer caveat about five-seed inference, I expanded the matched comparison to 10 and 12 completed seeds. The 12-seed class-balanced linear probe reached 69.8% +/- 5.2 accuracy and 34.7% +/- 5.0 macro recall. Compared with the fair fold-retrained MobileNet baseline, paired seeds support a large accuracy gain: +25.0 points, 95% CI +17.8 to +32.2, exact sign p=0.00049. The macro-recall gain is smaller but positive in the expanded run: +5.6 points, 95% CI +2.6 to +8.6, exact sign p=0.00635. These p-values are repeated-split stability diagnostics rather than independent external-test-set inference. Derm Foundation still loses mean recall on rosacea and hyperpigmentation, so this is not a solved tail-label classifier.
+I also ran a Derm Foundation embedding evaluation using `google/derm-foundation` as the frozen representation with the same grouped/nested protocol. After the reviewer caveat about five-seed inference, I expanded the matched comparison to 10 and 12 completed seeds, then regenerated the flagship artifact with `--embedding-source local-model` so it uses local SavedModel inference rather than a precomputed SCIN embedding cache. The 12-seed class-balanced linear probe reached 68.6% +/- 5.0 accuracy and 33.9% +/- 3.7 macro recall. Compared with the fair fold-retrained MobileNet baseline, paired seeds support a large accuracy gain: +23.8 points, 95% CI +16.1 to +31.4, exact sign p=0.00049. The macro-recall gain is smaller but positive in the expanded run: +4.8 points, 95% CI +2.6 to +7.1, exact sign p=0.00635. These p-values are repeated-split stability diagnostics rather than independent external-test-set inference. Derm Foundation still loses mean recall on rosacea and hyperpigmentation, so this is not a solved tail-label classifier.
 
-Artifacts: `models/grouped_scin_derm_foundation_embedding_12seed_metrics.json` and `models/grouped_scin_seed_count_sensitivity_metrics.json`.
+Artifacts: `models/grouped_scin_derm_foundation_embedding_12seed_local_model_metrics.json`, `models/grouped_scin_derm_foundation_embedding_12seed_metrics.json`, and `models/grouped_scin_seed_count_sensitivity_metrics.json`. Three candidate seeds (`303`, `505`, `606`) failed before evaluation in native Windows runs and were excluded by failure status rather than by metric; seed `707` was recovered in the final 12-seed set.
 
 Additional diagnostic artifact: `models/grouped_scin_mobilenet_checkpoint_selection_diagnostic.json`.
 
-I then added a generic frozen-encoder control: ConvNeXt-Tiny ImageNet embeddings with the same grouped/nested linear-probe protocol. It reached 53.1% +/- 4.1 accuracy and 23.1% +/- 3.3 macro recall. Derm Foundation remains ahead by +16.7 accuracy points and +11.6 macro-recall points, but this still does not isolate dermatology-specific pretraining from model size and input resolution. Derm Foundation is a BiT-101x3-style 6144-dimensional, 448px representation; MobileNetV3-Small is a compact 224px deployed model; ConvNeXt-Tiny is a stronger generic control but still much smaller than Derm Foundation.
+I then added generic frozen-encoder controls. ConvNeXt-Tiny ImageNet embeddings with the same grouped/nested linear-probe protocol reached 53.1% +/- 4.1 accuracy and 23.1% +/- 3.3 macro recall. The closer architecture- and input-resolution-matched control, BiT-M R101x3 ImageNet, reached 62.7% +/- 4.9 accuracy and 29.4% +/- 6.2 macro recall. Derm Foundation remains ahead of BiT-M by +5.9 accuracy points and +4.6 macro-recall points. This supports a narrower claim that dermatology-specific pretraining helps on this SCIN downstream task beyond architecture and input resolution, while still not making the result external validation.
 
-Additional control artifact: `models/grouped_scin_convnext_tiny_embedding_12seed_metrics.json`.
+Additional control artifacts: `models/grouped_scin_convnext_tiny_embedding_12seed_metrics.json` and `models/grouped_scin_bit_m_r101x3_embedding_12seed_metrics.json`.
 
 Vendor-benchmark caveat: Google's Derm Foundation materials explicitly include SCIN as a public downstream linear-classifier use case. This result is therefore a SCIN downstream benchmark on the vendor home dataset, not external validation.
 
@@ -85,8 +85,8 @@ Vendor-benchmark caveat: Google's Derm Foundation materials explicitly include S
 - Public datasets are noisy and not fully face-specific.
 - Performance has not been clinically validated.
 - The reported 86.2% grouped SCIN fixed-model check is contaminated as a model-holdout estimate unless the original ONNX training cases can be excluded or the model is retrained per grouped fold.
-- The Derm Foundation 12-seed artifact was generated before embedding provenance was recorded and is marked `legacy_cache_source_unrecorded`. Future reruns should use `--embedding-source local-model` if the goal is to avoid Google's shipped SCIN precomputed embedding artifact.
-- The Derm Foundation comparison bundles dermatology pretraining, much larger model capacity, and 448px input resolution. The ConvNeXt-Tiny control narrows but does not eliminate this attribution confound.
+- Legacy Derm Foundation artifacts generated before embedding provenance was recorded remain marked `legacy_cache_source_unrecorded`; the flagship 12-seed result now uses `embedding_source=local-model`.
+- The Derm Foundation comparison remains a SCIN downstream benchmark. The BiT-M R101x3 ImageNet control narrows the capacity and input-resolution confound, but it does not replace independent external validation.
 - SCIN is used in Derm Foundation example/evaluation materials, so the result should not be treated as external validation.
 - Several tail labels have validation support too small for meaningful mean +/- std recall. Metrics for labels with fewer than about 10 validation images should be treated as undefined/underpowered diagnostics.
 - Performance may vary by lighting, camera processing, makeup, filters, and skin tone. The current subgroup workflow is underpowered for the darkest Monk bucket.
@@ -102,5 +102,5 @@ The UI and API present outputs as non-diagnostic screening observations. The app
 2. Prepare ImageFolder data with grouped `case_id` splitting.
 3. Treat the 12-seed fair fold-retrained MobileNetV3 result, not the fixed-model diagnostic, as the baseline for future modeling comparisons.
 4. Rerun decoupled-head probes against fair representations or mark them as fixed-encoder experiment logs.
-5. Rerun Derm Foundation with `--embedding-source local-model` when compute allows, so the SCIN downstream evaluation does not depend on Google's shipped SCIN precomputed embedding file.
+5. Add an independent external test set before treating the Derm Foundation lift as general dermatology evidence rather than a SCIN downstream result.
 6. Add enough validated face-specific tail examples before treating macro recall as stable evidence.
