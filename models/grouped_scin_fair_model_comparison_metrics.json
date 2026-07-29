@@ -1,319 +1,50 @@
 {
-  "status": "completed_fair_comparison",
+  "status": "completed_fair_comparison_expanded_seed_sensitivity",
   "protocol": "Compare Derm Foundation linear probe against MobileNetV3 retrained independently on each grouped SCIN training fold. Fixed deployed ONNX metrics are retained only as contaminated diagnostics.",
-  "seeds": [
+  "primary_seed_count": 12,
+  "primary_seeds": [
     42,
     7,
     13,
     21,
-    84
+    84,
+    101,
+    202,
+    404,
+    707,
+    808,
+    909,
+    1001
   ],
+  "artifacts": {
+    "seed_count_sensitivity": "models\\grouped_scin_seed_count_sensitivity_metrics.json",
+    "fair_mobilenet_12seed": "models/grouped_scin_mobilenet_retrained_baseline_12seed_metrics.json",
+    "derm_foundation_12seed": "models/grouped_scin_derm_foundation_embedding_12seed_metrics.json",
+    "fair_mobilenet_10seed": "models/grouped_scin_mobilenet_retrained_baseline_10seed_metrics.json",
+    "derm_foundation_10seed": "models/grouped_scin_derm_foundation_embedding_10seed_metrics.json",
+    "fair_mobilenet_5seed": "models/grouped_scin_mobilenet_retrained_baseline_metrics.json",
+    "derm_foundation_5seed": "models/grouped_scin_derm_foundation_embedding_metrics.json",
+    "fixed_deployed_onnx_diagnostic": "models/grouped_scin_clean_split_metrics.json",
+    "nested_decoupled_head_fixed_encoder": "models/grouped_scin_decoupled_logit_head_metrics.json"
+  },
   "primary_comparison": {
-    "fair_grouped_mobilenet_retrained": {
-      "accuracy": {
-        "mean": 0.4796329392153219,
-        "std": 0.031731776815120745,
-        "values": [
-          0.4866666666666667,
-          0.43529411764705883,
-          0.47770700636942676,
-          0.5241379310344828,
-          0.47435897435897434
-        ]
-      },
-      "macro_recall": {
-        "mean": 0.301776195222339,
-        "std": 0.052594873557414365,
-        "values": [
-          0.3919631955346241,
-          0.2925018631305733,
-          0.2696730305025236,
-          0.2597167325428195,
-          0.2950261544011544
-        ]
-      },
-      "per_class_recall": {
-        "acne_like_texture": {
-          "mean": 0.12120855109469911,
-          "std": 0.06691135777738302,
-          "values": [
-            0.11538461538461539,
-            0.08823529411764706,
-            0.1935483870967742,
-            0.17857142857142858,
-            0.030303030303030304
-          ]
-        },
-        "clinician_review": {
-          "mean": 0.22333333333333333,
-          "std": 0.18089284734953515,
-          "values": [
-            0.5,
-            0.25,
-            0.2,
-            0.0,
-            0.16666666666666666
-          ]
-        },
-        "dermatitis_like_irritation": {
-          "mean": 0.6377603085510231,
-          "std": 0.06590845839080385,
-          "values": [
-            0.5816326530612245,
-            0.5596330275229358,
-            0.6530612244897959,
-            0.717391304347826,
-            0.6770833333333334
-          ]
-        },
-        "folliculitis_like_bumps": {
-          "mean": 0.25692640692640695,
-          "std": 0.24249622076155716,
-          "values": [
-            0.5833333333333334,
-            0.42857142857142855,
-            0.0,
-            0.09090909090909091,
-            0.18181818181818182
-          ]
-        },
-        "hyperpigmentation_like_uneven_tone": {
-          "mean": 0.0,
-          "std": 0.0,
-          "values": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-          ]
-        },
-        "rosacea_like_redness": {
-          "mean": 0.5714285714285714,
-          "std": 0.1010152544552211,
-          "values": [
-            0.5714285714285714,
-            0.42857142857142855,
-            0.5714285714285714,
-            0.5714285714285714,
-            0.7142857142857143
-          ]
-        }
-      },
-      "per_class_support": {
-        "acne_like_texture": {
-          "mean": 30.4,
-          "std": 3.361547262794322,
-          "values": [
-            26,
-            34,
-            31,
-            28,
-            33
-          ]
-        },
-        "clinician_review": {
-          "mean": 4.8,
-          "std": 0.8366600265340756,
-          "values": [
-            4,
-            4,
-            5,
-            5,
-            6
-          ]
-        },
-        "dermatitis_like_irritation": {
-          "mean": 98.6,
-          "std": 6.308724118235002,
-          "values": [
-            98,
-            109,
-            98,
-            92,
-            96
-          ]
-        },
-        "folliculitis_like_bumps": {
-          "mean": 12.2,
-          "std": 1.3038404810405297,
-          "values": [
-            12,
-            14,
-            13,
-            11,
-            11
-          ]
-        },
-        "hyperpigmentation_like_uneven_tone": {
-          "mean": 2.6,
-          "std": 0.5477225575051661,
-          "values": [
-            3,
-            2,
-            3,
-            2,
-            3
-          ]
-        },
-        "rosacea_like_redness": {
-          "mean": 7.0,
-          "std": 0.0,
-          "values": [
-            7,
-            7,
-            7,
-            7,
-            7
-          ]
-        }
-      },
-      "low_support_by_seed": {
-        "42": [
-          "clinician_review",
-          "hyperpigmentation_like_uneven_tone",
-          "rosacea_like_redness"
-        ],
-        "7": [
-          "clinician_review",
-          "hyperpigmentation_like_uneven_tone",
-          "rosacea_like_redness"
-        ],
-        "13": [
-          "clinician_review",
-          "hyperpigmentation_like_uneven_tone",
-          "rosacea_like_redness"
-        ],
-        "21": [
-          "clinician_review",
-          "hyperpigmentation_like_uneven_tone",
-          "rosacea_like_redness"
-        ],
-        "84": [
-          "clinician_review",
-          "hyperpigmentation_like_uneven_tone",
-          "rosacea_like_redness"
-        ]
-      },
-      "artifact": "models/grouped_scin_mobilenet_retrained_baseline_metrics.json"
-    },
-    "derm_foundation_linear_probe": {
-      "accuracy": {
-        "mean": 0.6676371424340573,
-        "std": 0.06944962337599857,
-        "values": [
-          0.7866666666666666,
-          0.6411764705882353,
-          0.6624203821656051,
-          0.6068965517241379,
-          0.6410256410256411
-        ]
-      },
-      "macro_recall": {
-        "mean": 0.3384835527771847,
-        "std": 0.05930658815377304,
-        "values": [
-          0.4019710448281877,
-          0.38929470870917177,
-          0.3094900491213855,
-          0.2572463768115942,
-          0.33441558441558444
-        ]
-      },
-      "per_class_recall": {
-        "acne_like_texture": {
-          "mean": 0.5766400898279456,
-          "std": 0.18230735837457654,
-          "values": [
-            0.8846153846153846,
-            0.5294117647058824,
-            0.5806451612903226,
-            0.4642857142857143,
-            0.42424242424242425
-          ]
-        },
-        "clinician_review": {
-          "mean": 0.21666666666666667,
-          "std": 0.33124344857252985,
-          "values": [
-            0.0,
-            0.75,
-            0.0,
-            0.0,
-            0.3333333333333333
-          ]
-        },
-        "dermatitis_like_irritation": {
-          "mean": 0.8284703510442869,
-          "std": 0.05246772760120476,
-          "values": [
-            0.9081632653061225,
-            0.7706422018348624,
-            0.8367346938775511,
-            0.7934782608695652,
-            0.8333333333333334
-          ]
-        },
-        "folliculitis_like_bumps": {
-          "mean": 0.20912420912420912,
-          "std": 0.13428318426530225,
-          "values": [
-            0.3333333333333333,
-            0.2857142857142857,
-            0.15384615384615385,
-            0.0,
-            0.2727272727272727
-          ]
-        },
-        "hyperpigmentation_like_uneven_tone": {
-          "mean": 0.0,
-          "std": 0.0,
-          "values": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-          ]
-        },
-        "rosacea_like_redness": {
-          "mean": 0.19999999999999998,
-          "std": 0.12777531299998798,
-          "values": [
-            0.2857142857142857,
-            0.0,
-            0.2857142857142857,
-            0.2857142857142857,
-            0.14285714285714285
-          ]
-        }
-      },
-      "artifact": "models/grouped_scin_derm_foundation_embedding_metrics.json"
-    },
-    "delta_derm_minus_mobilenet": {
-      "accuracy_mean": 0.18800420321873534,
-      "macro_recall_mean": 0.03670735755484572,
-      "per_class_recall_mean": {
-        "acne_like_texture": 0.4554315387332465,
-        "clinician_review": -0.006666666666666654,
-        "dermatitis_like_irritation": 0.19071004249326384,
-        "folliculitis_like_bumps": -0.04780219780219783,
-        "hyperpigmentation_like_uneven_tone": 0.0,
-        "rosacea_like_redness": -0.37142857142857144
-      },
-      "interpretation": "Use paired_derm_foundation_minus_fair_mobilenet for inference; unpaired mean deltas alone overstate the macro-recall evidence."
-    },
     "majority_class_dermatitis_baseline": {
-      "prediction": "dermatitis_like_irritation",
       "accuracy": {
-        "mean": 0.6337161999165849,
-        "std": 0.014727588956240057,
+        "mean": 0.6373038471284765,
+        "std": 0.016245887907854518,
         "values": [
           0.6533333333333333,
           0.6411764705882353,
           0.6242038216560509,
           0.6344827586206897,
-          0.6153846153846154
+          0.6153846153846154,
+          0.6329113924050633,
+          0.6268656716417911,
+          0.6319018404907976,
+          0.6470588235294118,
+          0.6319018404907976,
+          0.6305732484076433,
+          0.6778523489932886
         ]
       },
       "macro_recall": {
@@ -324,81 +55,186 @@
           0.16666666666666666,
           0.16666666666666666,
           0.16666666666666666,
+          0.16666666666666666,
+          0.16666666666666666,
+          0.16666666666666666,
+          0.16666666666666666,
+          0.16666666666666666,
+          0.16666666666666666,
+          0.16666666666666666,
           0.16666666666666666
         ]
+      }
+    },
+    "fair_grouped_mobilenet_retrained": {
+      "accuracy": {
+        "mean": 0.44821187897850995,
+        "std": 0.09938928716980254,
+        "values": [
+          0.4866666666666667,
+          0.43529411764705883,
+          0.47770700636942676,
+          0.5241379310344828,
+          0.47435897435897434,
+          0.4430379746835443,
+          0.2537313432835821,
+          0.32515337423312884,
+          0.41830065359477125,
+          0.5337423312883436,
+          0.6305732484076433,
+          0.37583892617449666
+        ]
       },
-      "per_class_recall": {
-        "acne_like_texture": {
-          "mean": 0.0,
-          "std": 0.0,
-          "values": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-          ]
+      "macro_recall": {
+        "mean": 0.2906864221794943,
+        "std": 0.039478323124742525,
+        "values": [
+          0.3919631955346241,
+          0.2925018631305733,
+          0.2696730305025236,
+          0.2597167325428195,
+          0.2950261544011544,
+          0.23951868919610855,
+          0.2929015429015429,
+          0.3063968394065481,
+          0.29437229437229434,
+          0.2435209834011901,
+          0.2932659932659933,
+          0.3093797474985594
+        ]
+      }
+    },
+    "derm_foundation_linear_probe": {
+      "accuracy": {
+        "mean": 0.6978026402811485,
+        "std": 0.05203552916240875,
+        "values": [
+          0.7866666666666666,
+          0.6411764705882353,
+          0.6624203821656051,
+          0.6068965517241379,
+          0.6410256410256411,
+          0.6835443037974683,
+          0.7164179104477612,
+          0.7239263803680982,
+          0.7058823529411765,
+          0.7423312883435583,
+          0.7452229299363057,
+          0.7181208053691275
+        ]
+      },
+      "macro_recall": {
+        "mean": 0.3470564453985441,
+        "std": 0.05041167766069117,
+        "values": [
+          0.4019710448281877,
+          0.38929470870917177,
+          0.3094900491213855,
+          0.2572463768115942,
+          0.33441558441558444,
+          0.2760215053763441,
+          0.31850094350094355,
+          0.3284075148152818,
+          0.38021885521885523,
+          0.4119340919372238,
+          0.37617845117845117,
+          0.380998218869506
+        ]
+      }
+    },
+    "paired_derm_minus_mobile": {
+      "accuracy": {
+        "mean_delta": 0.24959076130263852,
+        "std_delta": 0.11323461135632877,
+        "values": [
+          0.29999999999999993,
+          0.20588235294117652,
+          0.1847133757961783,
+          0.08275862068965512,
+          0.16666666666666674,
+          0.24050632911392406,
+          0.46268656716417905,
+          0.39877300613496935,
+          0.28758169934640526,
+          0.20858895705521474,
+          0.1146496815286624,
+          0.3422818791946308
+        ],
+        "paired_t": 7.63554313469729,
+        "df": 11,
+        "p_value_two_sided": 1.0147811598924633e-05,
+        "ci95": [
+          0.1776449216904455,
+          0.32153660091483155
+        ],
+        "exact_sign_test": {
+          "positive": 12,
+          "negative": 0,
+          "ties": 0,
+          "p_value_two_sided": 0.00048828125
         },
-        "clinician_review": {
-          "mean": 0.0,
-          "std": 0.0,
-          "values": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-          ]
-        },
-        "dermatitis_like_irritation": {
-          "mean": 1.0,
-          "std": 0.0,
-          "values": [
-            1.0,
-            1.0,
-            1.0,
-            1.0,
-            1.0
-          ]
-        },
-        "folliculitis_like_bumps": {
-          "mean": 0.0,
-          "std": 0.0,
-          "values": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-          ]
-        },
-        "hyperpigmentation_like_uneven_tone": {
-          "mean": 0.0,
-          "std": 0.0,
-          "values": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-          ]
-        },
-        "rosacea_like_redness": {
-          "mean": 0.0,
-          "std": 0.0,
-          "values": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-          ]
+        "exact_sign_flip_permutation": {
+          "p_value_two_sided": 0.00048828125,
+          "extreme_or_equal": 2,
+          "total_sign_flips": 4096
         }
       },
-      "support_source": "fair grouped MobileNet validation folds"
+      "macro_recall": {
+        "mean_delta": 0.056370023219049804,
+        "std_delta": 0.047376274847533546,
+        "values": [
+          0.010007849293563575,
+          0.09679284557859846,
+          0.03981701861886189,
+          -0.0024703557312253377,
+          0.03938943001443007,
+          0.03650281618023557,
+          0.025599400599400635,
+          0.022010675408733693,
+          0.0858465608465609,
+          0.1684131085360337,
+          0.08291245791245788,
+          0.07161847137094662
+        ],
+        "paired_t": 4.121714700171897,
+        "df": 11,
+        "p_value_two_sided": 0.0016957610451535504,
+        "ci95": [
+          0.026268574282400814,
+          0.0864714721556988
+        ],
+        "exact_sign_test": {
+          "positive": 11,
+          "negative": 1,
+          "ties": 0,
+          "p_value_two_sided": 0.00634765625
+        },
+        "exact_sign_flip_permutation": {
+          "p_value_two_sided": 0.0009765625,
+          "extreme_or_equal": 4,
+          "total_sign_flips": 4096
+        }
+      }
     },
-    "paired_derm_foundation_minus_fair_mobilenet": {
-      "accuracy": {
+    "per_class_recall_mean_delta": {
+      "acne_like_texture": 0.43513219860468444,
+      "clinician_review": 0.07916666666666668,
+      "dermatitis_like_irritation": 0.28727620614787985,
+      "folliculitis_like_bumps": -0.03527953527953526,
+      "hyperpigmentation_like_uneven_tone": -0.041666666666666664,
+      "rosacea_like_redness": -0.38640873015873023
+    }
+  },
+  "seed_count_sensitivity": {
+    "5": {
+      "seeds": [
+        42,
+        7,
+        13,
+        21,
+        84
+      ],
+      "accuracy_delta": {
         "mean_delta": 0.18800420321873532,
         "std_delta": 0.07811120180116565,
         "values": [
@@ -414,9 +250,20 @@
         "ci95": [
           0.09101633608579873,
           0.2849920703516719
-        ]
+        ],
+        "exact_sign_test": {
+          "positive": 5,
+          "negative": 0,
+          "ties": 0,
+          "p_value_two_sided": 0.0625
+        },
+        "exact_sign_flip_permutation": {
+          "p_value_two_sided": 0.0625,
+          "extreme_or_equal": 2,
+          "total_sign_flips": 32
+        }
       },
-      "macro_recall": {
+      "macro_recall_delta": {
         "mean_delta": 0.036707357554845735,
         "std_delta": 0.03832390355699663,
         "values": [
@@ -432,145 +279,192 @@
         "ci95": [
           -0.010878053762510241,
           0.08429276887220172
-        ]
-      },
-      "per_class_recall_mean_delta": {
-        "acne_like_texture": 0.4554315387332465,
-        "clinician_review": -0.006666666666666654,
-        "dermatitis_like_irritation": 0.19071004249326384,
-        "folliculitis_like_bumps": -0.04780219780219783,
-        "hyperpigmentation_like_uneven_tone": 0.0,
-        "rosacea_like_redness": -0.37142857142857144
-      },
-      "interpretation": "Accuracy improves robustly under paired seeds. Macro-recall improvement is not statistically distinguishable from zero at the 0.05 level, and Derm Foundation loses mean recall on clinician_review, folliculitis_like_bumps, and rosacea_like_redness while tying hyperpigmentation at 0.0."
+        ],
+        "exact_sign_test": {
+          "positive": 4,
+          "negative": 1,
+          "ties": 0,
+          "p_value_two_sided": 0.375
+        },
+        "exact_sign_flip_permutation": {
+          "p_value_two_sided": 0.125,
+          "extreme_or_equal": 4,
+          "total_sign_flips": 32
+        }
+      }
     },
-    "aggregate_claim": "large_robust_accuracy_lift_no_demonstrated_macro_recall_lift"
-  },
-  "diagnostic_not_fair_baseline": {
-    "fixed_deployed_onnx_grouped_scin": {
-      "accuracy": {
-        "mean": 0.8616437898006353,
-        "std": 0.012112975122697394,
+    "10": {
+      "seeds": [
+        42,
+        7,
+        13,
+        21,
+        84,
+        101,
+        202,
+        404,
+        707,
+        808
+      ],
+      "accuracy_delta": {
+        "mean_delta": 0.2538157574908369,
+        "std_delta": 0.11257767936687109,
         "values": [
-          0.86,
-          0.8470588235294118,
-          0.8535031847133758,
-          0.8758620689655172,
-          0.8717948717948718
-        ]
-      },
-      "macro_recall": {
-        "mean": 0.6314479201917427,
-        "std": 0.10079673733729334,
-        "values": [
-          0.5245290423861853,
-          0.665895716084599,
-          0.5233520703566786,
-          0.7175654056088838,
-          0.7258973665223665
-        ]
-      },
-      "artifact": "models/grouped_scin_clean_split_metrics.json",
-      "validity_note": "The fixed deployed ONNX model was previously fine-tuned on SCIN-derived head/neck data, so grouped validation folds may contain cases the model saw during original training."
-    }
-  },
-  "interpretation": "Derm Foundation embeddings give a large, paired-seed-supported accuracy improvement over fold-retrained MobileNetV3. The macro-recall delta is positive but not statistically distinguishable from zero in this five-seed run. Both learned models beat the majority-class baseline on macro recall, but absolute performance remains weak and tail labels are underpowered.",
-  "tail_support_note": "Across fair MobileNet folds, clinician_review averages 4.8 validation images, hyperpigmentation averages 2.6, and rosacea averages 7.0. Treat their recall as underpowered diagnostics, not stable tail-class evidence.",
-  "fixed_encoder_head_experiment_not_clean_representation_benchmark": {
-    "nested_decoupled_balanced_logit_head": {
-      "accuracy": {
-        "mean": 0.7533106708023053,
-        "std": 0.01696463936512948,
-        "values": [
-          0.7666666666666667,
-          0.7647058823529411,
-          0.732484076433121,
-          0.7655172413793103,
-          0.7371794871794872
-        ]
-      },
-      "macro_recall": {
-        "mean": 0.7072611699931335,
-        "std": 0.11440108225593938,
-        "values": [
-          0.6865297401011686,
-          0.814936525068743,
-          0.5244535034857615,
-          0.7892010163749293,
-          0.721185064935065
-        ]
-      },
-      "per_class_recall": {
-        "acne_like_texture": {
-          "mean": 0.723692405001703,
-          "std": 0.04362908948646982,
-          "values": [
-            0.6923076923076923,
-            0.7352941176470589,
-            0.7741935483870968,
-            0.75,
-            0.6666666666666666
-          ]
+          0.29999999999999993,
+          0.20588235294117652,
+          0.1847133757961783,
+          0.08275862068965512,
+          0.16666666666666674,
+          0.24050632911392406,
+          0.46268656716417905,
+          0.39877300613496935,
+          0.28758169934640526,
+          0.20858895705521474
+        ],
+        "paired_t": 7.129618448576629,
+        "df": 9,
+        "p_value_two_sided": 5.486724170354282e-05,
+        "ci95": [
+          0.17328253709963126,
+          0.33434897788204254
+        ],
+        "exact_sign_test": {
+          "positive": 10,
+          "negative": 0,
+          "ties": 0,
+          "p_value_two_sided": 0.001953125
         },
-        "clinician_review": {
-          "mean": 0.64,
-          "std": 0.1781852968120546,
-          "values": [
-            0.75,
-            0.75,
-            0.4,
-            0.8,
-            0.5
-          ]
-        },
-        "dermatitis_like_irritation": {
-          "mean": 0.7793085143909977,
-          "std": 0.013397097574803524,
-          "values": [
-            0.7959183673469388,
-            0.7614678899082569,
-            0.7857142857142857,
-            0.782608695652174,
-            0.7708333333333334
-          ]
-        },
-        "folliculitis_like_bumps": {
-          "mean": 0.7196137196137197,
-          "std": 0.13058735538987964,
-          "values": [
-            0.8333333333333334,
-            0.7857142857142857,
-            0.6153846153846154,
-            0.5454545454545454,
-            0.8181818181818182
-          ]
-        },
-        "hyperpigmentation_like_uneven_tone": {
-          "mean": 0.6666666666666666,
-          "std": 0.4714045207910317,
-          "values": [
-            0.3333333333333333,
-            1.0,
-            0.0,
-            1.0,
-            1.0
-          ]
-        },
-        "rosacea_like_redness": {
-          "mean": 0.7142857142857143,
-          "std": 0.14285714285714285,
-          "values": [
-            0.7142857142857143,
-            0.8571428571428571,
-            0.5714285714285714,
-            0.8571428571428571,
-            0.5714285714285714
-          ]
+        "exact_sign_flip_permutation": {
+          "p_value_two_sided": 0.001953125,
+          "extreme_or_equal": 2,
+          "total_sign_flips": 1024
         }
       },
-      "artifact": "models/grouped_scin_decoupled_logit_head_metrics.json",
-      "validity_note": "C-selection is now nested inside each grouped training fold, so the evaluation fold is not used for head hyperparameter selection. However, the frozen logits come from the previously SCIN-trained deployed ONNX encoder, so this remains a fixed-encoder head experiment rather than a clean representation benchmark."
+      "macro_recall_delta": {
+        "mean_delta": 0.05219093493451932,
+        "std_delta": 0.05118372332785918,
+        "values": [
+          0.010007849293563575,
+          0.09679284557859846,
+          0.03981701861886189,
+          -0.0024703557312253377,
+          0.03938943001443007,
+          0.03650281618023557,
+          0.025599400599400635,
+          0.022010675408733693,
+          0.0858465608465609,
+          0.1684131085360337
+        ],
+        "paired_t": 3.2245060905309284,
+        "df": 9,
+        "p_value_two_sided": 0.010413911699350875,
+        "ci95": [
+          0.01557630497956948,
+          0.08880556488946915
+        ],
+        "exact_sign_test": {
+          "positive": 9,
+          "negative": 1,
+          "ties": 0,
+          "p_value_two_sided": 0.021484375
+        },
+        "exact_sign_flip_permutation": {
+          "p_value_two_sided": 0.00390625,
+          "extreme_or_equal": 4,
+          "total_sign_flips": 1024
+        }
+      }
     },
-    "interpretation": "This refreshed nested head result is useful for operating-point analysis, but it is excluded from the clean representation comparison because it uses frozen logits from the previously SCIN-trained deployed ONNX encoder."
-  }
+    "12": {
+      "seeds": [
+        42,
+        7,
+        13,
+        21,
+        84,
+        101,
+        202,
+        404,
+        707,
+        808,
+        909,
+        1001
+      ],
+      "accuracy_delta": {
+        "mean_delta": 0.24959076130263852,
+        "std_delta": 0.11323461135632877,
+        "values": [
+          0.29999999999999993,
+          0.20588235294117652,
+          0.1847133757961783,
+          0.08275862068965512,
+          0.16666666666666674,
+          0.24050632911392406,
+          0.46268656716417905,
+          0.39877300613496935,
+          0.28758169934640526,
+          0.20858895705521474,
+          0.1146496815286624,
+          0.3422818791946308
+        ],
+        "paired_t": 7.63554313469729,
+        "df": 11,
+        "p_value_two_sided": 1.0147811598924633e-05,
+        "ci95": [
+          0.1776449216904455,
+          0.32153660091483155
+        ],
+        "exact_sign_test": {
+          "positive": 12,
+          "negative": 0,
+          "ties": 0,
+          "p_value_two_sided": 0.00048828125
+        },
+        "exact_sign_flip_permutation": {
+          "p_value_two_sided": 0.00048828125,
+          "extreme_or_equal": 2,
+          "total_sign_flips": 4096
+        }
+      },
+      "macro_recall_delta": {
+        "mean_delta": 0.056370023219049804,
+        "std_delta": 0.047376274847533546,
+        "values": [
+          0.010007849293563575,
+          0.09679284557859846,
+          0.03981701861886189,
+          -0.0024703557312253377,
+          0.03938943001443007,
+          0.03650281618023557,
+          0.025599400599400635,
+          0.022010675408733693,
+          0.0858465608465609,
+          0.1684131085360337,
+          0.08291245791245788,
+          0.07161847137094662
+        ],
+        "paired_t": 4.121714700171897,
+        "df": 11,
+        "p_value_two_sided": 0.0016957610451535504,
+        "ci95": [
+          0.026268574282400814,
+          0.0864714721556988
+        ],
+        "exact_sign_test": {
+          "positive": 11,
+          "negative": 1,
+          "ties": 0,
+          "p_value_two_sided": 0.00634765625
+        },
+        "exact_sign_flip_permutation": {
+          "p_value_two_sided": 0.0009765625,
+          "extreme_or_equal": 4,
+          "total_sign_flips": 4096
+        }
+      }
+    }
+  },
+  "interpretation": "The five-seed paired t-test was too fragile by itself because exact paired non-parametric tests cannot cross p<0.05 with only five same-signed differences. Expanding to 10 and 12 matched completed seeds preserves the large Derm Foundation accuracy lift over fair fold-retrained MobileNetV3 and also supports a smaller positive macro-recall lift. The result is still not a clinically useful model: class-level gains are uneven, rosacea and hyperpigmentation get worse at the 12-seed mean, and low-support tail labels remain underpowered.",
+  "tail_support_note": "Across the 12 fair MobileNet folds, clinician_review averaged 4.8 validation images, hyperpigmentation 2.6, and rosacea 7.1. Treat per-class tail recall as underpowered diagnostic evidence.",
+  "failed_seed_note": "The expanded comparison uses matched completed seeds only. Several additional native Windows MobileNet runs failed with a PyTorch process exit before evaluation and were not selected by metric."
 }

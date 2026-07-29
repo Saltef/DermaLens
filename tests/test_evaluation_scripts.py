@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 
+from scripts.compare_grouped_seed_counts import _exact_sign_test
 from scripts.evaluate_onnx import _build_metrics as _build_onnx_metrics
 from scripts.evaluate_subgroups import _exclude_trained_cases, _grouped_split, _metrics
 from scripts.run_grouped_mobilenet_baseline import _summary
@@ -118,3 +119,11 @@ def test_train_export_best_state_copy_does_not_share_storage() -> None:
 
     assert torch.equal(copied["weight"], original_weight)
     assert not torch.equal(copied["weight"], model.state_dict()["weight"])
+
+
+def test_five_seed_exact_sign_test_cannot_clear_point_05() -> None:
+    result = _exact_sign_test([0.3, 0.2, 0.1, 0.4, 0.5])
+
+    assert result["positive"] == 5
+    assert result["negative"] == 0
+    assert result["p_value_two_sided"] == 0.0625

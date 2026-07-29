@@ -9,17 +9,22 @@ DermaLens uses benchmarks in two different ways:
 
 | Benchmark | Status | Result | Validity |
 | --- | --- | ---: | --- |
-| Majority-class dermatitis baseline on grouped SCIN | Completed | 63.4% +/- 1.5 accuracy, 16.7% macro recall | Required imbalanced-class floor. High accuracy because dermatitis is 63.4% of validation images; low macro recall because five labels are never predicted. |
-| Fair grouped MobileNetV3 retrain on SCIN | Completed | 48.0% +/- 3.2 accuracy, 30.2% +/- 5.3 macro recall | Clean internal baseline. Each seed trains on grouped training cases and evaluates untouched validation cases. |
-| Derm Foundation linear probe on grouped SCIN | Completed | 66.8% +/- 6.9 accuracy, 33.8% +/- 5.9 macro recall | Clean representation comparison. Robust paired accuracy lift over fair MobileNet; macro-recall lift is not statistically distinguishable from zero. |
+| Majority-class dermatitis baseline on grouped SCIN | Completed | 63.7% +/- 1.6 accuracy, 16.7% macro recall | Required imbalanced-class floor across the 12-seed fair comparison. High accuracy because dermatitis dominates validation support; low macro recall because five labels are never predicted. |
+| Fair grouped MobileNetV3 retrain on SCIN | Completed | 44.8% +/- 9.9 accuracy, 29.1% +/- 3.9 macro recall | Clean internal baseline across 12 matched seeds. Each seed trains on grouped training cases and evaluates untouched validation cases. |
+| Derm Foundation linear probe on grouped SCIN | Completed | 69.8% +/- 5.2 accuracy, 34.7% +/- 5.0 macro recall | Clean representation comparison across the same 12 matched seeds. Large paired accuracy lift over fair MobileNet and a smaller positive macro-recall lift; tail classes remain weak. |
 | Nested decoupled logit head on grouped SCIN | Completed | 75.3% +/- 1.7 accuracy, 70.7% +/- 11.4 macro recall | Fixed-encoder operating point. Not a clean representation benchmark because the frozen deployed encoder was previously trained on SCIN-derived data. |
 | Fixed deployed ONNX on grouped SCIN | Diagnostic only | 86.2% +/- 1.2 accuracy, 63.1% +/- 10.1 macro recall | Contaminated as model-holdout evidence; grouped folds do not exclude original model-training cases. |
 
 Primary artifacts:
 
 - `models/grouped_scin_mobilenet_retrained_baseline_metrics.json`
+- `models/grouped_scin_mobilenet_retrained_baseline_10seed_metrics.json`
+- `models/grouped_scin_mobilenet_retrained_baseline_12seed_metrics.json`
 - `models/grouped_scin_derm_foundation_embedding_metrics.json`
+- `models/grouped_scin_derm_foundation_embedding_10seed_metrics.json`
+- `models/grouped_scin_derm_foundation_embedding_12seed_metrics.json`
 - `models/grouped_scin_fair_model_comparison_metrics.json`
+- `models/grouped_scin_seed_count_sensitivity_metrics.json`
 - `models/grouped_scin_decoupled_logit_head_metrics.json`
 - `models/grouped_scin_clean_split_metrics.json`
 
@@ -40,17 +45,17 @@ A benchmark is only a **headline benchmark** if it tests the same target distrib
 For the current portfolio claim, the cleanest result is:
 
 ```text
-Majority-class dermatitis floor: 63.4% accuracy, 16.7% macro recall
-Fair grouped MobileNetV3 retrain: 48.0% accuracy, 30.2% macro recall
-Derm Foundation linear probe: 66.8% accuracy, 33.8% macro recall
+Majority-class dermatitis floor: 63.7% accuracy, 16.7% macro recall
+Fair grouped MobileNetV3 retrain: 44.8% accuracy, 29.1% macro recall
+Derm Foundation linear probe: 69.8% accuracy, 34.7% macro recall
 ```
 
-The defensible statistical claim is narrow: Derm Foundation gives a large paired accuracy gain over fair MobileNet (+18.8 points, 95% CI +9.1 to +28.5, p=0.006). The paired macro-recall gain is not statistically distinguishable from zero (+3.7 points, 95% CI -1.1 to +8.4, p=0.099). At the class level, Derm Foundation loses mean recall on rosacea, folliculitis, and clinician-review, ties hyperpigmentation at 0.0, and gains on acne and dermatitis.
+The defensible statistical claim changed after expanding the matched seeds. With only five seeds, no exact paired non-parametric test can reach p<0.05; the five-seed accuracy p-value rested on an untestable t-test normality assumption. At 12 matched completed seeds, Derm Foundation gives a large paired accuracy gain over fair MobileNet (+25.0 points, 95% CI +17.8 to +32.2, exact sign p=0.00049) and a smaller macro-recall gain (+5.6 points, 95% CI +2.6 to +8.6, exact sign p=0.00635). At the class level, Derm Foundation still loses mean recall on rosacea and hyperpigmentation and gains mainly on acne, dermatitis, and clinician-review.
 
 Honest headline:
 
 ```text
 Derm Foundation embeddings give a large, robust accuracy improvement over fold-retrained MobileNetV3.
-Both learned models beat the majority-class floor on macro recall.
+They also show a smaller positive macro-recall lift over that fair baseline, while both learned models beat the majority-class floor on macro recall.
 Absolute performance remains far from usable, and tail classes are underpowered.
 ```

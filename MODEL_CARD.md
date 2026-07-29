@@ -30,7 +30,7 @@ A later methodological review identified a split-leakage risk: SCIN can contribu
 
 Under the corrected grouped SCIN-only protocol, the fixed deployed ONNX model with conservative prior calibration reached 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall across five split seeds. This is now classified as a contaminated fixed-model diagnostic, not a clean held-out baseline. The grouped split prevents overlap between the newly constructed folds, but the fixed ONNX model was previously fine-tuned on SCIN-derived head/neck data. Without the original model-training case list, this run cannot prove that validation cases were unseen by the deployed model.
 
-The fair comparison has now been run with `scripts/run_grouped_mobilenet_baseline.py`: each seed prepares a grouped split, trains MobileNet only on that seed's training cases, exports ONNX, evaluates once on untouched validation cases, and aggregates support-aware metrics. The five-seed fair MobileNet baseline reached 48.0% +/- 3.2 accuracy and 30.2% +/- 5.3 macro recall.
+The fair comparison has now been run with `scripts/run_grouped_mobilenet_baseline.py`: each seed prepares a grouped split, trains MobileNet only on that seed's training cases, exports ONNX, evaluates once on untouched validation cases, and aggregates support-aware metrics. The 12-seed fair MobileNet baseline reached 44.8% +/- 9.9 accuracy and 29.1% +/- 3.9 macro recall. A majority-class dermatitis baseline reached 63.7% +/- 1.6 accuracy and 16.7% macro recall.
 
 ### Skin-Tone Subgroup Audit
 
@@ -63,9 +63,9 @@ I tested a decoupled balanced head under the same grouped SCIN protocol. The dep
 
 Artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`.
 
-I also ran a Derm Foundation embedding evaluation using `google/derm-foundation` as the frozen representation with the same grouped/nested protocol. The class-balanced linear probe reached 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall. Compared with the fair fold-retrained MobileNet baseline, paired seeds support a large accuracy gain: +18.8 points, 95% CI +9.1 to +28.5, p=0.006. The macro-recall gain is not statistically distinguishable from zero: +3.7 points, 95% CI -1.1 to +8.4, p=0.099. Derm Foundation loses mean recall on rosacea, folliculitis, and clinician-review, ties hyperpigmentation at 0.0, and gains on acne and dermatitis.
+I also ran a Derm Foundation embedding evaluation using `google/derm-foundation` as the frozen representation with the same grouped/nested protocol. After the reviewer caveat about five-seed inference, I expanded the matched comparison to 10 and 12 completed seeds. The 12-seed class-balanced linear probe reached 69.8% +/- 5.2 accuracy and 34.7% +/- 5.0 macro recall. Compared with the fair fold-retrained MobileNet baseline, paired seeds support a large accuracy gain: +25.0 points, 95% CI +17.8 to +32.2, exact sign p=0.00049. The macro-recall gain is smaller but positive in the expanded run: +5.6 points, 95% CI +2.6 to +8.6, exact sign p=0.00635. Derm Foundation still loses mean recall on rosacea and hyperpigmentation, so this is not a solved tail-label classifier.
 
-Artifact: `models/grouped_scin_derm_foundation_embedding_metrics.json`.
+Artifacts: `models/grouped_scin_derm_foundation_embedding_12seed_metrics.json` and `models/grouped_scin_seed_count_sensitivity_metrics.json`.
 
 ## Known Limitations
 
@@ -85,6 +85,6 @@ The UI and API present outputs as non-diagnostic screening observations. The app
 
 1. Rebuild manifests with strict label confidence settings.
 2. Prepare ImageFolder data with grouped `case_id` splitting.
-3. Treat the fair fold-retrained MobileNetV3 result, not the fixed-model diagnostic, as the baseline for future modeling comparisons.
+3. Treat the 12-seed fair fold-retrained MobileNetV3 result, not the fixed-model diagnostic, as the baseline for future modeling comparisons.
 4. Rerun decoupled-head probes against fair representations or mark them as fixed-encoder experiment logs.
 5. Add enough validated face-specific tail examples before treating macro recall as stable evidence.

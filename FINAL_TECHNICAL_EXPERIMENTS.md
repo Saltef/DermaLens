@@ -25,7 +25,7 @@ I implemented the corrected protocol in `scripts/prepare_imagefolder.py`:
 - write `split_audit.json` with image counts, group counts, and split settings
 - skip exact duplicate file digests while writing ImageFolder outputs
 
-Future headline metrics should be produced only after rerunning the baseline and best experimental models under this grouped split. The earlier numbers are still useful for comparing modeling ideas, but they should be framed as pre-correction validation results.
+Headline metrics are now separated by validity class: earlier numbers are retained as pre-correction experiment history, the fixed grouped ONNX run is retained as a contaminated diagnostic, and the fair MobileNet versus Derm Foundation comparison is the clean grouped modeling result.
 
 ### Post-Correction Clean Baseline
 
@@ -52,11 +52,13 @@ The key missing comparison from the audit is now implemented:
 - Evaluation: each seed's validation cases are used once after training
 - Reporting: accuracy, macro recall, per-class recall, per-class support, and low-support labels
 
-The full five-seed run has been executed:
+The fair baseline has now been executed across five, 10, and 12 matched completed seeds:
 
 | Run | Seeds | Epochs | Accuracy | Macro Recall | Low-Support Labels |
 | --- | ---: | ---: | ---: | ---: | --- |
 | MobileNetV3 fair grouped retrain | 5 | 8 | 48.0% +/- 3.2 | 30.2% +/- 5.3 | clinician_review, hyperpigmentation_like_uneven_tone, rosacea_like_redness |
+| MobileNetV3 fair grouped retrain | 10 | 8 | 43.7% +/- 8.8 | 28.9% +/- 4.3 | clinician_review, hyperpigmentation_like_uneven_tone, rosacea_like_redness |
+| MobileNetV3 fair grouped retrain | 12 | 8 | 44.8% +/- 9.9 | 29.1% +/- 3.9 | clinician_review, hyperpigmentation_like_uneven_tone, rosacea_like_redness |
 
 This is the clean MobileNet baseline for this repo. It is far below the fixed-model diagnostic, which confirms that the old 86.2% number should not travel as a held-out claim.
 
@@ -64,6 +66,8 @@ Artifacts:
 
 - `scripts/run_grouped_mobilenet_baseline.py`
 - `models/grouped_scin_mobilenet_retrained_baseline_metrics.json`
+- `models/grouped_scin_mobilenet_retrained_baseline_10seed_metrics.json`
+- `models/grouped_scin_mobilenet_retrained_baseline_12seed_metrics.json`
 
 ### Skin-Tone Subgroup Audit
 
@@ -133,16 +137,17 @@ The completed result was:
 | Model / probe | Accuracy | Macro recall |
 | --- | ---: | ---: |
 | Fixed grouped ONNX diagnostic | 86.2% +/- 1.2 | 63.1% +/- 10.1 |
-| Majority-class dermatitis baseline | 63.4% +/- 1.5 | 16.7% |
-| Fair grouped MobileNetV3 retrain | 48.0% +/- 3.2 | 30.2% +/- 5.3 |
-| Derm Foundation linear probe | 66.8% +/- 6.9 | 33.8% +/- 5.9 |
+| Majority-class dermatitis baseline, 12 seeds | 63.7% +/- 1.6 | 16.7% |
+| Fair grouped MobileNetV3 retrain, 12 seeds | 44.8% +/- 9.9 | 29.1% +/- 3.9 |
+| Derm Foundation linear probe, 12 seeds | 69.8% +/- 5.2 | 34.7% +/- 5.0 |
 
-The failure mode was concentrated in the tail classes. Hyperpigmentation stayed at 0.0 mean recall, folliculitis reached only 20.9%, and rosacea reached 20.0%. I also ran a compact sanity sweep over logistic probes with and without class weighting and with macro-first versus accuracy-first C selection; none recovered the fixed ONNX diagnostic.
+The first five-seed run had an important statistical caveat: no exact paired non-parametric test can reach p<0.05 with only five same-signed differences. I therefore expanded the matched comparison to 10 and 12 completed seeds and regenerated the sensitivity artifact.
 
-Paired interpretation: the dermatology foundation linear probe produces a large, robust accuracy lift over the fold-retrained MobileNetV3 baseline: +18.8 points, 95% CI +9.1 to +28.5, paired t(4)=5.38, p=0.006. The macro-recall delta is positive but not statistically distinguishable from zero: +3.7 points, 95% CI -1.1 to +8.4, paired t(4)=2.14, p=0.099. Per-class recall gets worse for rosacea, folliculitis, and clinician-review, ties hyperpigmentation at 0.0, and improves on acne and dermatitis. The result is scientifically useful because it shows dermatology-specific embeddings improve accuracy under the corrected protocol, but it is not a solved classifier and not a proven macro-recall improvement.
+Paired interpretation: the dermatology foundation linear probe produces a large accuracy lift over the fold-retrained MobileNetV3 baseline at 12 seeds: +25.0 points, 95% CI +17.8 to +32.2, paired t(11)=7.64, p=1.0e-5, exact sign p=0.00049. The macro-recall delta is smaller but positive in the expanded run: +5.6 points, 95% CI +2.6 to +8.6, paired t(11)=4.12, p=0.0017, exact sign p=0.00635. Per-class recall still gets worse for rosacea and hyperpigmentation and improves mostly on acne, dermatitis, and clinician-review. The result is scientifically useful because it shows dermatology-specific embeddings improve the clean benchmark, but it is not a solved classifier.
 
-Artifact: `models/grouped_scin_derm_foundation_embedding_metrics.json`.
+Artifacts: `models/grouped_scin_derm_foundation_embedding_metrics.json`, `models/grouped_scin_derm_foundation_embedding_10seed_metrics.json`, and `models/grouped_scin_derm_foundation_embedding_12seed_metrics.json`.
 Fair comparison artifact: `models/grouped_scin_fair_model_comparison_metrics.json`.
+Seed-count sensitivity artifact: `models/grouped_scin_seed_count_sensitivity_metrics.json`.
 
 ## Baseline To Beat
 
@@ -169,10 +174,10 @@ Fair grouped MobileNet retrain:
 - Model: MobileNetV3-Small retrained separately on each grouped training fold
 - Split: grouped by `case_id`, no train/validation group overlap
 - Epochs: `8`
-- Seeds: `42`, `7`, `13`, `21`, `84`
-- Accuracy: `48.0% +/- 3.2`
-- Macro recall: `30.2% +/- 5.3`
-- Caveat: tail labels remain underpowered; clinician_review averages 4.8 validation images, hyperpigmentation 2.6, and rosacea 7.0
+- Seeds: `42`, `7`, `13`, `21`, `84`, `101`, `202`, `404`, `707`, `808`, `909`, `1001`
+- Accuracy: `44.8% +/- 9.9`
+- Macro recall: `29.1% +/- 3.9`
+- Caveat: tail labels remain underpowered; clinician_review averages 4.8 validation images, hyperpigmentation 2.6, and rosacea 7.1
 
 Raw flat model on the same combined validation split:
 

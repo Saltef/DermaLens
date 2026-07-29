@@ -83,7 +83,7 @@ The deployed model is intentionally modest:
 - MobileNetV3-Small ONNX
 - local CPU-friendly inference
 - conservative prior calibration
-- fair grouped retrain baseline: 48.0% +/- 3.2 accuracy and 30.2% +/- 5.3 macro recall
+- fair grouped retrain baseline: 44.8% +/- 9.9 accuracy and 29.1% +/- 3.9 macro recall across 12 matched seeds
 
 The earlier combined validation split reported 69.4% accuracy and 48.4% macro recall, but that number is kept mainly as experiment history because the preparation path had image-level leakage risk. The later grouped SCIN result fixed fold-level case overlap, but a second audit found that it is still not a clean model holdout because the fixed deployed ONNX model had already been trained on SCIN-derived head/neck images.
 
@@ -93,18 +93,18 @@ The repo includes the fair-baseline runner:
 python scripts/run_grouped_mobilenet_baseline.py `
   --manifest data/raw/scin/face_skin_manifest.csv `
   --image-root data/raw/scin `
-  --summary-output models/grouped_scin_mobilenet_retrained_baseline_metrics.json `
-  --seeds 42 7 13 21 84 `
+  --summary-output models/grouped_scin_mobilenet_retrained_baseline_12seed_metrics.json `
+  --seeds 42 7 13 21 84 101 202 404 707 808 909 1001 `
   --epochs 8
 ```
 
-The completed five-seed run reached 48.0% +/- 3.2 accuracy and 30.2% +/- 5.3 macro recall. This lower result is the fair baseline; the old 86.2% fixed-model number stays in the repo only as a contaminated diagnostic.
+The completed 12-seed run reached 44.8% +/- 9.9 accuracy and 29.1% +/- 3.9 macro recall. This lower result is the fair baseline; the old 86.2% fixed-model number stays in the repo only as a contaminated diagnostic.
 
 The repo also includes a subgroup workflow by Fitzpatrick and Monk tone metadata in `models/grouped_scin_subgroup_metrics.json`. Read it as an example of fairness-aware evaluation mechanics, not proof that the model is fair; the darkest Monk bucket is too small, and SCIN's available tone labels are retrospective image estimates rather than controlled clinical subgroup labels.
 
 There is also one grouped-split decoupled-head artifact: `models/grouped_scin_decoupled_logit_head_metrics.json`. It freezes the deployed ONNX image model and retrains only a class-balanced head over its logits, with C selected on a nested grouped calibration split. The refreshed head reached 75.3% +/- 1.7 accuracy and 70.7% +/- 11.4 macro recall. Read it as a fixed-encoder operating-point experiment, not as a clean model benchmark, because the frozen encoder may have seen SCIN-derived cases during original fine-tuning.
 
-The high-leverage foundation-model path is implemented in `scripts/evaluate_derm_foundation_embeddings.py`. It extracts `google/derm-foundation` embeddings, trains a class-balanced linear probe, selects C on nested calibration data, and evaluates on the held-out grouped fold. The completed result is 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall. Compared with the fair MobileNet baseline, Derm Foundation has a robust paired accuracy lift but no demonstrated macro-recall lift. Both learned models beat the majority-class floor on macro recall; neither solves the low-support tail classes.
+The high-leverage foundation-model path is implemented in `scripts/evaluate_derm_foundation_embeddings.py`. It extracts `google/derm-foundation` embeddings, trains a class-balanced linear probe, selects C on nested calibration data, and evaluates on the held-out grouped fold. The completed 12-seed result is 69.8% +/- 5.2 accuracy and 34.7% +/- 5.0 macro recall. Compared with the fair MobileNet baseline, Derm Foundation has a robust paired accuracy lift and a smaller positive macro-recall lift after expanding beyond the fragile five-seed test. Both learned models beat the majority-class floor on macro recall; neither solves the low-support tail classes.
 
 The research pipeline found stronger experimental results:
 
@@ -112,7 +112,7 @@ The research pipeline found stronger experimental results:
 - Neural heads and ensembles reached higher original-validation performance.
 - A validation-tuned class-bias ensemble reached 81.4%, but fresh holdout testing did not reproduce it.
 
-The project therefore does not claim a validated 80% model. The honest conclusion is that the fair baseline is now known, Derm Foundation gives the strongest clean representation lift, and the next evidence-producing step is better data: cleaner labels, more face-specific examples, and enough tail support for meaningful macro recall.
+The project therefore does not claim a validated 80% model. The honest conclusion is that the fair baseline is now known, Derm Foundation gives the strongest clean representation lift, and the next evidence-producing step is better data: cleaner labels, more face-specific examples, and enough tail support for meaningful per-class recall.
 
 ## 6. What To Look For In The Code
 

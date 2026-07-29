@@ -23,13 +23,13 @@ For a more explicit walkthrough, see [GUIDE.md](GUIDE.md).
 - **Deployable model:** MobileNetV3-Small ONNX classifier with optional prior calibration.
 - **Research models:** ConvNeXt frozen embeddings, neural classifier heads, long-tail supervised contrastive tests, targeted augmentation, probability ensembles, and calibration sweeps.
 - **Runtime polish:** ONNX inference runs off the async event loop, uploads have a decompression-bomb guard, and facial region summaries now use an OpenCV face detector with a geometry fallback.
-- **Fair grouped MobileNet baseline:** retraining MobileNetV3-Small separately on five grouped SCIN folds reached 48.0% +/- 3.2 accuracy and 30.2% +/- 5.3 macro recall. See `models/grouped_scin_mobilenet_retrained_baseline_metrics.json`.
-- **Majority-class floor:** always predicting `dermatitis_like_irritation` reaches 63.4% +/- 1.5 accuracy and 16.7% macro recall on the fair grouped validation folds.
-- **Fair Derm Foundation comparison:** the Derm Foundation linear probe reached 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall. Paired seeds show a robust accuracy lift over fair MobileNet (+18.8 points, 95% CI +9.1 to +28.5, p=0.006), but the macro-recall lift is not significant (+3.7 points, 95% CI -1.1 to +8.4, p=0.099). See `models/grouped_scin_fair_model_comparison_metrics.json`.
+- **Fair grouped MobileNet baseline:** retraining MobileNetV3-Small separately on 12 grouped SCIN folds reached 44.8% +/- 9.9 accuracy and 29.1% +/- 3.9 macro recall. See `models/grouped_scin_mobilenet_retrained_baseline_12seed_metrics.json`.
+- **Majority-class floor:** always predicting `dermatitis_like_irritation` reaches 63.7% +/- 1.6 accuracy and 16.7% macro recall on the 12 fair grouped validation folds.
+- **Fair Derm Foundation comparison:** the Derm Foundation linear probe reached 69.8% +/- 5.2 accuracy and 34.7% +/- 5.0 macro recall over the same 12 grouped folds. Paired seeds show an accuracy lift over fair MobileNet (+25.0 points, 95% CI +17.8 to +32.2, exact sign p=0.00049) and a smaller macro-recall lift (+5.6 points, 95% CI +2.6 to +8.6, exact sign p=0.00635). See `models/grouped_scin_fair_model_comparison_metrics.json` and `models/grouped_scin_seed_count_sensitivity_metrics.json`.
 - **Legacy deployable ONNX result:** 69.4% accuracy and 48.4% macro recall after conservative calibration on the earlier combined validation path. This is retained as experiment history because the original split path had leakage risk.
 - **Fixed-model SCIN diagnostic, not a clean held-out headline:** the deployed ONNX model reached 86.2% +/- 1.2 accuracy and 63.1% +/- 10.1 macro recall on grouped SCIN folds, but the model was previously fine-tuned on SCIN-derived head/neck data. Grouping prevents overlap inside the new folds; it does not prove the fixed model had never seen those validation cases. See `models/grouped_scin_clean_split_metrics.json`.
 - **Grouped modeling experiments:** Derm Foundation is the clean representation comparison. The decoupled head is a refreshed fixed-encoder operating-point experiment because it uses frozen logits from the previously SCIN-trained deployed ONNX model.
-- **Derm Foundation result:** the dermatology-specific embedding probe completed at 66.8% +/- 6.9 accuracy and 33.8% +/- 5.9 macro recall across grouped split seeds. It improves over the fair MobileNet baseline, but it does not solve the tail-label problem.
+- **Derm Foundation result:** the dermatology-specific embedding probe improves over the fair MobileNet baseline under 10- and 12-seed sensitivity checks, but it does not solve the tail-label problem and class-level gains remain uneven.
 - **Subgroup workflow demo:** Fitzpatrick/Monk subgroup metrics are reported in `models/grouped_scin_subgroup_metrics.json`, but the buckets are too small and the tone labels too noisy for fairness claims.
 - **Best untuned experimental validation result:** 79.2% accuracy and 71.0% macro recall with a mixed ConvNeXt ensemble.
 - **Critical limitation:** fresh holdout testing did not confirm the validation-tuned 81.4% result, and the later fixed-model grouped SCIN check is not a clean model holdout because original training-case exclusion was not available. Some tail classes have fewer than 10 validation images per split, so per-class recall and macro recall are underpowered diagnostics rather than stable evidence.
@@ -147,18 +147,18 @@ The corrected fair-baseline path now exists:
 python scripts/run_grouped_mobilenet_baseline.py `
   --manifest data/raw/scin/face_skin_manifest.csv `
   --image-root data/raw/scin `
-  --summary-output models/grouped_scin_mobilenet_retrained_baseline_metrics.json `
-  --seeds 42 7 13 21 84 `
+  --summary-output models/grouped_scin_mobilenet_retrained_baseline_12seed_metrics.json `
+  --seeds 42 7 13 21 84 101 202 404 707 808 909 1001 `
   --epochs 8 `
   --batch-size 16 `
   --num-workers 0
 ```
 
-The completed five-seed fair baseline reached:
+The completed 12-seed fair baseline reached:
 
 ```text
-majority-class baseline: 63.4% +/- 1.5 accuracy, 16.7% macro recall
-fair MobileNetV3 retrain: 48.0% +/- 3.2 accuracy, 30.2% +/- 5.3 macro recall
+majority-class baseline: 63.7% +/- 1.6 accuracy, 16.7% macro recall
+fair MobileNetV3 retrain: 44.8% +/- 9.9 accuracy, 29.1% +/- 3.9 macro recall
 ```
 
 This is much lower than the contaminated fixed-model diagnostic, which confirms that the audit found a real validity problem rather than a documentation nuance. It also makes the foundation-model comparison fair.
@@ -187,16 +187,16 @@ python scripts/evaluate_derm_foundation_embeddings.py `
 
 This uses Google's `google/derm-foundation` embedding model as a frozen representation, trains a class-balanced linear probe, selects C on a nested grouped calibration split, and evaluates once on the held-out grouped fold.
 
-The completed Derm Foundation probe result was:
+The completed Derm Foundation probe result, after expanding the matched-seed comparison, was:
 
 ```text
 fixed ONNX diagnostic: 86.2% +/- 1.2 accuracy, 63.1% +/- 10.1 macro recall
-majority baseline:     63.4% +/- 1.5 accuracy, 16.7% macro recall
-Derm Foundation probe: 66.8% +/- 6.9 accuracy, 33.8% +/- 5.9 macro recall
-fair MobileNet retrain: 48.0% +/- 3.2 accuracy, 30.2% +/- 5.3 macro recall
+majority baseline:     63.7% +/- 1.6 accuracy, 16.7% macro recall
+Derm Foundation probe: 69.8% +/- 5.2 accuracy, 34.7% +/- 5.0 macro recall
+fair MobileNet retrain: 44.8% +/- 9.9 accuracy, 29.1% +/- 3.9 macro recall
 ```
 
-The honest comparison is mixed. Derm Foundation gives a large, paired-seed-supported accuracy lift over fair MobileNet, and it slightly clears the majority-class baseline on accuracy. The macro-recall delta over MobileNet is within noise, though both learned models beat the majority-class floor on macro recall. Per-class recall drops for rosacea, folliculitis, and clinician-review, ties at 0.0 for hyperpigmentation, and improves mainly on acne and dermatitis.
+The honest comparison is still mixed, but stronger than the five-seed result. At five seeds, exact paired tests could not cross p<0.05 even with all accuracy deltas positive, so the original t-test was too fragile to carry alone. After expanding to 10 and 12 matched completed seeds, Derm Foundation gives a large accuracy lift over fair MobileNet and a smaller positive macro-recall lift. At 12 seeds, the paired deltas are +25.0 points accuracy and +5.6 points macro recall. Class-level recall still drops for rosacea and hyperpigmentation and improves mainly on acne, dermatitis, and clinician-review, so this is not a solved tail-label model.
 
 ## Current Validity Status
 
@@ -204,8 +204,8 @@ The current repo now distinguishes between validated machinery and unresolved mo
 
 1. Implemented: grouped ImageFolder preparation with case-level leakage audits.
 2. Implemented: support-aware ONNX evaluation with low-support label flags.
-3. Completed: fair grouped MobileNet retrain/evaluate runner across five seeds.
-4. Completed: Derm Foundation comparison against that fair MobileNet baseline.
+3. Completed: fair grouped MobileNet retrain/evaluate runner across 12 matched seeds.
+4. Completed: Derm Foundation comparison and 5/10/12 seed-count sensitivity against that fair MobileNet baseline.
 5. Still needed for stronger science: more face-specific data or a label audit for the low-support/overlapping tail classes.
 6. Any metric involving labels with fewer than about 10 validation examples should be described as underpowered, not as a stable tail-class result.
 
